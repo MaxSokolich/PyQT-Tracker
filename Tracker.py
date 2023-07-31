@@ -817,6 +817,8 @@ class App(QWidget):
                 
         
     
+
+
 class Robot:
     """
     Robot class to store and ID all new robots currently being tracked.
@@ -900,6 +902,8 @@ class Robot:
         }
 
         return mydict
+
+
 
 
 class VideoThread(QThread):
@@ -1014,7 +1018,7 @@ class VideoThread(QThread):
                     
                     #display visuals
                     cv2.circle(displayframe,(int(xcord+ x1), int(ycord + y1)),5,(botcolor),-1,)
-                    cv2.rectangle(displayframe, (x1, y1), (x1 + w, y1 + h), (botcolor), 3)
+                    cv2.rectangle(displayframe, (x1_new, y1_new), (x1_new + w_new, y1_new + h_new), (botcolor), 3)
                     
                     pts = np.array(bot.position_list, np.int32)
                     cv2.polylines(displayframe, [pts], False, botcolor, 3)
@@ -1040,6 +1044,7 @@ class VideoThread(QThread):
         im1 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         invert = self.maskinvert
         mask_sigma= self.mask_sigma
+        
         img_threshold=0
 
 
@@ -1049,6 +1054,7 @@ class VideoThread(QThread):
         imgdiff=(-(meanBackgroundImg-np.median(im1))+BackgroundImg-im1)
         if not invert:
             imgdiff = np.mean(imgdiff)-imgdiff;#if invert is true then just keep the img as it is, this is for dark subjects. If invert is false then make it negative and shift by mean, this is for bright subjects
+        
         maskdiff = imgdiff < img_threshold
         finalimg= np.where(maskdiff,np.zeros_like(im1),imgdiff)#setting dark pixels to zero
             
@@ -1116,6 +1122,9 @@ class VideoThread(QThread):
         self.cap.release()
         cv2.destroyAllWindows
 
+
+
+
 class FPSCounter:
     """
     Class for managing the FPS of the microbot tracker
@@ -1140,6 +1149,8 @@ class FPSCounter:
     def get_fps(self):
         return self.fps
     
+
+
 
 
 if __name__=="__main__":

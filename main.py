@@ -1,5 +1,5 @@
 import sys
-from gui_class import App
+from src.gui_class import App
 from PyQt5.QtWidgets import QApplication
 
 """

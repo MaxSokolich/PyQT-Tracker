@@ -6,8 +6,8 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 import cv2
 import os
 from os.path import expanduser
-from tracker_class import VideoThread
-from robot_class import Robot
+from src.tracker_class import VideoThread
+from src.robot_class import Robot
 import pandas as pd
 from datetime import datetime
 
@@ -190,8 +190,8 @@ class App(QWidget):
         self.rightbutton.setGeometry(QtCore.QRect(105, 100, 60, 20))
         self.rightbutton.setArrowType(Qt.RightArrow)
         self.rightbutton.setAutoRepeat(True)
-        self.rightbutton.setAutoRepeatDelay(200)
-        self.rightbutton.setAutoRepeatInterval(50)
+        #self.rightbutton.setAutoRepeatDelay(200)
+        #self.rightbutton.setAutoRepeatInterval(50)
         self.rightbutton.clicked.connect(self.frameright)
         self.rightbutton.hide()
         self.rightbutton.setStyleSheet('''
@@ -227,8 +227,8 @@ class App(QWidget):
         self.leftbutton.setGeometry(QtCore.QRect(35, 100, 60, 20))
         self.leftbutton.setArrowType(Qt.LeftArrow)
         self.leftbutton.setAutoRepeat(True)
-        self.leftbutton.setAutoRepeatDelay(200)
-        self.leftbutton.setAutoRepeatInterval(50)
+        #self.leftbutton.setAutoRepeatDelay(200)
+        #self.leftbutton.setAutoRepeatInterval(50)
         self.leftbutton.clicked.connect(self.frameleft)
         self.leftbutton.hide()
         self.leftbutton.setStyleSheet('''
@@ -494,6 +494,10 @@ class App(QWidget):
 
 
 
+
+
+
+
     def eventFilter(self, object, event):
         if object is self.VideoFeedLabel: 
             #if event.type() == QtCore.QEvent.MouseMove:
@@ -710,6 +714,7 @@ class App(QWidget):
     def frameright(self):
         if self.videopath != 0:
             self.tracker.framenum+=1
+            
             self.frameslider.setSliderPosition(self.tracker.framenum)
             self.framelabel.setText("Frame:"+str(self.tracker.framenum))
 

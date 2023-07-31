@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from scipy import ndimage 
 import time
     
-
+#add unique crop length 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
     cropped_frame_signal = pyqtSignal(np.ndarray)
@@ -28,6 +28,7 @@ class VideoThread(QThread):
         self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
         self.framenum = 0
+        self.framenumlast = 0
         self.mask_sigma = 0.7
         self.maskinvert = True
         self.crop_length = 40
@@ -87,7 +88,7 @@ class VideoThread(QThread):
                     #find the center of mass from the mask
                     szsorted=np.argsort(sizes)
                     [ycord,xcord]=ndimage.center_of_mass(croppedmask,labels=label_im,index = szsorted[-(1)])
-                    
+                    ndimage.binary_dilation
                     
                     #derive the global current location
                     current_pos = [xcord + x1,   ycord + y1] #xcord ycord are relative to the cropped frame. need to convert to the overall frame dim
@@ -107,6 +108,8 @@ class VideoThread(QThread):
                     blur = cv2.Laplacian(croppedframe, cv2.CV_64F).var()
                     
                     #store the data in the instance of RobotClasss
+                    
+                    #if self.framenum != self.framenumlast:
                     bot.add_frame(self.framenum)
                     bot.add_time(self.cap.get(cv2.CAP_PROP_POS_MSEC)/1000) #original in ms
                     bot.add_position([current_pos[0], current_pos[1]])
@@ -115,11 +118,12 @@ class VideoThread(QThread):
                     bot.add_area(area)
                     bot.add_blur(blur)
                     bot.set_avg_area(np.mean(bot.area_list))
+                    self.framenumlast = self.framenum
                     
                     
                     #display visuals
                     cv2.circle(displayframe,(int(xcord+ x1), int(ycord + y1)),5,(botcolor),-1,)
-                    cv2.rectangle(displayframe, (x1, y1), (x1 + w, y1 + h), (botcolor), 3)
+                    cv2.rectangle(displayframe, (x1_new, y1_new), (x1_new + w_new, y1_new + h_new), (botcolor), 3)
                     
                     pts = np.array(bot.position_list, np.int32)
                     cv2.polylines(displayframe, [pts], False, botcolor, 3)
@@ -127,6 +131,9 @@ class VideoThread(QThread):
 
                 
             #constantly display the cropped frame mask for parameter tuning
+            
+            #croppedmask = frame[y1_new : y1_new + h_new, x1_new : x1_new + w_new]
+            #croppedmask  = self.find_mask(croppedframe)
             croppedmask = cv2.cvtColor(croppedmask, cv2.COLOR_GRAY2BGR)
             if len(contours) !=0:
                 cv2.drawContours(croppedmask, [max_cnt], -1, (0, 255, 255), 1)
@@ -151,13 +158,15 @@ class VideoThread(QThread):
         BackgroundImg =  np.ones_like(im1)#BackgroundImage;#I only take every 10th image, any more is likely unnecessary, depends on fps but this can be slow
         meanBackgroundImg = np.median(BackgroundImg)
         
-        imgdiff=(-(meanBackgroundImg-np.median(im1))+BackgroundImg-im1)
+        imgdiff=(-(meanBackgroundImg-np.median(im1))+  BackgroundImg - im1)
         if not invert:
             imgdiff = np.mean(imgdiff)-imgdiff;#if invert is true then just keep the img as it is, this is for dark subjects. If invert is false then make it negative and shift by mean, this is for bright subjects
+        
         maskdiff = imgdiff < img_threshold
         finalimg= np.where(maskdiff,np.zeros_like(im1),imgdiff)#setting dark pixels to zero
             
         mask = finalimg > (finalimg.mean() + mask_sigma*finalimg.std())
+
         mask = mask.astype(np.uint8)  #convert to an unsigned byte
         mask*=255
     
@@ -171,17 +180,21 @@ class VideoThread(QThread):
         
     def run(self):
         # capture from web cam
+        
+        
         while self._run_flag:
             self.fps.update()
 
             #set and read frame
             if self._play_flag == True:
                 self.framenum +=1
-
+            
+            
 
             if self.totalnumframes !=0:
                 if self.framenum >  self.totalnumframes:
                     self.framenum = 0
+                
                 self.cap.set(1, self.framenum)
             
             
