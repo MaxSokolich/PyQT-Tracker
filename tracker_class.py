@@ -24,8 +24,7 @@ class VideoThread(QThread):
         #initiate control class
         self.control_robot = algorithm()
         
-        
-        
+    
         self.fps = FPSCounter()
         self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -34,18 +33,19 @@ class VideoThread(QThread):
 
         self._run_flag = True
         self._play_flag = True
-        self._record_flag = False
         self.mask_flag = False
-
-    
-
         self.framenum = 0
-        self.framenumlast = 0
+
         self.mask_sigma = 0.7
+        self.mask_blur = 40  #this is not used as of now
         self.maskinvert = True
         self.crop_length = 40
+        self.arrivalthresh = 25
+        self.RRTtreesize = 25
+        self.memory = 15  #this isnt used as of now
         self.robot_list = []
         
+
 
     def track_robot(self, frame):
         """
@@ -120,7 +120,6 @@ class VideoThread(QThread):
                     
                     #store the data in the instance of RobotClasss
                     
-                    #if self.framenum != self.framenumlast:
                     bot.add_frame(self.framenum)
                     bot.add_time(self.cap.get(cv2.CAP_PROP_POS_MSEC)/1000) #original in ms
                     bot.add_position([current_pos[0], current_pos[1]])
@@ -129,7 +128,7 @@ class VideoThread(QThread):
                     bot.add_area(area)
                     bot.add_blur(blur)
                     bot.set_avg_area(np.mean(bot.area_list))
-                    self.framenumlast = self.framenum
+                
                     
                     
                     #display visuals
@@ -189,7 +188,7 @@ class VideoThread(QThread):
 
 
     def run(self):
-         
+       
         # capture from web camx
         while self._run_flag:
             self.fps.update()
@@ -225,8 +224,7 @@ class VideoThread(QThread):
             
                 #step 2 control robot
                 if len(self.robot_list)>0 and len(self.robot_list[-1].trajectory) > 0:
-                    stepsize, arrivialthresh, auto = 50,50, True
-                    frame, actions, arrived = self.control_robot.run(frame, frame_mask, self.robot_list, stepsize, arrivialthresh, auto)
+                    frame, actions, arrived = self.control_robot.run(frame, frame_mask, self.robot_list, self.RRTtreesize, self.arrivalthresh)
                 else:
                     actions = 0.0
                     arrived = True
@@ -237,6 +235,11 @@ class VideoThread(QThread):
                 self.change_pixmap_signal.emit(frame)
                 self.actions_signal.emit(actions, arrived)
 
+           
+            
+                
+                
+                
                 #step 4: delay based on fps
                 if self.totalnumframes !=0:
                     interval = int(1000/self.videofps)  #use original fps used to record the video if not live
@@ -254,7 +257,11 @@ class VideoThread(QThread):
         self.cap.release()
       
 
+   
 
+        
+
+                
 
 
 

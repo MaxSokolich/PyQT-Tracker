@@ -19,7 +19,7 @@ class algorithm:
         self.arrived = False
         self.alpha = 0.0
 
-    def run(self, frame, mask, robot_list, stepsize, arrivialthresh, auto):
+    def run(self, frame, mask, robot_list, stepsize, arrivialthresh):
         
         if self.count == 0: #% 10
         
@@ -27,10 +27,9 @@ class algorithm:
             startpos = robot_list[-1].position_list[-1] #the most recent position at the time of clicking run algo
             endpos = robot_list[-1].trajectory[-1]
             
-            #step 3: generate path from RRT
+
             
-            print("this should update the trajectory")    
-            
+            #print("this should update the trajectory")    
             x,y,w,h = robot_list[-1].cropped_frame[-1]
             cv2.rectangle(mask, (x, y), (x + w, y + h), (0, 0, 0), -1)
             try:
@@ -116,8 +115,7 @@ class RRT:
 
         for i in range(len(x)):
             #print(int(x[i]),int(y[i]))
-           
-            
+        
             color.append(self.img[int(y[i]),int(x[i])])
 
         #print(color, "\n\n")
@@ -214,7 +212,7 @@ class RRT:
                 self.node_list[i].parent_y.append(ty)
 
 
-                print("Path has been found")
+                #print("Path has been found")
             
                 trajectory = list(zip(self.node_list[i].parent_x,self.node_list[i].parent_y))
                 return trajectory

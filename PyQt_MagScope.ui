@@ -37,7 +37,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>490</y>
+        <y>480</y>
         <width>161</width>
         <height>20</height>
        </rect>
@@ -129,13 +129,13 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>290</y>
-        <width>160</width>
+        <y>340</y>
+        <width>201</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>Crop Length: 40</string>
+       <string>Crop Length:       40</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pausebutton">
@@ -238,7 +238,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>450</y>
+        <y>440</y>
         <width>161</width>
         <height>20</height>
        </rect>
@@ -362,10 +362,10 @@
      <widget class="QPushButton" name="savedatabutton">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>350</y>
-        <width>160</width>
-        <height>41</height>
+        <x>0</x>
+        <y>390</y>
+        <width>100</width>
+        <height>35</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -403,19 +403,19 @@
        <rect>
         <x>10</x>
         <y>240</y>
-        <width>160</width>
+        <width>201</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>Mask Sigma: 0.7</string>
+       <string>Mask Sigma:       0.7</string>
       </property>
      </widget>
      <widget class="QSlider" name="croplengthslider">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>310</y>
+        <y>360</y>
         <width>180</width>
         <height>25</height>
        </rect>
@@ -440,7 +440,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>470</y>
+        <y>460</y>
         <width>161</width>
         <height>20</height>
        </rect>
@@ -484,10 +484,10 @@
      <widget class="QPushButton" name="recordbutton">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>400</y>
-        <width>111</width>
-        <height>32</height>
+        <x>110</x>
+        <y>390</y>
+        <width>90</width>
+        <height>35</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -528,6 +528,88 @@
        <bool>true</bool>
       </property>
      </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>430</y>
+        <width>205</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(0, 0, 0);
+                background-color: rgb(255, 255, 255);
+                border-style: outset;
+                border-width: 3px;
+                border-radius: 10px;
+                border-color: rgb(0, 0, 0);
+                min-width: 1em;
+                padding: 6px;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="maskblurlabel">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>290</y>
+        <width>201</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Mask Blur:         40</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="maskblurslider">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>310</y>
+        <width>180</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>5</number>
+      </property>
+      <property name="maximum">
+       <number>200</number>
+      </property>
+      <property name="value">
+       <number>40</number>
+      </property>
+      <property name="sliderPosition">
+       <number>40</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <zorder>label</zorder>
+     <zorder>robotblurlabel</zorder>
+     <zorder>rightbutton</zorder>
+     <zorder>choosevideobutton</zorder>
+     <zorder>croplengthlabel</zorder>
+     <zorder>pausebutton</zorder>
+     <zorder>trackbutton</zorder>
+     <zorder>robotarealabel</zorder>
+     <zorder>maskinvert_checkBox</zorder>
+     <zorder>maskbutton</zorder>
+     <zorder>CroppedVideoFeedLabel</zorder>
+     <zorder>leftbutton</zorder>
+     <zorder>savedatabutton</zorder>
+     <zorder>masksigmalabel</zorder>
+     <zorder>croplengthslider</zorder>
+     <zorder>robotvelocitylabel</zorder>
+     <zorder>masksigmaslider</zorder>
+     <zorder>framelabel</zorder>
+     <zorder>recordbutton</zorder>
+     <zorder>maskblurlabel</zorder>
+     <zorder>maskblurslider</zorder>
     </widget>
     <widget class="QWidget" name="control_tab">
      <attribute name="title">
@@ -580,40 +662,20 @@
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QRadioButton" name="controlautoradio">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
-        <y>70</y>
-        <width>111</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Automatic</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="controlmanualradio">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>70</y>
-        <width>81</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Manual</string>
-      </property>
-     </widget>
      <widget class="QSlider" name="gammaslider">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>324</y>
+        <y>440</y>
         <width>180</width>
         <height>31</height>
        </rect>
+      </property>
+      <property name="maximum">
+       <number>180</number>
+      </property>
+      <property name="value">
+       <number>90</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -623,10 +685,19 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>274</y>
+        <y>340</y>
         <width>180</width>
         <height>31</height>
        </rect>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>50</number>
+      </property>
+      <property name="value">
+       <number>25</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -636,36 +707,42 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>255</y>
+        <y>320</y>
         <width>201</width>
         <height>21</height>
        </rect>
       </property>
       <property name="text">
-       <string>arivial thresh</string>
+       <string>Arrival Thresh:    25</string>
       </property>
      </widget>
      <widget class="QLabel" name="gammalabel">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>305</y>
+        <y>420</y>
         <width>201</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>gamma</string>
+       <string>Gamma:             90</string>
       </property>
      </widget>
      <widget class="QSlider" name="rollingfrequencyslider">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>374</y>
+        <y>390</y>
         <width>180</width>
         <height>31</height>
        </rect>
+      </property>
+      <property name="maximum">
+       <number>40</number>
+      </property>
+      <property name="value">
+       <number>10</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -675,23 +752,32 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>355</y>
+        <y>370</y>
         <width>201</width>
         <height>21</height>
        </rect>
       </property>
       <property name="text">
-       <string>rolling frequency</string>
+       <string>Rolling Frequency: 10</string>
       </property>
      </widget>
      <widget class="QSlider" name="psislider">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>424</y>
+        <y>490</y>
         <width>180</width>
         <height>31</height>
        </rect>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>90</number>
+      </property>
+      <property name="value">
+       <number>90</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -701,13 +787,13 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>405</y>
+        <y>470</y>
         <width>201</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>psi</string>
+       <string>Psi:               90</string>
       </property>
      </widget>
      <widget class="QLabel" name="magneticfieldsimlabel">
@@ -726,37 +812,11 @@
        <string/>
       </property>
      </widget>
-     <widget class="QLabel" name="memorylabel">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>455</y>
-        <width>201</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>memory</string>
-      </property>
-     </widget>
-     <widget class="QSlider" name="memoryslider">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>474</y>
-        <width>180</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
      <widget class="QPushButton" name="joystickbutton">
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>110</y>
+        <y>70</y>
         <width>141</width>
         <height>31</height>
        </rect>
@@ -805,7 +865,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>170</y>
+        <y>140</y>
         <width>171</width>
         <height>31</height>
        </rect>
@@ -817,9 +877,9 @@
      <widget class="QLabel" name="acousticfreqlabel">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>150</y>
-        <width>191</width>
+        <x>20</x>
+        <y>110</y>
+        <width>171</width>
         <height>21</height>
        </rect>
       </property>
@@ -831,7 +891,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>210</y>
+        <y>180</y>
         <width>161</width>
         <height>25</height>
        </rect>
@@ -858,6 +918,94 @@
       </property>
       <property name="checkable">
        <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QSlider" name="RRTtreesizeslider">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>290</y>
+        <width>180</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>75</number>
+      </property>
+      <property name="value">
+       <number>25</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="invertedAppearance">
+       <bool>false</bool>
+      </property>
+      <property name="invertedControls">
+       <bool>false</bool>
+      </property>
+      <property name="tickPosition">
+       <enum>QSlider::NoTicks</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="RRTtreesizelabel">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>270</y>
+        <width>201</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>RRT Tree Size:     25</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="memoryslider">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>240</y>
+        <width>180</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>100</number>
+      </property>
+      <property name="pageStep">
+       <number>10</number>
+      </property>
+      <property name="value">
+       <number>15</number>
+      </property>
+      <property name="tracking">
+       <bool>true</bool>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="tickPosition">
+       <enum>QSlider::NoTicks</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="memorylabel">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>220</y>
+        <width>201</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Memory:            15</string>
       </property>
      </widget>
     </widget>

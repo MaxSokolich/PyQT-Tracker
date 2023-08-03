@@ -119,7 +119,8 @@ class ControllerActions:
         self.actions = [self.Bx, 
                 self.By,
                 self.Bz,
-                self.alpha]
+                self.alpha,
+                self.freq]
 
         return self.actions
            

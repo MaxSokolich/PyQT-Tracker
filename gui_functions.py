@@ -49,8 +49,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.window_width = 1600
         self.window_height = 860
         self.resize(self.window_width, self.window_height)
+
+        #create folder in homerdiractory of user
+        home_dir = expanduser("~")
+        new_dir_name = "Tracking Data"
+        desktop_path = os.path.join(home_dir, "Desktop")
+        self.new_dir_path = os.path.join(desktop_path, new_dir_name)
+        if not os.path.exists(self.new_dir_path):
+            os.makedirs(self.new_dir_path)
+
+
         
-       
+        self.result = None
+        self.rec_start_time = time.time()
         self.videopath = 0
         self.cap = None
         self.drawing = False
@@ -108,6 +119,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.maskbutton.clicked.connect(self.showmask)
         self.ui.maskinvert_checkBox.toggled.connect(self.invertmaskcommand)
         self.ui.masksigmaslider.valueChanged.connect(self.get_masksigma)
+        self.ui.maskblurslider.valueChanged.connect(self.get_maskblur)
         self.ui.croplengthslider.valueChanged.connect(self.get_croplength)
         self.ui.savedatabutton.clicked.connect(self.savedata)
         self.ui.frameslider.valueChanged.connect(self.adjustframe)
@@ -116,19 +128,62 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
         #control tab functions
-    
-        self.ui.controlbutton.clicked.connect(self.toggle_control_status)
-        self.ui.joystickbutton.clicked.connect(self.toggle_joystick_status)
         self.control_status = False
         self.joystick_status = False
 
+        self.ui.controlbutton.clicked.connect(self.toggle_control_status)
+        self.ui.joystickbutton.clicked.connect(self.toggle_joystick_status)
+        
+        self.ui.memoryslider.valueChanged.connect(self.get_memory)
+        self.ui.RRTtreesizeslider.valueChanged.connect(self.get_RRTtreesize)
+        self.ui.arrivalthreshslider.valueChanged.connect(self.get_arrivalthresh)
+        self.ui.rollingfrequencyslider.valueChanged.connect(self.get_rollingfreq)
+        self.ui.gammaslider.valueChanged.connect(self.get_gamma)
+        self.ui.psislider.valueChanged.connect(self.get_psi)
+        
+        
+        
 
+    
+    
+    def get_memory(self):
+        memory = self.ui.memoryslider.value()
+        self.ui.memorylabel.setText("Memory:            {}".format(memory))
+        if self.cap is not None:        
+            self.tracker.memory = memory
 
+    def get_RRTtreesize(self):
+        RRTtreesize = self.ui.RRTtreesizeslider.value()
+        self.ui.RRTtreesizelabel.setText("RRT Tree Size:     {}".format(RRTtreesize))
+        if self.cap is not None:        
+            self.tracker.RRTtreesize = RRTtreesize
 
+    def get_arrivalthresh(self):
+        arrivalthresh = self.ui.arrivalthreshslider.value()
+        self.ui.arrivalthreshlabel.setText("Arrival Thresh:    {}".format(arrivalthresh))
+        if self.cap is not None:        
+            self.tracker.arrivalthresh = arrivalthresh
+    
+    
+    
+    def get_rollingfreq(self):
+        rollingfreq = self.ui.rollingfrequencyslider.value()
+        self.ui.rollingfrequencylabel.setText("Rolling Frequency: {}".format(rollingfreq))
+        return rollingfreq
+    
+    def get_gamma(self):
+        gamma = self.ui.gammaslider.value()
+        self.ui.gammalabel.setText("Gamma:             {}".format(gamma))
+        return gamma
+        
+    def get_psi(self):
+        psi = self.ui.psislider.value()
+        self.ui.psilabel.setText("Psi:               {}".format(psi))
+        return psi
 
-    def on_radio_button_toggle(self):
-        pass
+    
 
+    
 
     def toggle_control_status(self):
         if self.ui.controlbutton.isChecked():
@@ -160,10 +215,11 @@ class MainWindow(QtWidgets.QMainWindow):
         #newactions argument is signal from tracker_class: actions_signal
         #output actions if control status is on
 
-        gamma = 90
-        freq = 90
-        psi = 45
+        gamma = self.get_gamma()
+        psi = self.get_psi()
+
         if self.control_status == True:
+            freq = self.get_rollingfreq()
             if arrived == True:
                 Bx, By, Bz, alpha, gamma, freq, psi = 0,0,0,0,0,0,0
             else:
@@ -177,25 +233,21 @@ class MainWindow(QtWidgets.QMainWindow):
         elif self.joystick_status == True:
             #if pygame.joystick.get_count() != 0:
             
-            Bx, By, Bz, alpha = 60,0,5,6#self.controller_actions.run(self.joystick)
+            Bx, By, Bz, alpha, freq = 0,0,0,0,0#self.controller_actions.run(self.joystick)
+            if freq !=0:
+                freq = self.get_rollingfreq()
+
             self.arduino.send(Bx, By, Bz, alpha, gamma, freq, psi)
             self.actions = [Bx,By,Bz,alpha,gamma,freq,psi]
             self.magnetic_field_list.append(self.actions)
         
-                
-        
 
-
-
-
-    
-                                       
+                           
 
     def tbprint(self, text):
         #print to textbox
         self.ui.plainTextEdit.appendPlainText("$ "+ text)
         
-
     def selectFile(self):
         options = QtWidgets.QFileDialog.Options()
         options |= QtWidgets.QFileDialog.ReadOnly
@@ -249,8 +301,6 @@ class MainWindow(QtWidgets.QMainWindow):
                         robot.add_blur(0)
                         
                         #self.magnetic_field_list.append([self.tracker.framenum]+self.actions)
-                        
-                        
                         self.tracker.robot_list.append(robot)
                         self.tbprint("Added Robot: {}".format(len(self.tracker.robot_list)))
        
@@ -265,7 +315,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 
                 
                     if event.buttons() == QtCore.Qt.RightButton: 
-                   
                         del self.tracker.robot_list[:]
                         del self.magnetic_field_list[:]
                     
@@ -289,14 +338,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 
-
-
-
-
-
-
     def update_image(self, frame):
         """Updates the image_label with a new opencv image"""
+        if self.result is not None:
+            cv2.putText(frame,"frame: " + str(self.tracker.framenum),
+                        (int((self.video_width) * (7 / 10)),
+                         int((self.video_height) * (9.9 / 10)),),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        fontScale=1, 
+                        thickness=4,
+                        color = (255, 255, 255))
+            self.result.write(frame)
+        
         
         rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
@@ -335,17 +388,12 @@ class MainWindow(QtWidgets.QMainWindow):
         
 
 
-    
-        
-
-
 
     
     def track(self):
         if self.videopath is not None:
             if self.ui.trackbutton.isChecked():
                 
-
                 #start video thread
                 self.ui.pausebutton.show()
                 self.ui.leftbutton.show()
@@ -356,6 +404,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.cap = cv2.VideoCapture(self.videopath)
                 self.video_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
                 self.video_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
+
                 self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
                 self.display_width = int(self.display_height * (self.video_width / self.video_height))
@@ -434,10 +484,22 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.cap is not None:
             if self.ui.recordbutton.isChecked():
                 self.ui.recordbutton.setText("Stop")
-                self.tracker._record_flag == True
+                self.tbprint("Start Record")
+                file_path  = os.path.join(self.new_dir_path, str(datetime.now())+".mp4")
+                self.rec_start_time = time.time()
+                self.result = cv2.VideoWriter(
+                    file_path,
+                    cv2.VideoWriter_fourcc(*"mp4v"),
+                    self.videofps,    
+                    (self.video_width, self.video_height), ) 
             else:
                 self.ui.recordbutton.setText("Record")
-                self.tracker._record_flag == False
+                if self.result is not None:
+                    self.result.release()
+                    self.result = None
+                    self.tbprint("End Record")
+                    self.savedata()
+                    
          
 
     def invertmaskcommand(self):
@@ -474,37 +536,34 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.frameslider.setSliderPosition(self.tracker.framenum)
             self.ui.framelabel.setText("Frame:"+str(self.tracker.framenum))
     
-    
     def get_masksigma(self):
         sigma = self.ui.masksigmaslider.value() /10
-        self.ui.masksigmalabel.setText("Mask Sigma: {}".format(sigma) )
+        self.ui.masksigmalabel.setText("Mask Sigma:       {}".format(sigma) )
         if self.cap is not None:        
             self.tracker.mask_sigma = sigma
+
+    def get_maskblur(self):
+        blur = self.ui.maskblurslider.value() 
+        self.ui.maskblurlabel.setText("Mask Blur:         {}".format(blur) )
+        if self.cap is not None:        
+            self.tracker.mask_blur = blur
         
     def get_croplength(self): 
         crop_length = self.ui.croplengthslider.value()
         if crop_length %2 ==0:
-            self.ui.croplengthlabel.setText("Crop Length: {}".format(crop_length) )
+            self.ui.croplengthlabel.setText("Crop Length:       {}".format(crop_length) )
             if self.cap is not None:
                 self.tracker.crop_length = crop_length
 
+
     def savedata(self):
-        self.joystick_status = False
-        #create folder in homerdiractory of user
-        home_dir = expanduser("~")
-        new_dir_name = "Tracking Data"
-        desktop_path = os.path.join(home_dir, "Desktop")
-        new_dir_path = os.path.join(desktop_path, new_dir_name)
-        if not os.path.exists(new_dir_path):
-            os.makedirs(new_dir_path)
-        
-        
         if self.cap is not None and len(self.tracker.robot_list)>0:      
+             #create dictionarys from the robot class
+            file_path  = os.path.join(self.new_dir_path, str(datetime.now())+".xlsx")
             robot_dictionary = []
             for bot in self.tracker.robot_list:
                 robot_dictionary.append(bot.as_dict())
-            #create dictionarys from the robot class
-            file_path  = os.path.join(new_dir_path, str(datetime.now())+".xlsx")
+           
 
             
             with pd.ExcelWriter(file_path) as writer:
@@ -585,4 +644,6 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         called when x button is pressed
         """
+        if self.cap is not None:
+            self.tracker.stop()
         self.arduino.close()
