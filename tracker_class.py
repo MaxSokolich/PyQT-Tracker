@@ -5,27 +5,39 @@ import matplotlib.pyplot as plt
 
 from scipy import ndimage 
 import time
+
+from control_class import algorithm
     
 #add unique crop length 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
     cropped_frame_signal = pyqtSignal(np.ndarray)
+    actions_signal = pyqtSignal(float, bool)
 
 
 
-
-    def __init__(self, cap):
-        super().__init__()
-        self._run_flag = True
-        self._play_flag = True
-        self.mask_flag = False
-        #self.cap = cv2.VideoCapture(videopath)
-        self.cap = cap
+    def __init__(self, parent):
+        super().__init__(parent=parent)
+        self.parent = parent
+        self.cap = self.parent.cap 
+        
+        #initiate control class
+        self.control_robot = algorithm()
+        
+        
+        
         self.fps = FPSCounter()
         self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
         self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+        self._run_flag = True
+        self._play_flag = True
+        self._record_flag = False
+        self.mask_flag = False
+
+    
 
         self.framenum = 0
         self.framenumlast = 0
@@ -33,10 +45,9 @@ class VideoThread(QThread):
         self.maskinvert = True
         self.crop_length = 40
         self.robot_list = []
+        
 
-       
-
-    def detect_robot(self, frame):
+    def track_robot(self, frame):
         """
         there are techincally 4 frames for analyse at a time:
         1) displayframe:  this is the raw BGR frame from the videofeed
@@ -46,11 +57,11 @@ class VideoThread(QThread):
         
         """
         displayframe = frame.copy()
-        
+
         if self.mask_flag == True:
             displaymask = self.find_mask(displayframe)
             displayframe = cv2.cvtColor(displaymask, cv2.COLOR_GRAY2BGR)
-        
+
         if len(self.robot_list) > 0:
             
             color = plt.cm.rainbow(np.linspace(1, 0, len(self.robot_list))) * 255
@@ -122,18 +133,20 @@ class VideoThread(QThread):
                     
                     
                     #display visuals
-                    cv2.circle(displayframe,(int(xcord+ x1), int(ycord + y1)),5,(botcolor),-1,)
+                    cv2.circle(displayframe,(int(xcord + x1), int(ycord + y1)),5,(botcolor),-1,)
                     cv2.rectangle(displayframe, (x1_new, y1_new), (x1_new + w_new, y1_new + h_new), (botcolor), 3)
                     
                     pts = np.array(bot.position_list, np.int32)
                     cv2.polylines(displayframe, [pts], False, botcolor, 3)
-                             
 
-                
-            #constantly display the cropped frame mask for parameter tuning
-            
-            #croppedmask = frame[y1_new : y1_new + h_new, x1_new : x1_new + w_new]
-            #croppedmask  = self.find_mask(croppedframe)
+                    targets = bot.trajectory
+                    if len(targets) > 0:
+                        pts = np.array(bot.trajectory, np.int32)
+                        cv2.polylines(displayframe, [pts], False, (1, 1, 255), 3)
+                        tar = targets[-1]
+                        cv2.circle(displayframe,(int(tar[0]), int(tar[1])),6,(botcolor), -1,)
+                             
+          
             croppedmask = cv2.cvtColor(croppedmask, cv2.COLOR_GRAY2BGR)
             if len(contours) !=0:
                 cv2.drawContours(croppedmask, [max_cnt], -1, (0, 255, 255), 1)
@@ -172,16 +185,12 @@ class VideoThread(QThread):
     
         return mask
     
+    
 
 
-
-
-  
-        
     def run(self):
-        # capture from web cam
-        
-        
+         
+        # capture from web camx
         while self._run_flag:
             self.fps.update()
 
@@ -190,7 +199,6 @@ class VideoThread(QThread):
                 self.framenum +=1
             
             
-
             if self.totalnumframes !=0:
                 if self.framenum >  self.totalnumframes:
                     self.framenum = 0
@@ -199,7 +207,10 @@ class VideoThread(QThread):
             
             
             ret, frame = self.cap.read()
-        
+
+            #calcualte mask for control
+            frame_mask = self.find_mask(frame)
+            
 
             if ret:
                 cv2.putText(frame,str(int(self.fps.get_fps())),
@@ -210,14 +221,23 @@ class VideoThread(QThread):
                     color = (255, 255, 255))
                 
                 #step 1 detect robot
-                frame, croppedframe = self.detect_robot(frame) 
+                frame, croppedframe = self.track_robot(frame) 
+            
+                #step 2 control robot
+                if len(self.robot_list)>0 and len(self.robot_list[-1].trajectory) > 0:
+                    stepsize, arrivialthresh, auto = 50,50, True
+                    frame, actions, arrived = self.control_robot.run(frame, frame_mask, self.robot_list, stepsize, arrivialthresh, auto)
+                else:
+                    actions = 0.0
+                    arrived = True
 
                 
-                 #display graphics and emit the frame to the gui
+                #step 3: emit croppedframe, frame from this thread to the main thread
                 self.cropped_frame_signal.emit(croppedframe)
                 self.change_pixmap_signal.emit(frame)
-          
+                self.actions_signal.emit(actions, arrived)
 
+                #step 4: delay based on fps
                 if self.totalnumframes !=0:
                     interval = int(1000/self.videofps)  #use original fps used to record the video if not live
                     cv2.waitKey(interval)
@@ -232,7 +252,13 @@ class VideoThread(QThread):
         self._run_flag = False
         self.wait()
         self.cap.release()
-        cv2.destroyAllWindows
+      
+
+
+
+
+
+
 
 class FPSCounter:
     """

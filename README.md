@@ -4,6 +4,25 @@ New microrobotic tracking and control UI
 
 to make a standalone app: /opt/homebrew/bin/python3.10 -m PyInstaller --onedir --windowed --icon TrackerIcon.icns --name Tracker Tracker.py
 
+pyuic5 PyQt_Magscope.ui -o gui_widgets.py
+
+
+class MainWindow(QtWidgets.QMainWindow):
+    def __init__(self, parent=None):
+        super(MainWindow, self).__init__(parent=parent)
+        ui = Ui_MainWindow()
+        ui.setupUi(self)
+
+
+import sys
+
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    w = MainWindow()
+    w.show()
+    sys.exit(app.exec_())
+
+    
 4 Files:
 
 gui_class.py: this contains the PyQT UI arctecture
