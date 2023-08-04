@@ -100,8 +100,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         pygame.init()
         if pygame.joystick.get_count() == 0:
-            self.tbprint("No Joysticks")
-            self.ui.joystickbutton.hide()
+            self.tbprint("No Joystick Connected...")
             
         else:
             self.joystick = pygame.joystick.Joystick(0)
@@ -209,17 +208,21 @@ class MainWindow(QtWidgets.QMainWindow):
     
 
     def toggle_joystick_status(self):
-        if self.ui.joystickbutton.isChecked():
-            self.joystick_status = True
-            self.ui.joystickbutton.setText("Stop")
-            self.tbprint("Joystick On")
-            self.simulator.start()
-        
+        if pygame.joystick.get_count() != 0:
+            if self.ui.joystickbutton.isChecked():
+                self.joystick_status = True
+                self.ui.joystickbutton.setText("Stop")
+                self.tbprint("Joystick On")
+                self.simulator.start()
+            
+            else:
+                self.joystick_status = False
+                self.ui.joystickbutton.setText("Joystick")
+                self.tbprint("Joystick Off")
+                self.simulator.stop()
         else:
-            self.joystick_status = False
-            self.ui.joystickbutton.setText("Joystick")
-            self.tbprint("Joystick Off")
-            self.simulator.stop()
+            self.tbprint("No Joystick Connected...")
+
 
     
 
