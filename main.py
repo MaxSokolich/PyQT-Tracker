@@ -3,7 +3,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication
 import sys
 
-from gui_functions import MainWindow
+from classes.gui_functions import MainWindow
 
 
 if __name__ == "__main__":
@@ -11,4 +11,3 @@ if __name__ == "__main__":
     w = MainWindow()
     w.show()
     sys.exit(app.exec_())
-    

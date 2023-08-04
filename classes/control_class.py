@@ -1,10 +1,87 @@
-import cv2
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread,QTimer
 import numpy as np
-import time
-import math
+import cv2
 import random
-from src.python.ArduinoHandler import ArduinoHandler
-from src.python.Params import MAGNETIC_FIELD_PARAMS, CONTROL_PARAMS, MASK
+import math
+
+
+class algorithm:
+   
+    def __init__(self):
+        self.node = 0
+        self.count = 0
+        self.arrived = False
+        self.alpha = 0.0
+
+    def reset(self):
+        self.node = 0
+        self.count = 0
+        self.arrived = False
+        self.alpha = 0.0
+
+    def run(self, frame, mask, robot_list, stepsize, arrivialthresh):
+        
+        if self.count == 0: #% 10
+        
+            #define start end
+            startpos = robot_list[-1].position_list[-1] #the most recent position at the time of clicking run algo
+            endpos = robot_list[-1].trajectory[-1]
+            
+
+            
+            #print("this should update the trajectory")    
+            x,y,w,h = robot_list[-1].cropped_frame[-1]
+            cv2.rectangle(mask, (x, y), (x + w, y + h), (0, 0, 0), -1)
+          
+            pathplanner = RRT(mask, startpos, endpos, stepsize)
+            trajectory = pathplanner.run()
+
+            trajectory.append(endpos)    
+        
+    
+            #record robot list trajectory
+            robot_list[-1].trajectory= trajectory
+
+
+        #logic for arrival condition
+        if self.node == len(robot_list[-1].trajectory):
+            #weve arrived
+            self.arrived = True
+            self.alpha = 0.0
+
+
+        #closed loop algorithm 
+        else:
+            #define target coordinate
+            targetx = robot_list[-1].trajectory[self.node][0]
+            targety = robot_list[-1].trajectory[self.node][1]
+
+            #define robots current position
+            robotx = robot_list[-1].position_list[-1][0]
+            roboty = robot_list[-1].position_list[-1][1]
+            
+            #calculate error between node and robot
+            direction_vec = [targetx - robotx, targety - roboty]
+            error = np.sqrt(direction_vec[0] ** 2 + direction_vec[1] ** 2)
+            self.alpha = np.arctan2(-direction_vec[1], direction_vec[0])
+
+
+            #draw error arrow
+            cv2.arrowedLine(
+                frame,
+                (int(robotx), int(roboty)),
+                (int(targetx), int(targety)),
+                [0, 0, 0],
+                3,
+            )
+    
+            if error < arrivialthresh:
+                self.node += 1
+            
+
+        self.count += 1
+    
+        return frame, self.alpha, self.arrived
 
 
 class Nodes:
@@ -16,13 +93,13 @@ class Nodes:
         self.parent_y = []
 
 class RRT:
-    def __init__(self, img, start, end):
+    def __init__(self, img, start, end, stepsize):
         
         #imagepath = "/Users/bizzarohd/Desktop/mask.png"
         self.img = img #cv2.imread(imagepath,0) # load grayscale maze image
         self.start = start#(20,20) #(20,20) # starting coordinate
         self.end = end#(650,450) #(450,250) # target coordinate
-        self.stepSize = CONTROL_PARAMS["RRT_stepsize"] # stepsize for RRT
+        self.stepSize = stepsize # stepsize for RRT
         self.node_list = [0]
 
     # check collision
@@ -33,8 +110,7 @@ class RRT:
 
         for i in range(len(x)):
             #print(int(x[i]),int(y[i]))
-           
-            
+        
             color.append(self.img[int(y[i]),int(x[i])])
 
         #print(color, "\n\n")
@@ -109,7 +185,7 @@ class RRT:
 
         i=1
         pathFound = False
-        for k in range(200):#while pathFound==False:
+        for k in range(1000):##while pathFound==False:#for k in range(200):#
             nx,ny = self.rnd_point(h,l)  #generate random point
             #print("Random points:",nx,ny)
 
@@ -123,7 +199,6 @@ class RRT:
             #print("Check collision:",tx,ty,directCon,nodeCon)
 
             if directCon and nodeCon:
-                print("Node can connect directly with end")
                 self.node_list.append(i)
                 self.node_list[i] = Nodes(tx,ty)
                 self.node_list[i].parent_x = self.node_list[nearest_ind].parent_x.copy()
@@ -132,7 +207,7 @@ class RRT:
                 self.node_list[i].parent_y.append(ty)
 
 
-                print("Path has been found")
+                #print("Path has been found")
             
                 trajectory = list(zip(self.node_list[i].parent_x,self.node_list[i].parent_y))
                 return trajectory
@@ -154,119 +229,6 @@ class RRT:
             else:
                 #print("No direct con. and no node con. :( Generating new rnd numbers")
                 continue
-        print("Path not found")
+                    
+        
         return [] #if the for loop ends without finding a path return an empty lst
-
-            
-class PathPlanner_Algorithm:
-
-    def __init__(self, ):
-        #every time middle mouse button is pressed, it will reinitiate this classe
-        self.node = 0
-        self.robot_list = []
-        self.count = 0
-        #self.width, self.height = None
-
-
-    def run(self, frame: np.ndarray, arduino: ArduinoHandler, robot_list):
-        """
-        Used for real time closed loop feedback on the jetson to steer a microrobot along a
-        desired trajctory created with the right mouse button. Does so by:
-            -defining a target position
-            -displaying the target position
-            -if a target position is defined, look at most recently clicked bot and display its trajectory
-
-        In summary, moves the robot to each node in the trajectory array.
-        If the error is less than a certain amount, move on to the next node
-
-        Args:
-            frame: np array representation of the current video frame read in
-            start: start time of the tracking
-        Return:
-            None
-        """
-        self.robot_list = robot_list    
-            
-            
-        if len(self.robot_list[-1].trajectory) > 0:
-            print(self.count)
-            if self.count % 10== 0:
-            
-                #define start end
-                
-                startpos = self.robot_list[-1].position_list[-1] #the most recent position at the time of clicking run algo
-                endpos = self.robot_list[-1].trajectory[-1]
-                
-                #step 3: generate path from RRT
-                if MASK["img"] is not None:
-                    print("this should update the trajectory")    
-                    mask = MASK["img"]
-                    x,y,w,h = self.robot_list[-1].cropped_frame[-1]
-                    cv2.rectangle(mask, (x, y), (x + w, y + h), (0, 0, 0), -1)
-                    try:
-                        pathplanner = RRT(mask, startpos,endpos)
-                        trajectory = pathplanner.run()
-                        trajectory.append(endpos)    
-                    except Exception:
-                        trajectory = [startpos, endpos]
-
-                else:
-                    print("No Mask Found")
-                    trajectory = [startpos, endpos]
-
-                
-                #record robot list trajectory
-                self.robot_list[-1].trajectory = trajectory
-
-
-            #logic for arrival condition
-            if self.node == len(self.robot_list[-1].trajectory):
-                alpha = 0
-                gamma = 0
-                psi =0
-                freq = 0
-                print("arrived")
-
-
-            #closed loop algorithm 
-            else:
-                #define target coordinate
-                targetx = self.robot_list[-1].trajectory[self.node][0]
-                targety = self.robot_list[-1].trajectory[self.node][1]
-
-                #define robots current position
-                robotx = self.robot_list[-1].position_list[-1][0]
-                roboty = self.robot_list[-1].position_list[-1][1]
-                
-                #calculate error between node and robot
-                direction_vec = [targetx - robotx, targety - roboty]
-                error = np.sqrt(direction_vec[0] ** 2 + direction_vec[1] ** 2)
-                self.alpha = np.arctan2(-direction_vec[1], direction_vec[0])
-
-
-                #draw error arrow
-                cv2.arrowedLine(
-                    frame,
-                    (int(robotx), int(roboty)),
-                    (int(targetx), int(targety)),
-                    [0, 0, 0],
-                    3,
-                )
-        
-                if error < CONTROL_PARAMS["arrival_thresh"]:
-                    self.node += 1
-
-               
-                #OUTPUT SIGNAL
-                my_alpha = self.alpha - np.pi/2  #subtract 90 for roll
-                alpha = round(my_alpha,2)
-                gamma = np.radians(MAGNETIC_FIELD_PARAMS["gamma"]) 
-                psi = np.radians(MAGNETIC_FIELD_PARAMS["psi"])
-                freq = MAGNETIC_FIELD_PARAMS["rolling_frequency"]
-                
-                MAGNETIC_FIELD_PARAMS["alpha"] = alpha
-                
-                
-            arduino.send(0,0,0, alpha, gamma, freq, psi)
-        
-        self.count += 1

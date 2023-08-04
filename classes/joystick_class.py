@@ -83,8 +83,9 @@ class ControllerActions:
                 # Joystick button press event
                 button = event.button
                 if button == 1: #circle
-                    print("Controller Disconnected")
-                    return True
+                    #print("Controller Disconnected")
+                    #return True
+                    pass
                 if button == 0: #X
                     self.acoustic_status = 1
                 if button == 2: #square

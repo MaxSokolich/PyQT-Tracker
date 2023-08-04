@@ -297,17 +297,17 @@ class Ui_MainWindow(object):
 "                padding: 6px;")
         self.label.setText("")
         self.label.setObjectName("label")
-        self.maskblurlabel = QtWidgets.QLabel(self.tracking_tab)
-        self.maskblurlabel.setGeometry(QtCore.QRect(10, 290, 201, 20))
-        self.maskblurlabel.setObjectName("maskblurlabel")
-        self.maskblurslider = QtWidgets.QSlider(self.tracking_tab)
-        self.maskblurslider.setGeometry(QtCore.QRect(10, 310, 180, 25))
-        self.maskblurslider.setMinimum(5)
-        self.maskblurslider.setMaximum(200)
-        self.maskblurslider.setProperty("value", 40)
-        self.maskblurslider.setSliderPosition(40)
-        self.maskblurslider.setOrientation(QtCore.Qt.Horizontal)
-        self.maskblurslider.setObjectName("maskblurslider")
+        self.maskdilationlabel = QtWidgets.QLabel(self.tracking_tab)
+        self.maskdilationlabel.setGeometry(QtCore.QRect(10, 290, 201, 20))
+        self.maskdilationlabel.setObjectName("maskdilationlabel")
+        self.maskdilationslider = QtWidgets.QSlider(self.tracking_tab)
+        self.maskdilationslider.setGeometry(QtCore.QRect(10, 310, 180, 25))
+        self.maskdilationslider.setMinimum(0)
+        self.maskdilationslider.setMaximum(50)
+        self.maskdilationslider.setProperty("value", 0)
+        self.maskdilationslider.setSliderPosition(0)
+        self.maskdilationslider.setOrientation(QtCore.Qt.Horizontal)
+        self.maskdilationslider.setObjectName("maskdilationslider")
         self.label.raise_()
         self.robotblurlabel.raise_()
         self.rightbutton.raise_()
@@ -327,13 +327,13 @@ class Ui_MainWindow(object):
         self.masksigmaslider.raise_()
         self.framelabel.raise_()
         self.recordbutton.raise_()
-        self.maskblurlabel.raise_()
-        self.maskblurslider.raise_()
+        self.maskdilationlabel.raise_()
+        self.maskdilationslider.raise_()
         self.tabWidget.addTab(self.tracking_tab, "")
         self.control_tab = QtWidgets.QWidget()
         self.control_tab.setObjectName("control_tab")
         self.controlbutton = QtWidgets.QPushButton(self.control_tab)
-        self.controlbutton.setGeometry(QtCore.QRect(20, 10, 160, 51))
+        self.controlbutton.setGeometry(QtCore.QRect(20, 5, 160, 51))
         self.controlbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 255);\n"
@@ -409,7 +409,7 @@ class Ui_MainWindow(object):
         self.magneticfieldsimlabel.setText("")
         self.magneticfieldsimlabel.setObjectName("magneticfieldsimlabel")
         self.joystickbutton = QtWidgets.QPushButton(self.control_tab)
-        self.joystickbutton.setGeometry(QtCore.QRect(30, 70, 141, 31))
+        self.joystickbutton.setGeometry(QtCore.QRect(30, 90, 141, 31))
         self.joystickbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(255, 0, 255);\n"
@@ -444,14 +444,14 @@ class Ui_MainWindow(object):
         self.joystickbutton.setCheckable(True)
         self.joystickbutton.setObjectName("joystickbutton")
         self.acousticfreq_spinBox = QtWidgets.QSpinBox(self.control_tab)
-        self.acousticfreq_spinBox.setGeometry(QtCore.QRect(20, 140, 171, 31))
+        self.acousticfreq_spinBox.setGeometry(QtCore.QRect(20, 150, 171, 31))
         self.acousticfreq_spinBox.setMaximum(3000000)
         self.acousticfreq_spinBox.setObjectName("acousticfreq_spinBox")
         self.acousticfreqlabel = QtWidgets.QLabel(self.control_tab)
-        self.acousticfreqlabel.setGeometry(QtCore.QRect(20, 110, 171, 21))
+        self.acousticfreqlabel.setGeometry(QtCore.QRect(20, 130, 171, 21))
         self.acousticfreqlabel.setObjectName("acousticfreqlabel")
         self.applyacousticbutton = QtWidgets.QPushButton(self.control_tab)
-        self.applyacousticbutton.setGeometry(QtCore.QRect(20, 180, 161, 25))
+        self.applyacousticbutton.setGeometry(QtCore.QRect(20, 190, 111, 25))
         self.applyacousticbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -466,7 +466,18 @@ class Ui_MainWindow(object):
 "                background-color: rgb(100, 100, 100);\n"
 "                color: rgb(0, 0, 0);\n"
 "                border-style: inset;\n"
-"            }")
+"            }\n"
+"\n"
+"         QPushButton:checked {\n"
+"                color: rgb(255, 255, 255);\n"
+"                background-color: rgb(255, 0, 0);\n"
+"                border-style: outset;\n"
+"                border-width: 2px;\n"
+"                border-radius: 10px;\n"
+"                border-color: rgb(200, 0, 0);\n"
+"                min-width: 1em;\n"
+"                padding: 1px;\n"
+"}")
         self.applyacousticbutton.setCheckable(True)
         self.applyacousticbutton.setObjectName("applyacousticbutton")
         self.RRTtreesizeslider = QtWidgets.QSlider(self.control_tab)
@@ -495,6 +506,25 @@ class Ui_MainWindow(object):
         self.memorylabel = QtWidgets.QLabel(self.control_tab)
         self.memorylabel.setGeometry(QtCore.QRect(10, 220, 201, 21))
         self.memorylabel.setObjectName("memorylabel")
+        self.rollradio = QtWidgets.QRadioButton(self.control_tab)
+        self.rollradio.setGeometry(QtCore.QRect(30, 65, 61, 20))
+        self.rollradio.setChecked(True)
+        self.rollradio.setObjectName("rollradio")
+        self.swimradio = QtWidgets.QRadioButton(self.control_tab)
+        self.swimradio.setGeometry(QtCore.QRect(100, 65, 99, 20))
+        self.swimradio.setObjectName("swimradio")
+        self.led = QtWidgets.QLabel(self.control_tab)
+        self.led.setGeometry(QtCore.QRect(150, 190, 25, 25))
+        self.led.setStyleSheet("\n"
+"                background-color: rgb(255, 0, 0);\n"
+"                border-style: outset;\n"
+"                border-width: 3px;\n"
+"                border-radius: 12px;\n"
+"                border-color: rgb(255, 0, 0);\n"
+"         \n"
+"                padding: 6px;")
+        self.led.setText("")
+        self.led.setObjectName("led")
         self.tabWidget.addTab(self.control_tab, "")
         self.VideoFeedLabel = QtWidgets.QLabel(self.centralwidget)
         self.VideoFeedLabel.setGeometry(QtCore.QRect(230, 30, 1330, 700))
@@ -519,7 +549,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -540,7 +570,7 @@ class Ui_MainWindow(object):
         self.robotvelocitylabel.setText(_translate("MainWindow", "Velocity:"))
         self.framelabel.setText(_translate("MainWindow", "Frame: "))
         self.recordbutton.setText(_translate("MainWindow", "Record"))
-        self.maskblurlabel.setText(_translate("MainWindow", "Mask Blur:         40"))
+        self.maskdilationlabel.setText(_translate("MainWindow", "Mask Dilation:     0"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tracking_tab), _translate("MainWindow", "Tracking"))
         self.controlbutton.setText(_translate("MainWindow", "Control"))
         self.arrivalthreshlabel.setText(_translate("MainWindow", "Arrival Thresh:    25"))
@@ -552,4 +582,6 @@ class Ui_MainWindow(object):
         self.applyacousticbutton.setText(_translate("MainWindow", "Apply"))
         self.RRTtreesizelabel.setText(_translate("MainWindow", "RRT Tree Size:     25"))
         self.memorylabel.setText(_translate("MainWindow", "Memory:            15"))
+        self.rollradio.setText(_translate("MainWindow", "Roll"))
+        self.swimradio.setText(_translate("MainWindow", "Swim"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.control_tab), _translate("MainWindow", "Control"))

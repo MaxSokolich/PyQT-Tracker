@@ -19,8 +19,7 @@ import sys
 from PyQt5.QtWidgets import QApplication
 import numpy as np
 import cv2
-import matplotlib.pyplot as plt
-from scipy import ndimage 
+import matplotlib.pyplot as plt 
 import time
 import platform
 import pygame
@@ -28,11 +27,14 @@ os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 
-from tracker_class import VideoThread
-from gui_widgets import Ui_MainWindow
-from robot_class import Robot
-from arduino_class import ArduinoHandler
-from joystick_class import ControllerActions
+from classes.tracker_class import VideoThread
+from classes.gui_widgets import Ui_MainWindow
+from classes.robot_class import Robot
+from classes.arduino_class import ArduinoHandler
+from classes.joystick_class import ControllerActions
+from classes.simulation_class import HelmholtzSimulator
+from classes.projection_class import AxisProjection
+from classes.acoustic_class import AcousticClass
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -65,14 +67,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.videopath = 0
         self.cap = None
         self.drawing = False
+        self.acoustic_frequency = 0
         self.magnetic_field_list = []
-        self.actions = [0,0,0,0,0,0,0]
+        self.actions = [0,0,0,0,0,0,0,0,0]
 
 
         #connect to arduino
         if "mac" in platform.platform():
             self.tbprint("Detected OS: macos")
-            PORT = "/dev/cu.usbmodem11401"
+            PORT = "/dev/cu.usbmodem111101"
         elif "Linux" in platform.platform():
             self.tbprint("Detected OS: Linux")
             PORT = "/dev/ttyACM0"
@@ -89,21 +92,22 @@ class MainWindow(QtWidgets.QMainWindow):
         #if self.arduino.conn is None:
             #self.ui.controlbutton.hide()
         
+        #define joystick class, simulator class, pojection class, and acoustic class
         self.controller_actions = ControllerActions()
-
+        self.simulator = HelmholtzSimulator(self.ui.magneticfieldsimlabel, width=200, height=200, dpi=50)
+        self.projection = AxisProjection()
+        self.acoustic_module = AcousticClass()
+        
         pygame.init()
         if pygame.joystick.get_count() == 0:
             self.tbprint("No Joysticks")
-            #self.ui.joystickbutton.hide()
+            self.ui.joystickbutton.hide()
             
         else:
-            self.ui.joystickbutton.show()
             self.joystick = pygame.joystick.Joystick(0)
             self.joystick.init()
             self.tbprint("Connected to: "+str(self.joystick.get_name()))
 
-        
-        
 
         #tracker tab functions
         self.ui.pausebutton.hide()
@@ -119,7 +123,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.maskbutton.clicked.connect(self.showmask)
         self.ui.maskinvert_checkBox.toggled.connect(self.invertmaskcommand)
         self.ui.masksigmaslider.valueChanged.connect(self.get_masksigma)
-        self.ui.maskblurslider.valueChanged.connect(self.get_maskblur)
+        self.ui.maskdilationslider.valueChanged.connect(self.get_maskdilation)
         self.ui.croplengthslider.valueChanged.connect(self.get_croplength)
         self.ui.savedatabutton.clicked.connect(self.savedata)
         self.ui.frameslider.valueChanged.connect(self.adjustframe)
@@ -131,21 +135,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self.control_status = False
         self.joystick_status = False
 
+        self.ui.led.hide()
+        self.ui.acousticfreq_spinBox.hide()
+        self.ui.acousticfreqlabel.hide()
+        self.ui.applyacousticbutton.hide()
+
         self.ui.controlbutton.clicked.connect(self.toggle_control_status)
         self.ui.joystickbutton.clicked.connect(self.toggle_joystick_status)
-        
         self.ui.memoryslider.valueChanged.connect(self.get_memory)
         self.ui.RRTtreesizeslider.valueChanged.connect(self.get_RRTtreesize)
         self.ui.arrivalthreshslider.valueChanged.connect(self.get_arrivalthresh)
         self.ui.rollingfrequencyslider.valueChanged.connect(self.get_rollingfreq)
         self.ui.gammaslider.valueChanged.connect(self.get_gamma)
         self.ui.psislider.valueChanged.connect(self.get_psi)
+        self.ui.applyacousticbutton.clicked.connect(self.apply_acoustic)
+        self.ui.acousticfreq_spinBox.valueChanged.connect(self.get_acoustic_frequency)
         
-        
-        
-
-    
-    
     def get_memory(self):
         memory = self.ui.memoryslider.value()
         self.ui.memorylabel.setText("Memory:            {}".format(memory))
@@ -164,13 +169,11 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.cap is not None:        
             self.tracker.arrivalthresh = arrivalthresh
     
-    
-    
     def get_rollingfreq(self):
         rollingfreq = self.ui.rollingfrequencyslider.value()
         self.ui.rollingfrequencylabel.setText("Rolling Frequency: {}".format(rollingfreq))
         return rollingfreq
-    
+        
     def get_gamma(self):
         gamma = self.ui.gammaslider.value()
         self.ui.gammalabel.setText("Gamma:             {}".format(gamma))
@@ -183,18 +186,26 @@ class MainWindow(QtWidgets.QMainWindow):
 
     
 
-    
-
     def toggle_control_status(self):
         if self.ui.controlbutton.isChecked():
             self.control_status = True
             self.ui.controlbutton.setText("Stop")
             self.tbprint("Control On")
+            self.ui.led.show()
+            self.ui.acousticfreq_spinBox.show()
+            self.ui.acousticfreqlabel.show()
+            self.ui.applyacousticbutton.show()
+        
         
         else:
             self.control_status = False
             self.ui.controlbutton.setText("Control")
             self.tbprint("Control Off")
+            self.ui.led.hide()
+            self.ui.acousticfreq_spinBox.hide()
+            self.ui.acousticfreqlabel.hide()
+            self.ui.applyacousticbutton.hide()
+            
     
 
     def toggle_joystick_status(self):
@@ -202,48 +213,109 @@ class MainWindow(QtWidgets.QMainWindow):
             self.joystick_status = True
             self.ui.joystickbutton.setText("Stop")
             self.tbprint("Joystick On")
+            self.simulator.start()
         
         else:
             self.joystick_status = False
             self.ui.joystickbutton.setText("Joystick")
             self.tbprint("Joystick Off")
+            self.simulator.stop()
 
     
 
 
-    def update_actions(self, newactions, arrived):
-        #newactions argument is signal from tracker_class: actions_signal
+    def update_actions(self, alpha, arrived):
+        #alpha argument is signal from tracker_class: actions_signal
         #output actions if control status is on
 
-        gamma = self.get_gamma()
-        psi = self.get_psi()
-
+        gamma = np.radians(self.get_gamma())
+        psi = np.radians(self.get_psi())
         if self.control_status == True:
+            if self.ui.swimradio.isChecked():
+                alpha=alpha
+                self.simulator.roll = False
+            elif self.ui.rollradio.isChecked():
+                alpha = alpha - np.pi/2
+                self.simulator.roll = True
+            
             freq = self.get_rollingfreq()
+            
             if arrived == True:
                 Bx, By, Bz, alpha, gamma, freq, psi = 0,0,0,0,0,0,0
             else:
                 Bx,By,Bz = 0,0,0
-                alpha = newactions
             self.arduino.send(Bx, By, Bz, alpha, gamma, freq, psi)  
-            self.actions = [Bx,By,Bz,alpha,gamma,freq,psi]          
+            self.actions = [self.tracker.framenum,Bx,By,Bz,alpha,gamma,freq,psi,self.acoustic_frequency]          
             self.magnetic_field_list.append(self.actions)
+            self.simulator.Bx = Bx
+            self.simulator.By = By
+            self.simulator.Bz = Bz
+            self.simulator.alpha = alpha
+            self.simulator.gamma = gamma
+            self.simulator.freq = freq/10
+            self.simulator.omega = 2 * np.pi * self.simulator.freq
+            self.simulator.psi = psi
 
 
         elif self.joystick_status == True:
-            #if pygame.joystick.get_count() != 0:
-            
-            Bx, By, Bz, alpha, freq = 0,0,0,0,0#self.controller_actions.run(self.joystick)
-            if freq !=0:
-                freq = self.get_rollingfreq()
+            if pygame.joystick.get_count() != 0:
+                Bx, By, Bz, alpha, freq = self.controller_actions.run(self.joystick)
+                if self.ui.swimradio.isChecked():
+                    alpha=alpha
+                    self.simulator.roll = False
+                elif self.ui.rollradio.isChecked():
+                    alpha = alpha - np.pi/2
+                    self.simulator.roll = True
+                if freq !=0:
+                    freq = self.get_rollingfreq()
 
-            self.arduino.send(Bx, By, Bz, alpha, gamma, freq, psi)
-            self.actions = [Bx,By,Bz,alpha,gamma,freq,psi]
-            self.magnetic_field_list.append(self.actions)
+                self.arduino.send(Bx, By, Bz, alpha, gamma, freq, psi)
+                self.actions = [self.tracker.framenum,Bx,By,Bz,alpha,gamma,freq,psi, self.acoustic_frequency]
+                self.magnetic_field_list.append(self.actions)
+                self.simulator.Bx = Bx
+                self.simulator.By = By
+                self.simulator.Bz = Bz
+                self.simulator.alpha = alpha
+                self.simulator.gamma = gamma
+                self.simulator.freq = freq/10
+                self.simulator.omega = 2 * np.pi * self.simulator.freq
+                self.simulator.psi = psi
+        else:
+            self.simulator.zero()
+    
+    def get_acoustic_frequency(self):
+        self.acoustic_frequency = self.ui.acousticfreq_spinBox.value()
+        self.apply_acoustic()
+    
+    def apply_acoustic(self):
+        if self.ui.applyacousticbutton.isChecked():
+            self.ui.applyacousticbutton.setText("Stop")
+            self.tbprint("Acoustic Module On")
+            self.acoustic_frequency = self.ui.acousticfreq_spinBox.value()
+            self.acoustic_module.start(self.acoustic_frequency, 0)
+            self.ui.led.setStyleSheet("\n"
+"                background-color: rgb(0, 255, 0);\n"
+"                border-style: outset;\n"
+"                border-width: 3px;\n"
+"                border-radius: 12px;\n"
+"                border-color: rgb(0, 255, 0);\n"
+"         \n"
+"                padding: 6px;")
         
-
-                           
-
+        else:
+            self.ui.applyacousticbutton.setText("Apply")
+            self.tbprint("Acoustic Module Off")
+            self.acoustic_module.stop()
+            self.ui.led.setStyleSheet("\n"
+"                background-color: rgb(255, 0, 0);\n"
+"                border-style: outset;\n"
+"                border-width: 3px;\n"
+"                border-radius: 12px;\n"
+"                border-color: rgb(255, 0, 0);\n"
+"         \n"
+"                padding: 6px;")
+       
+        
     def tbprint(self, text):
         #print to textbox
         self.ui.plainTextEdit.appendPlainText("$ "+ text)
@@ -300,9 +372,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         robot.add_area(0)
                         robot.add_blur(0)
                         
-                        #self.magnetic_field_list.append([self.tracker.framenum]+self.actions)
+                        
                         self.tracker.robot_list.append(robot)
-                        self.tbprint("Added Robot: {}".format(len(self.tracker.robot_list)))
+                        
        
                 elif event.type() == QtCore.QEvent.MouseButtonPress:   
                     if event.buttons() == QtCore.Qt.LeftButton: 
@@ -324,12 +396,11 @@ class MainWindow(QtWidgets.QMainWindow):
                         if self.drawing == True:
                             if len(self.tracker.robot_list)>0:
                                 newx, newy = self.convert_coords(event.pos())
-                                print("drawing")
+                                
                                 self.tracker.robot_list[-1].add_trajectory([newx, newy])
                 
                 elif event.type() == QtCore.QEvent.MouseButtonRelease:
                     if event.buttons() == QtCore.Qt.LeftButton: 
-                        print("release")
                         self.drawing = False
                         
                     
@@ -342,14 +413,20 @@ class MainWindow(QtWidgets.QMainWindow):
         """Updates the image_label with a new opencv image"""
         if self.result is not None:
             cv2.putText(frame,"frame: " + str(self.tracker.framenum),
-                        (int((self.video_width) * (7 / 10)),
-                         int((self.video_height) * (9.9 / 10)),),
+                        (int(self.video_width / 15),
+                         int(self.video_height / 30)),
                         cv2.FONT_HERSHEY_SIMPLEX,
                         fontScale=1, 
                         thickness=4,
                         color = (255, 255, 255))
             self.result.write(frame)
         
+        
+        if self.control_status == True or self.joystick_status == True:
+            _, Bx,By,Bz,alpha,gamma,_,_,_ = self.actions
+            self.projection.roll = self.ui.rollradio.isChecked()
+            frame, self.projection.draw_sideview(frame,Bx,By,Bz,alpha,gamma,self.video_width,self.video_height)
+            frame, self.projection.draw_topview(frame,Bx,By,Bz,alpha,gamma,self.video_width,self.video_height)
         
         rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
@@ -453,7 +530,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                     #reset mask button
                     self.tracker.mask_flag = False
-                    self.ui.maskbutton.setText("Joystick")
+                    self.ui.maskbutton.setText("Mask")
                     self.ui.maskbutton.setChecked(False)
 
                     
@@ -465,6 +542,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.ui.leftbutton.hide()
                     self.ui.rightbutton.hide()
                     self.ui.maskbutton.hide()    
+
+                    #zero arduino commands
+                    self.arduino.send(0,0,0,0,0,0,0)
 
         else:
             self.ui.trackbutton.setText("No Video")
@@ -497,7 +577,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if self.result is not None:
                     self.result.release()
                     self.result = None
-                    self.tbprint("End Record")
+                    self.tbprint("End Record, Data Saved")
                     self.savedata()
                     
          
@@ -542,11 +622,11 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.cap is not None:        
             self.tracker.mask_sigma = sigma
 
-    def get_maskblur(self):
-        blur = self.ui.maskblurslider.value() 
-        self.ui.maskblurlabel.setText("Mask Blur:         {}".format(blur) )
+    def get_maskdilation(self):
+        dilation = self.ui.maskdilationslider.value() 
+        self.ui.maskdilationlabel.setText("Mask Dilation:     {}".format(dilation) )
         if self.cap is not None:        
-            self.tracker.mask_blur = blur
+            self.tracker.mask_dilation = dilation
         
     def get_croplength(self): 
         crop_length = self.ui.croplengthslider.value()
@@ -628,7 +708,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         if len(self.magnetic_field_list) > 0:     
                             df2 = pd.DataFrame()      
 
-                            MFFrame, Bx, By, Bz, alpha, gamma, freq, psi = zip(*self.magnetic_field_list)
+                            MFFrame, Bx, By, Bz, alpha, gamma, freq, psi, acoustic_freq = zip(*self.magnetic_field_list)
                             df2[f"Applied on Frame"] = pd.Series(MFFrame, dtype='float64')
                             df2[f"Bx"] = pd.Series(Bx, dtype='float64')
                             df2[f"By"] = pd.Series(By, dtype='float64')
@@ -637,6 +717,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             df2[f"gamma"] = pd.Series(gamma, dtype='float64')
                             df2[f"freq"] = pd.Series(freq, dtype='float64')
                             df2[f"psi"] = pd.Series(psi, dtype='float64')
+                            df2[f"acoustic_frequency"] = pd.Series(acoustic_freq, dtype='float64')
                             df2.to_excel(writer, sheet_name=f"Magnetic Field", index=False)
             
     

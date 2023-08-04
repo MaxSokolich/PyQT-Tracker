@@ -32,8 +32,8 @@ class ArduinoHandler:
                 self.conn = txfer.SerialTransfer(port)
                 self.port = port
                 self.conn.open()
-                time.sleep(5)
-                self.printer(f" -- Arduino Connection initialized using port {port} --")
+                #time.sleep(5)
+                self.printer(f"Arduino Connection initialized using port {port}")
             except InvalidSerialPort:
                 self.printer("Could not connect to arduino, disabling")
                 self.conn = None

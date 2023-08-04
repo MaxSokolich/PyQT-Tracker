@@ -18,8 +18,6 @@ class Robot:
         self.avg_area = 0  # current average area of the bot in this frame
         self.trajectory = []  # track points from manual pathing
         self.times = []  #time step per frame in seconds
-        self.acoustic_freq = []#acoustic frequency applied
-        self.magnetic_field = [] #magnetif field params being sent to arduino
         
 
     def add_area(self, area: float):
@@ -43,17 +41,13 @@ class Robot:
     def set_avg_area(self, avg_area: float):
         self.avg_area = avg_area
 
-    def add_trajectory(self, traj: List[int]):
+    def add_trajectory(self, traj):
         self.trajectory.append(traj)
-
-    def add_acoustic_freq(self, freq: float):
-        self.acoustic_freq.append(freq)
 
     def add_time(self, time):
         self.times.append(time)
     
-    def add_magnetic_field(self, magnetic_field):
-        self.magnetic_field.append(magnetic_field)
+
     
 
     def as_dict(self) -> dict:
@@ -77,9 +71,6 @@ class Robot:
             "Blur": self.blur_list,
             "Avg Area": self.avg_area,
             "Trajectory": self.trajectory,
-            "Acoustic Frequency": self.acoustic_freq,
-            "Magnetic Field": self.magnetic_field,
- 
         }
 
         return mydict
