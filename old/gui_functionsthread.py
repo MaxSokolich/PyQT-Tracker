@@ -10,8 +10,8 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 import cv2
 import os
 from os.path import expanduser
-
-print(PYQT_VERSION_STR)
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+import random
 import pandas as pd
 from datetime import datetime
 import sys
@@ -31,9 +31,10 @@ from classes.gui_widgets import Ui_MainWindow
 from classes.robot_class import Robot
 from classes.arduino_class import ArduinoHandler
 from classes.joystick_class import ControllerActions
-from classes.simulation_class import HelmholtzSimulator
+from old.simulation_classthread import HelmholtzSimulator
 from classes.projection_class import AxisProjection
 from classes.acoustic_class import AcousticClass
+
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -94,7 +95,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         #define joystick class, simulator class, pojection class, and acoustic class
         self.controller_actions = ControllerActions()
-        self.simulator = HelmholtzSimulator(self.ui.magneticfieldsimlabel, width=200, height=200, dpi=50)
+        #self.simulator = HelmholtzSimulator(self.ui.magneticfieldsimlabel, width=200, height=200, dpi=50)
         self.projection = AxisProjection()
         self.acoustic_module = AcousticClass()
         
@@ -151,20 +152,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.acousticfreq_spinBox.valueChanged.connect(self.get_acoustic_frequency)
         self.ui.resetdefaultbutton.clicked.connect(self.resetparams)
         self.ui.simulationbutton.clicked.connect(self.toggle_simulation)
-        
-
-    
-    def toggle_simulation(self):
-        if self.ui.simulationbutton.isChecked():
-            self.simulator.start()
-            self.tbprint("Simulation Off")
-            self.ui.simulationbutton.setText("Simulation Off")
-        else:
-            self.simulator.stop()
-            self.tbprint("Simulation On")
-            self.ui.simulationbutton.setText("Simulation On")
    
+        
+        self.simulator = HelmholtzSimulator(self.ui.magneticfieldsimlabel, width=200, height=200, dpi=50)
+        #self.simulator.figure_ready.connect(self.update_sim)
+        self.simulator.start()
 
+        
+       
+  
+    #def update_sim(self,canvas):
+        #canvas.draw()
+    #    print(canvas)
 
     def get_slider_vals(self):
         memory = self.ui.memorybox.value()
@@ -202,8 +201,16 @@ class MainWindow(QtWidgets.QMainWindow):
         
 
         
-
-    
+    def toggle_simulation(self):
+        if self.ui.simulationbutton.isChecked():
+            self.simulator.startsim()
+            self.tbprint("Simulation Off")
+            self.ui.simulationbutton.setText("Simulation Off")
+        else:
+            self.simulator.stopsim()
+            self.tbprint("Simulation On")
+            self.ui.simulationbutton.setText("Simulation On")
+            
     
     def toggle_control_status(self):
         if self.ui.controlbutton.isChecked():
@@ -214,6 +221,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.acousticfreq_spinBox.show()
             self.ui.acousticfreqlabel.show()
             self.ui.applyacousticbutton.show()
+  
         
         
         else:
@@ -224,6 +232,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.acousticfreq_spinBox.hide()
             self.ui.acousticfreqlabel.hide()
             self.ui.applyacousticbutton.hide()
+       
             
     
 
@@ -233,11 +242,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.joystick_status = True
                 self.ui.joystickbutton.setText("Stop")
                 self.tbprint("Joystick On")
+  
             
             else:
                 self.joystick_status = False
                 self.ui.joystickbutton.setText("Joystick")
                 self.tbprint("Joystick Off")
+       
         else:
             self.tbprint("No Joystick Connected...")
 
@@ -252,7 +263,6 @@ class MainWindow(QtWidgets.QMainWindow):
         gamma = np.radians(self.ui.gammadial.value())
         psi = np.radians(self.ui.psidial.value())
         if self.control_status == True:
-            
             if self.ui.swimradio.isChecked():
                 alpha=alpha
                 self.simulator.roll = False
@@ -260,6 +270,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 alpha = alpha - np.pi/2
                 self.simulator.roll = True
             
+        
+
             freq = self.ui.rollingfrequencybox.value()
             
             if arrived == True:
@@ -277,11 +289,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.simulator.freq = freq/10
             self.simulator.omega = 2 * np.pi * self.simulator.freq
             self.simulator.psi = psi
-
+            
 
         elif self.joystick_status == True:
             Bx, By, Bz, alpha, freq = self.controller_actions.run(self.joystick)
-            
             if self.ui.swimradio.isChecked():
                 alpha=alpha
                 self.simulator.roll = False
@@ -304,6 +315,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.simulator.freq = freq/10
             self.simulator.omega = 2 * np.pi * self.simulator.freq
             self.simulator.psi = psi
+
+
+
+
        
     
     def get_acoustic_frequency(self):
@@ -752,5 +767,5 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         if self.cap is not None:
             self.tracker.stop()
-        self.simulator.stop()
+        self.simulator.stopsim()
         self.arduino.close()

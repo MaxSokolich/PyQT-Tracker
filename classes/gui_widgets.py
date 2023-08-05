@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'PyQt_Magscope.ui'
+# Form implementation generated from reading ui file 'PyQt_Magscope2.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #
@@ -17,8 +17,19 @@ class Ui_MainWindow(object):
         MainWindow.resize(1600, 860)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+        self.frameslider = QtWidgets.QSlider(self.centralwidget)
+        self.frameslider.setGeometry(QtCore.QRect(250, 710, 1321, 30))
+        self.frameslider.setOrientation(QtCore.Qt.Horizontal)
+        self.frameslider.setObjectName("frameslider")
+        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.plainTextEdit.setGeometry(QtCore.QRect(250, 740, 791, 91))
+        self.plainTextEdit.setMouseTracking(True)
+        self.plainTextEdit.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        self.plainTextEdit.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContentsOnFirstShow)
+        self.plainTextEdit.setCenterOnScroll(False)
+        self.plainTextEdit.setObjectName("plainTextEdit")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(5, 10, 215, 780))
+        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 215, 781))
         self.tabWidget.setStyleSheet("font-size: 15pt;  font-family: Courier;")
         self.tabWidget.setObjectName("tabWidget")
         self.tracking_tab = QtWidgets.QWidget()
@@ -27,7 +38,7 @@ class Ui_MainWindow(object):
         self.robotblurlabel.setGeometry(QtCore.QRect(10, 480, 161, 20))
         self.robotblurlabel.setObjectName("robotblurlabel")
         self.rightbutton = QtWidgets.QToolButton(self.tracking_tab)
-        self.rightbutton.setGeometry(QtCore.QRect(110, 140, 60, 21))
+        self.rightbutton.setGeometry(QtCore.QRect(110, 140, 60, 25))
         self.rightbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -76,10 +87,10 @@ class Ui_MainWindow(object):
 "            }")
         self.choosevideobutton.setObjectName("choosevideobutton")
         self.croplengthlabel = QtWidgets.QLabel(self.tracking_tab)
-        self.croplengthlabel.setGeometry(QtCore.QRect(10, 340, 201, 20))
+        self.croplengthlabel.setGeometry(QtCore.QRect(10, 325, 101, 20))
         self.croplengthlabel.setObjectName("croplengthlabel")
         self.pausebutton = QtWidgets.QPushButton(self.tracking_tab)
-        self.pausebutton.setGeometry(QtCore.QRect(20, 110, 160, 20))
+        self.pausebutton.setGeometry(QtCore.QRect(20, 110, 160, 25))
         self.pausebutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(150, 0, 0);\n"
@@ -176,7 +187,7 @@ class Ui_MainWindow(object):
         self.CroppedVideoFeedLabel.setText("")
         self.CroppedVideoFeedLabel.setObjectName("CroppedVideoFeedLabel")
         self.leftbutton = QtWidgets.QToolButton(self.tracking_tab)
-        self.leftbutton.setGeometry(QtCore.QRect(30, 140, 60, 21))
+        self.leftbutton.setGeometry(QtCore.QRect(30, 140, 60, 25))
         self.leftbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -205,7 +216,7 @@ class Ui_MainWindow(object):
         self.leftbutton.setArrowType(QtCore.Qt.LeftArrow)
         self.leftbutton.setObjectName("leftbutton")
         self.savedatabutton = QtWidgets.QPushButton(self.tracking_tab)
-        self.savedatabutton.setGeometry(QtCore.QRect(0, 390, 100, 35))
+        self.savedatabutton.setGeometry(QtCore.QRect(0, 365, 100, 51))
         self.savedatabutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(0, 0, 0);\n"
 "                background-color: rgb(255, 255, 0);\n"
@@ -230,32 +241,16 @@ class Ui_MainWindow(object):
         self.savedatabutton.setCheckable(True)
         self.savedatabutton.setObjectName("savedatabutton")
         self.masksigmalabel = QtWidgets.QLabel(self.tracking_tab)
-        self.masksigmalabel.setGeometry(QtCore.QRect(10, 240, 201, 20))
+        self.masksigmalabel.setGeometry(QtCore.QRect(10, 245, 111, 20))
         self.masksigmalabel.setObjectName("masksigmalabel")
-        self.croplengthslider = QtWidgets.QSlider(self.tracking_tab)
-        self.croplengthslider.setGeometry(QtCore.QRect(10, 360, 180, 25))
-        self.croplengthslider.setMinimum(5)
-        self.croplengthslider.setMaximum(200)
-        self.croplengthslider.setProperty("value", 40)
-        self.croplengthslider.setSliderPosition(40)
-        self.croplengthslider.setTracking(True)
-        self.croplengthslider.setOrientation(QtCore.Qt.Horizontal)
-        self.croplengthslider.setObjectName("croplengthslider")
         self.robotvelocitylabel = QtWidgets.QLabel(self.tracking_tab)
         self.robotvelocitylabel.setGeometry(QtCore.QRect(10, 460, 161, 20))
         self.robotvelocitylabel.setObjectName("robotvelocitylabel")
-        self.masksigmaslider = QtWidgets.QSlider(self.tracking_tab)
-        self.masksigmaslider.setGeometry(QtCore.QRect(10, 260, 180, 25))
-        self.masksigmaslider.setMaximum(30)
-        self.masksigmaslider.setSliderPosition(7)
-        self.masksigmaslider.setTracking(True)
-        self.masksigmaslider.setOrientation(QtCore.Qt.Horizontal)
-        self.masksigmaslider.setObjectName("masksigmaslider")
         self.framelabel = QtWidgets.QLabel(self.tracking_tab)
         self.framelabel.setGeometry(QtCore.QRect(50, 80, 121, 31))
         self.framelabel.setObjectName("framelabel")
         self.recordbutton = QtWidgets.QPushButton(self.tracking_tab)
-        self.recordbutton.setGeometry(QtCore.QRect(110, 390, 90, 35))
+        self.recordbutton.setGeometry(QtCore.QRect(110, 365, 90, 51))
         self.recordbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -300,17 +295,24 @@ class Ui_MainWindow(object):
         self.label.setText("")
         self.label.setObjectName("label")
         self.maskdilationlabel = QtWidgets.QLabel(self.tracking_tab)
-        self.maskdilationlabel.setGeometry(QtCore.QRect(10, 290, 201, 20))
+        self.maskdilationlabel.setGeometry(QtCore.QRect(10, 285, 121, 20))
         self.maskdilationlabel.setObjectName("maskdilationlabel")
-        self.maskdilationslider = QtWidgets.QSlider(self.tracking_tab)
-        self.maskdilationslider.setGeometry(QtCore.QRect(10, 310, 180, 25))
-        self.maskdilationslider.setMinimum(0)
-        self.maskdilationslider.setMaximum(50)
-        self.maskdilationslider.setProperty("value", 0)
-        self.maskdilationslider.setSliderPosition(0)
-        self.maskdilationslider.setTracking(True)
-        self.maskdilationslider.setOrientation(QtCore.Qt.Horizontal)
-        self.maskdilationslider.setObjectName("maskdilationslider")
+        self.masksigmabox = QtWidgets.QDoubleSpinBox(self.tracking_tab)
+        self.masksigmabox.setGeometry(QtCore.QRect(120, 240, 81, 31))
+        self.masksigmabox.setMaximum(10.0)
+        self.masksigmabox.setSingleStep(0.1)
+        self.masksigmabox.setProperty("value", 0.7)
+        self.masksigmabox.setObjectName("masksigmabox")
+        self.maskdilationbox = QtWidgets.QSpinBox(self.tracking_tab)
+        self.maskdilationbox.setGeometry(QtCore.QRect(140, 280, 61, 31))
+        self.maskdilationbox.setMaximum(40)
+        self.maskdilationbox.setObjectName("maskdilationbox")
+        self.croplengthbox = QtWidgets.QSpinBox(self.tracking_tab)
+        self.croplengthbox.setGeometry(QtCore.QRect(140, 320, 61, 31))
+        self.croplengthbox.setMaximum(300)
+        self.croplengthbox.setProperty("value", 40)
+        self.croplengthbox.setDisplayIntegerBase(10)
+        self.croplengthbox.setObjectName("croplengthbox")
         self.label.raise_()
         self.robotblurlabel.raise_()
         self.rightbutton.raise_()
@@ -325,13 +327,13 @@ class Ui_MainWindow(object):
         self.leftbutton.raise_()
         self.savedatabutton.raise_()
         self.masksigmalabel.raise_()
-        self.croplengthslider.raise_()
         self.robotvelocitylabel.raise_()
-        self.masksigmaslider.raise_()
         self.framelabel.raise_()
         self.recordbutton.raise_()
         self.maskdilationlabel.raise_()
-        self.maskdilationslider.raise_()
+        self.masksigmabox.raise_()
+        self.maskdilationbox.raise_()
+        self.croplengthbox.raise_()
         self.tabWidget.addTab(self.tracking_tab, "")
         self.control_tab = QtWidgets.QWidget()
         self.control_tab.setObjectName("control_tab")
@@ -368,47 +370,17 @@ class Ui_MainWindow(object):
 "            }")
         self.controlbutton.setCheckable(True)
         self.controlbutton.setObjectName("controlbutton")
-        self.gammaslider = QtWidgets.QSlider(self.control_tab)
-        self.gammaslider.setGeometry(QtCore.QRect(10, 440, 180, 31))
-        self.gammaslider.setMaximum(180)
-        self.gammaslider.setProperty("value", 90)
-        self.gammaslider.setTracking(True)
-        self.gammaslider.setOrientation(QtCore.Qt.Horizontal)
-        self.gammaslider.setObjectName("gammaslider")
-        self.arrivalthreshslider = QtWidgets.QSlider(self.control_tab)
-        self.arrivalthreshslider.setGeometry(QtCore.QRect(10, 340, 180, 31))
-        self.arrivalthreshslider.setMinimum(1)
-        self.arrivalthreshslider.setMaximum(50)
-        self.arrivalthreshslider.setProperty("value", 25)
-        self.arrivalthreshslider.setTracking(True)
-        self.arrivalthreshslider.setOrientation(QtCore.Qt.Horizontal)
-        self.arrivalthreshslider.setObjectName("arrivalthreshslider")
         self.arrivalthreshlabel = QtWidgets.QLabel(self.control_tab)
-        self.arrivalthreshlabel.setGeometry(QtCore.QRect(10, 320, 201, 21))
+        self.arrivalthreshlabel.setGeometry(QtCore.QRect(10, 310, 131, 21))
         self.arrivalthreshlabel.setObjectName("arrivalthreshlabel")
         self.gammalabel = QtWidgets.QLabel(self.control_tab)
-        self.gammalabel.setGeometry(QtCore.QRect(10, 420, 201, 20))
+        self.gammalabel.setGeometry(QtCore.QRect(110, 490, 101, 20))
         self.gammalabel.setObjectName("gammalabel")
-        self.rollingfrequencyslider = QtWidgets.QSlider(self.control_tab)
-        self.rollingfrequencyslider.setGeometry(QtCore.QRect(10, 390, 180, 31))
-        self.rollingfrequencyslider.setMaximum(40)
-        self.rollingfrequencyslider.setProperty("value", 10)
-        self.rollingfrequencyslider.setTracking(True)
-        self.rollingfrequencyslider.setOrientation(QtCore.Qt.Horizontal)
-        self.rollingfrequencyslider.setObjectName("rollingfrequencyslider")
         self.rollingfrequencylabel = QtWidgets.QLabel(self.control_tab)
-        self.rollingfrequencylabel.setGeometry(QtCore.QRect(10, 370, 201, 21))
+        self.rollingfrequencylabel.setGeometry(QtCore.QRect(10, 350, 91, 21))
         self.rollingfrequencylabel.setObjectName("rollingfrequencylabel")
-        self.psislider = QtWidgets.QSlider(self.control_tab)
-        self.psislider.setGeometry(QtCore.QRect(10, 490, 180, 31))
-        self.psislider.setMinimum(1)
-        self.psislider.setMaximum(90)
-        self.psislider.setProperty("value", 90)
-        self.psislider.setTracking(True)
-        self.psislider.setOrientation(QtCore.Qt.Horizontal)
-        self.psislider.setObjectName("psislider")
         self.psilabel = QtWidgets.QLabel(self.control_tab)
-        self.psilabel.setGeometry(QtCore.QRect(10, 470, 201, 16))
+        self.psilabel.setGeometry(QtCore.QRect(20, 490, 71, 21))
         self.psilabel.setObjectName("psilabel")
         self.magneticfieldsimlabel = QtWidgets.QLabel(self.control_tab)
         self.magneticfieldsimlabel.setGeometry(QtCore.QRect(5, 520, 200, 200))
@@ -487,32 +459,11 @@ class Ui_MainWindow(object):
 "}")
         self.applyacousticbutton.setCheckable(True)
         self.applyacousticbutton.setObjectName("applyacousticbutton")
-        self.RRTtreesizeslider = QtWidgets.QSlider(self.control_tab)
-        self.RRTtreesizeslider.setGeometry(QtCore.QRect(10, 290, 180, 31))
-        self.RRTtreesizeslider.setMinimum(1)
-        self.RRTtreesizeslider.setMaximum(75)
-        self.RRTtreesizeslider.setProperty("value", 25)
-        self.RRTtreesizeslider.setTracking(True)
-        self.RRTtreesizeslider.setOrientation(QtCore.Qt.Horizontal)
-        self.RRTtreesizeslider.setInvertedAppearance(False)
-        self.RRTtreesizeslider.setInvertedControls(False)
-        self.RRTtreesizeslider.setTickPosition(QtWidgets.QSlider.NoTicks)
-        self.RRTtreesizeslider.setObjectName("RRTtreesizeslider")
         self.RRTtreesizelabel = QtWidgets.QLabel(self.control_tab)
-        self.RRTtreesizelabel.setGeometry(QtCore.QRect(10, 270, 201, 21))
+        self.RRTtreesizelabel.setGeometry(QtCore.QRect(10, 270, 131, 21))
         self.RRTtreesizelabel.setObjectName("RRTtreesizelabel")
-        self.memoryslider = QtWidgets.QSlider(self.control_tab)
-        self.memoryslider.setGeometry(QtCore.QRect(10, 240, 180, 31))
-        self.memoryslider.setMinimum(1)
-        self.memoryslider.setMaximum(100)
-        self.memoryslider.setPageStep(10)
-        self.memoryslider.setProperty("value", 15)
-        self.memoryslider.setTracking(True)
-        self.memoryslider.setOrientation(QtCore.Qt.Horizontal)
-        self.memoryslider.setTickPosition(QtWidgets.QSlider.NoTicks)
-        self.memoryslider.setObjectName("memoryslider")
         self.memorylabel = QtWidgets.QLabel(self.control_tab)
-        self.memorylabel.setGeometry(QtCore.QRect(10, 220, 201, 21))
+        self.memorylabel.setGeometry(QtCore.QRect(10, 230, 61, 21))
         self.memorylabel.setObjectName("memorylabel")
         self.rollradio = QtWidgets.QRadioButton(self.control_tab)
         self.rollradio.setGeometry(QtCore.QRect(30, 65, 61, 20))
@@ -533,28 +484,147 @@ class Ui_MainWindow(object):
 "                padding: 6px;")
         self.led.setText("")
         self.led.setObjectName("led")
+        self.memorybox = QtWidgets.QSpinBox(self.control_tab)
+        self.memorybox.setGeometry(QtCore.QRect(140, 220, 61, 31))
+        self.memorybox.setMinimum(1)
+        self.memorybox.setMaximum(100)
+        self.memorybox.setProperty("value", 15)
+        self.memorybox.setObjectName("memorybox")
+        self.RRTtreesizebox = QtWidgets.QSpinBox(self.control_tab)
+        self.RRTtreesizebox.setGeometry(QtCore.QRect(140, 260, 61, 31))
+        self.RRTtreesizebox.setMinimum(1)
+        self.RRTtreesizebox.setMaximum(100)
+        self.RRTtreesizebox.setProperty("value", 25)
+        self.RRTtreesizebox.setObjectName("RRTtreesizebox")
+        self.arrivalthreshbox = QtWidgets.QSpinBox(self.control_tab)
+        self.arrivalthreshbox.setGeometry(QtCore.QRect(140, 300, 61, 31))
+        self.arrivalthreshbox.setMinimum(1)
+        self.arrivalthreshbox.setMaximum(100)
+        self.arrivalthreshbox.setProperty("value", 50)
+        self.arrivalthreshbox.setObjectName("arrivalthreshbox")
+        self.rollingfrequencybox = QtWidgets.QSpinBox(self.control_tab)
+        self.rollingfrequencybox.setGeometry(QtCore.QRect(140, 340, 61, 31))
+        self.rollingfrequencybox.setMinimum(0)
+        self.rollingfrequencybox.setMaximum(40)
+        self.rollingfrequencybox.setProperty("value", 10)
+        self.rollingfrequencybox.setObjectName("rollingfrequencybox")
+        self.psidial = QtWidgets.QDial(self.control_tab)
+        self.psidial.setGeometry(QtCore.QRect(10, 380, 91, 101))
+        self.psidial.setStyleSheet("QDial\n"
+"    {\n"
+"        background-color:QLinearGradient( \n"
+"            x1: 0.177, y1: 0.004, x2: 0.831, y2: 0.911, \n"
+"            stop: 0 white, \n"
+"            stop: 0.061 white, \n"
+"            stop: 0.066 lightgray, \n"
+"            stop: 0.5 #242424, \n"
+"            stop: 0.505 #000000,\n"
+"            stop: 0.827 #040404,\n"
+"            stop: 0.966 #292929,\n"
+"            stop: 0.983 #2e2e2e\n"
+"        );\n"
+"    }")
+        self.psidial.setMinimum(1)
+        self.psidial.setMaximum(90)
+        self.psidial.setProperty("value", 90)
+        self.psidial.setNotchesVisible(True)
+        self.psidial.setObjectName("psidial")
+        self.gammadial = QtWidgets.QDial(self.control_tab)
+        self.gammadial.setGeometry(QtCore.QRect(110, 380, 91, 101))
+        self.gammadial.setStyleSheet("QDial {\n"
+"    background-color: qconicalgradient(cx:0.5, cy:0.5, angle:90, stop:0 #1a5276, stop:0.3 #2980b9, stop:0.7 #3498db, stop:1 #1a5276);\n"
+"    border: 2px solid #1a5276;\n"
+"    padding: 5px;\n"
+"}\n"
+"\n"
+"QDial::handle {\n"
+"    background-color: qconicalgradient(cx:0.5, cy:0.5, angle:90, stop:0 #f39c12, stop:0.3 #f1c40f, stop:0.7 #f39c12, stop:1 #f1c40f);\n"
+"    border: 2px solid #e67e22;\n"
+"    width: 20px;\n"
+"    height: 20px;\n"
+"    border-radius: 10px;\n"
+"    margin: -5px;\n"
+"}\n"
+"")
+        self.gammadial.setMaximum(180)
+        self.gammadial.setSingleStep(5)
+        self.gammadial.setProperty("value", 90)
+        self.gammadial.setOrientation(QtCore.Qt.Horizontal)
+        self.gammadial.setWrapping(True)
+        self.gammadial.setNotchesVisible(True)
+        self.gammadial.setObjectName("gammadial")
+        self.simulationbutton = QtWidgets.QPushButton(self.control_tab)
+        self.simulationbutton.setGeometry(QtCore.QRect(20, 725, 171, 21))
+        self.simulationbutton.setStyleSheet("QPushButton {\n"
+"                color: rgb(255, 255, 255);\n"
+"                background-color: rgb(0, 255, 0);\n"
+"                border-style: outset;\n"
+"                border-width: 2px;\n"
+"                border-radius: 10px;\n"
+"                border-color: rgb(0, 100, 0);\n"
+"                min-width: 1em;\n"
+"                padding: 2px;\n"
+"            }\n"
+"      \n"
+"            QPushButton:checked {\n"
+"                color: rgb(255, 255, 255);\n"
+"                background-color: rgb(255, 100, 0);\n"
+"                border-style: inset;\n"
+"                border-width: 2px;\n"
+"                border-radius: 10px;\n"
+"                border-color: rgb(255, 0, 0);\n"
+"                font: bold 16px;\n"
+"                min-width: 1em;\n"
+"\n"
+"               \n"
+"            }\n"
+"            QPushButton:hover {\n"
+"                background-color: rgb(100, 100, 100);\n"
+"                color: rgb(255, 255, 255);\n"
+"                border-color: rgb(100, 100, 100);\n"
+"                padding-left: 5px;\n"
+"                padding-top: 5px;\n"
+"            }")
+        self.simulationbutton.setCheckable(True)
+        self.simulationbutton.setObjectName("simulationbutton")
         self.tabWidget.addTab(self.control_tab, "")
+        self.resetdefaultbutton = QtWidgets.QPushButton(self.centralwidget)
+        self.resetdefaultbutton.setGeometry(QtCore.QRect(50, 795, 121, 31))
+        self.resetdefaultbutton.setStyleSheet("QPushButton {\n"
+"                color: rgb(255, 255, 255);\n"
+"                background-color: rgb(100, 100, 100);\n"
+"                border-style: outset;\n"
+"                border-width: 3px;\n"
+"                border-radius: 10px;\n"
+"                border-color: rgb(100, 100, 100);\n"
+"                min-width: 1em;\n"
+"                padding: 6px;\n"
+"            }\n"
+"            QPushButton:hover {\n"
+"                background-color: rgb(200, 200, 200);\n"
+"                color: rgb(0, 0, 0);\n"
+"            }\n"
+"            QPushButton:pressed {\n"
+"                background-color: rgb(200, 200, 200);\n"
+"         \n"
+"                padding-left: 5px;\n"
+"                padding-top: 5px;\n"
+"                border-style: inset;\n"
+"                }")
+        self.resetdefaultbutton.setObjectName("resetdefaultbutton")
         self.VideoFeedLabel = QtWidgets.QLabel(self.centralwidget)
-        self.VideoFeedLabel.setGeometry(QtCore.QRect(230, 30, 1330, 700))
+        self.VideoFeedLabel.setGeometry(QtCore.QRect(250, 5, 1330, 700))
         self.VideoFeedLabel.setMouseTracking(True)
         self.VideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
         self.VideoFeedLabel.setText("")
         self.VideoFeedLabel.setObjectName("VideoFeedLabel")
-        self.frameslider = QtWidgets.QSlider(self.centralwidget)
-        self.frameslider.setGeometry(QtCore.QRect(230, 0, 1321, 30))
-        self.frameslider.setOrientation(QtCore.Qt.Horizontal)
-        self.frameslider.setObjectName("frameslider")
-        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.plainTextEdit.setGeometry(QtCore.QRect(230, 735, 791, 91))
-        self.plainTextEdit.setMouseTracking(True)
-        self.plainTextEdit.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
-        self.plainTextEdit.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContentsOnFirstShow)
-        self.plainTextEdit.setCenterOnScroll(False)
-        self.plainTextEdit.setObjectName("plainTextEdit")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
+        self.actiondock = QtWidgets.QAction(MainWindow)
+        self.actiondock.setMenuRole(QtWidgets.QAction.NoRole)
+        self.actiondock.setObjectName("actiondock")
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
@@ -566,7 +636,7 @@ class Ui_MainWindow(object):
         self.robotblurlabel.setText(_translate("MainWindow", "Blur:"))
         self.rightbutton.setText(_translate("MainWindow", "..."))
         self.choosevideobutton.setText(_translate("MainWindow", "Choose Video"))
-        self.croplengthlabel.setText(_translate("MainWindow", "Crop Length:       40"))
+        self.croplengthlabel.setText(_translate("MainWindow", "Crop Length"))
         self.pausebutton.setText(_translate("MainWindow", "Pause"))
         self.trackbutton.setText(_translate("MainWindow", "Track"))
         self.robotarealabel.setText(_translate("MainWindow", "Area:"))
@@ -574,22 +644,25 @@ class Ui_MainWindow(object):
         self.maskbutton.setText(_translate("MainWindow", "Mask"))
         self.leftbutton.setText(_translate("MainWindow", "..."))
         self.savedatabutton.setText(_translate("MainWindow", "Save Data"))
-        self.masksigmalabel.setText(_translate("MainWindow", "Mask Sigma:       0.7"))
+        self.masksigmalabel.setText(_translate("MainWindow", "Mask Sigma"))
         self.robotvelocitylabel.setText(_translate("MainWindow", "Velocity:"))
         self.framelabel.setText(_translate("MainWindow", "Frame: "))
         self.recordbutton.setText(_translate("MainWindow", "Record"))
-        self.maskdilationlabel.setText(_translate("MainWindow", "Mask Dilation:     0"))
+        self.maskdilationlabel.setText(_translate("MainWindow", "Mask Dilation"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tracking_tab), _translate("MainWindow", "Tracking"))
         self.controlbutton.setText(_translate("MainWindow", "Control"))
-        self.arrivalthreshlabel.setText(_translate("MainWindow", "Arrival Thresh:    25"))
-        self.gammalabel.setText(_translate("MainWindow", "Gamma:             90"))
-        self.rollingfrequencylabel.setText(_translate("MainWindow", "Rolling Frequency: 10"))
-        self.psilabel.setText(_translate("MainWindow", "Psi:               90"))
+        self.arrivalthreshlabel.setText(_translate("MainWindow", "Arrival Thresh"))
+        self.gammalabel.setText(_translate("MainWindow", "Gamma: 90"))
+        self.rollingfrequencylabel.setText(_translate("MainWindow", "Frequency"))
+        self.psilabel.setText(_translate("MainWindow", "Psi: 90"))
         self.joystickbutton.setText(_translate("MainWindow", "Joystick"))
         self.acousticfreqlabel.setText(_translate("MainWindow", "Acoustic Frequency"))
         self.applyacousticbutton.setText(_translate("MainWindow", "Apply"))
-        self.RRTtreesizelabel.setText(_translate("MainWindow", "RRT Tree Size:     25"))
-        self.memorylabel.setText(_translate("MainWindow", "Memory:            15"))
+        self.RRTtreesizelabel.setText(_translate("MainWindow", "RRT Tree Size"))
+        self.memorylabel.setText(_translate("MainWindow", "Memory"))
         self.rollradio.setText(_translate("MainWindow", "Roll"))
         self.swimradio.setText(_translate("MainWindow", "Swim"))
+        self.simulationbutton.setText(_translate("MainWindow", "Simulation On"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.control_tab), _translate("MainWindow", "Control"))
+        self.resetdefaultbutton.setText(_translate("MainWindow", "Reset to Default"))
+        self.actiondock.setText(_translate("MainWindow", "dock"))

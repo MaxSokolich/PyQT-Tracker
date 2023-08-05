@@ -8,30 +8,50 @@ from matplotlib.animation import FuncAnimation
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
 from PyQt5.QtCore import Qt, QTimer
 
-class HelmholtzSimulator(FigureCanvas):
-    def __init__(self, parent=None, width=200, height=200, dpi=100):
+import time
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
+import random
+from matplotlib import animation
+
+
+class HelmholtzSimulator(QThread):
+    figure_ready = pyqtSignal(int)
+    
+    def __init__(self, parent, width, height, dpi):
+        super().__init__(parent=parent)
+   
+        
+        #self.canvas = canvas
+        #self.figure = figure
+        
         fig = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
         fig.tight_layout()
         fig.subplots_adjust(top=1, bottom=0, left=-0.2, right=1)
         self.ax = fig.add_subplot(111, projection='3d')
-
-        super().__init__(fig)
-        self.setParent(parent)
+        self.canvas = FigureCanvas(fig)
+        self.canvas.setParent(parent)
+        #self.run_flag = True
         
-
-       
+        
+        
         #rolling parameters
         self.Bx = 0
         self.By = 0
         self.Bz = 0
         self.A = 1 #amplitude of rotating magetnic field
-        self.alpha = 0
-        self.gamma = 0
+        self.alpha =0
+        self.gamma = np.pi/2
         self.psi = 0
-        self.freq = 0
+        self.freq = 1
         self.omega = 2*np.pi* float(self.freq)  #angular velocity of rotating field defined from input from Rotating Frequency Entry
         self.roll = False
-    
+
+
         #params for field
         self.milli = 10**(-6)
         self.mu = 4*np.pi * (10**(-7)) /self.milli
@@ -51,13 +71,13 @@ class HelmholtzSimulator(FigureCanvas):
         self.ax.set_ylabel('y') 
         self.ax.set_zlabel('z')
 
-        
+
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.animate)
-          
+        #anim = animation.FuncAnimation(fig, self.animate, frames = range(360), interval=10, blit = False)
+        
 
-
-
+        
     #helmholtz X field equation
     def xb_field(self,x, Ix):
         a = 54 #radius
@@ -92,12 +112,13 @@ class HelmholtzSimulator(FigureCanvas):
         return B
     
 
+
     def animate(self):
         tp = time.time() - self.start_time
         
         if [self.Bx, self.By, self.Bz, self.freq] == [0,0,0,0]:
             self.zero()
- 
+
         else:
             Brollx =  ((-np.sin(self.alpha) * np.sin(self.omega*tp)) + (-np.cos(self.alpha) * np.cos(self.gamma)  * np.cos(self.omega*tp))) 
             Brolly =  ((np.cos(self.alpha) * np.sin(self.omega*tp)) + (-np.sin(self.alpha) * np.cos(self.gamma) *  np.cos(self.omega*tp))) 
@@ -126,7 +147,7 @@ class HelmholtzSimulator(FigureCanvas):
             Ix = self.Bx + Brollx
             Iy = self.By + Brolly
             Iz = self.Bz + Brollz
-      
+    
 
             Ix = Ix / np.sqrt(Ix**2 + Iy**2 + Iz**2)
             Iy = Iy / np.sqrt(Ix**2 + Iy**2 + Iz**2)
@@ -146,10 +167,13 @@ class HelmholtzSimulator(FigureCanvas):
             speed = np.sqrt((BX)**2+(BY)**2+(BZ)**2).flatten()
             self.ax.quiver(self.x,self.y,self.z,BX,BY,BZ, color='black',length=1) #norm = colors.LogNorm(vmin=speed.min(), vmax=speed.max() ))#,density = 2)#norm = colors.LogNorm(vmin=speed.min(), vmax=speed.max() ))
             self.ax.scatter(self.x,self.y,self.z, s = 1, c= "b")
-             
-            self.draw()
+            self.canvas.draw()
+        
 
-
+        #self.ax.plot(data, '*-')
+        self.figure_ready.emit(1)
+    
+    
     def show_axis_rotation(self, ax, length):
         #plot rotation axis
         if self.roll == True:
@@ -161,22 +185,31 @@ class HelmholtzSimulator(FigureCanvas):
         z = 1 * np.cos(self.gamma)
         ax.quiver(0,0,0,x,y,z,color='red',length=length)
 
-
-    def start(self):
-       self.timer.start(75)# Update plot every 10 ms
-
     def zero(self):
         self.ax.clear()
         self.ax.scatter(self.x,self.y,self.z, s = 1, c= "b")
         self.ax.set_xlabel('x') 
         self.ax.set_ylabel('y') 
         self.ax.set_zlabel('z')
-        self.draw()
-
-
-    def stop(self):
-        self.timer.stop()
+        #self.figure_ready.emit(self.canvas)
+        self.canvas.draw()
+    
+    def startsim(self):
+        self.run_flag = True
+        self.timer.start(50)
+        
+    def stopsim(self):
+        self.run_flag = False
         self.zero()
+        self.timer.stop()
+
+
+    #def run_animation(self):
+    #    # Set up plot to call animate() function periodically
+    #    anim = animation.FuncAnimation(self.fig, self.animate,frames = range(360), interval=10, blit = False)
+
+  
 
 
 
+  
