@@ -14,23 +14,58 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1600, 860)
+        MainWindow.resize(1600, 887)
+        font = QtGui.QFont()
+        font.setFamily("Avenir")
+        MainWindow.setFont(font)
+        MainWindow.setStyleSheet("font-family: Avenir;")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.frameslider = QtWidgets.QSlider(self.centralwidget)
-        self.frameslider.setGeometry(QtCore.QRect(250, 710, 1321, 30))
-        self.frameslider.setOrientation(QtCore.Qt.Horizontal)
-        self.frameslider.setObjectName("frameslider")
         self.plainTextEdit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.plainTextEdit.setGeometry(QtCore.QRect(250, 740, 791, 91))
+        self.plainTextEdit.setGeometry(QtCore.QRect(10, 740, 691, 111))
         self.plainTextEdit.setMouseTracking(True)
         self.plainTextEdit.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.plainTextEdit.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContentsOnFirstShow)
+        self.plainTextEdit.setPlainText("")
         self.plainTextEdit.setCenterOnScroll(False)
         self.plainTextEdit.setObjectName("plainTextEdit")
-        self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 215, 781))
-        self.tabWidget.setStyleSheet("font-size: 15pt;  font-family: Courier;")
+        self.VideoFeedLabel = QtWidgets.QLabel(self.centralwidget)
+        self.VideoFeedLabel.setGeometry(QtCore.QRect(10, 5, 1330, 700))
+        self.VideoFeedLabel.setMouseTracking(True)
+        self.VideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
+        self.VideoFeedLabel.setText("")
+        self.VideoFeedLabel.setObjectName("VideoFeedLabel")
+        self.frameslider = QtWidgets.QProgressBar(self.centralwidget)
+        self.frameslider.setGeometry(QtCore.QRect(10, 712, 1321, 20))
+        self.frameslider.setStyleSheet("    QProgressBar {\n"
+"        border: 2px solid rgba(33, 37, 43, 180);\n"
+"        border-radius: 5px;\n"
+"        text-align: center;\n"
+"        background-color: rgba(33, 37, 43, 180);\n"
+"        color: black;\n"
+"    }\n"
+"    QProgressBar::chunk {\n"
+"        background-color: #FFD700;\n"
+"    }")
+        self.frameslider.setMinimum(0)
+        self.frameslider.setMaximum(100)
+        self.frameslider.setProperty("value", 0)
+        self.frameslider.setObjectName("frameslider")
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+        self.dockWidget = QtWidgets.QDockWidget(MainWindow)
+        self.dockWidget.setMinimumSize(QtCore.QSize(245, 830))
+        self.dockWidget.setMaximumSize(QtCore.QSize(524287, 850))
+        self.dockWidget.setFloating(False)
+        self.dockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|QtCore.Qt.RightDockWidgetArea)
+        self.dockWidget.setObjectName("dockWidget")
+        self.dockWidgetContents = QtWidgets.QWidget()
+        self.dockWidgetContents.setObjectName("dockWidgetContents")
+        self.tabWidget = QtWidgets.QTabWidget(self.dockWidgetContents)
+        self.tabWidget.setGeometry(QtCore.QRect(15, 10, 221, 801))
+        self.tabWidget.setStyleSheet("font-size: 15pt; font: Arial;")
         self.tabWidget.setObjectName("tabWidget")
         self.tracking_tab = QtWidgets.QWidget()
         self.tracking_tab.setObjectName("tracking_tab")
@@ -44,8 +79,8 @@ class Ui_MainWindow(object):
 "                background-color: rgb(0, 0, 0);\n"
 "                border-style: outset;\n"
 "                border-width: px;\n"
-"                border-radius: 2px;\n"
-"                border-color: rgb(0, 0, 0);\n"
+"                border-radius: 10px;\n"
+"                border: 2px solid rgb(0, 0, 0);\n"
 "                font: bold 16px;\n"
 "                min-width: 1em;\n"
 "                padding: 1px;\n"
@@ -53,11 +88,11 @@ class Ui_MainWindow(object):
 "            QToolButton:hover {\n"
 "                background-color: rgb(100, 100, 100);\n"
 "                color: rgb(255, 255, 255);\n"
-"                border-color: rgb(100, 100, 100);\n"
+"                border: 2px solid rgb(0, 255, 0);\n"
 "            }\n"
 "            QToolButton:pressed {\n"
 "                background-color: rgb(100, 100, 100);\n"
-"                border: 2px solid rgb(100, 100, 100);\n"
+"                border: 2px solid rgb(255, 0, 0);\n"
 "                border-style: inset;\n"
 "                padding-left: 5px;\n"
 "                padding-top: 5px;\n"
@@ -107,7 +142,7 @@ class Ui_MainWindow(object):
 "                border-style: inset;\n"
 "                border-width: 3px;\n"
 "                border-radius: 10px;\n"
-"                border-color: rgb(0, 0, 150);\n"
+"                border-color: rgb(0, 0, 255);\n"
 "                font: bold 12px;\n"
 "                min-width: 1em;\n"
 "                padding: 1px;\n"
@@ -115,7 +150,7 @@ class Ui_MainWindow(object):
 "            QPushButton:hover {\n"
 "                background-color: rgb(100, 100, 100);\n"
 "                color: rgb(255, 255, 255);\n"
-"                border-color: rgb(100, 100, 100);\n"
+"                border-color: rgb(255, 0, 0);\n"
 "                padding-left: 2px;\n"
 "                padding-top: 2px;\n"
 "            }")
@@ -149,7 +184,7 @@ class Ui_MainWindow(object):
 "            QPushButton:hover {\n"
 "                background-color: rgb(100, 100, 100);\n"
 "                color: rgb(255, 255, 255);\n"
-"                border-color: rgb(100, 100, 100);\n"
+"                border-color: rgb(0, 255, 0);\n"
 "                padding-left: 5px;\n"
 "                padding-top: 5px;\n"
 "            }")
@@ -162,7 +197,7 @@ class Ui_MainWindow(object):
         self.maskinvert_checkBox.setGeometry(QtCore.QRect(10, 210, 191, 21))
         self.maskinvert_checkBox.setObjectName("maskinvert_checkBox")
         self.maskbutton = QtWidgets.QPushButton(self.tracking_tab)
-        self.maskbutton.setGeometry(QtCore.QRect(20, 180, 161, 25))
+        self.maskbutton.setGeometry(QtCore.QRect(20, 174, 161, 31))
         self.maskbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -175,8 +210,9 @@ class Ui_MainWindow(object):
 "            }\n"
 "            QPushButton:hover {\n"
 "                background-color: rgb(100, 100, 100);\n"
-"                color: rgb(0, 0, 0);\n"
+"                color: rgb(255, 255, 255);\n"
 "                border-style: inset;\n"
+"              border-color: rgb(0, 255, 0);\n"
 "            }")
         self.maskbutton.setCheckable(True)
         self.maskbutton.setChecked(False)
@@ -193,8 +229,8 @@ class Ui_MainWindow(object):
 "                background-color: rgb(0, 0, 0);\n"
 "                border-style: outset;\n"
 "                border-width: px;\n"
-"                border-radius: 2px;\n"
-"                border-color: rgb(0, 0, 0);\n"
+"                border-radius: 10px;\n"
+"                border: 2px solid rgb(0, 0, 0);\n"
 "                font: bold 16px;\n"
 "                min-width: 1em;\n"
 "                padding: 1px;\n"
@@ -202,11 +238,11 @@ class Ui_MainWindow(object):
 "            QToolButton:hover {\n"
 "                background-color: rgb(100, 100, 100);\n"
 "                color: rgb(255, 255, 255);\n"
-"                border-color: rgb(100, 100, 100);\n"
+"                border: 2px solid rgb(0, 255, 0);\n"
 "            }\n"
 "            QToolButton:pressed {\n"
 "                background-color: rgb(100, 100, 100);\n"
-"                border: 2px solid rgb(100, 100, 100);\n"
+"                border: 2px solid rgb(255, 0, 0);\n"
 "                border-style: inset;\n"
 "                padding-left: 5px;\n"
 "                padding-top: 5px;\n"
@@ -250,7 +286,7 @@ class Ui_MainWindow(object):
         self.framelabel.setGeometry(QtCore.QRect(50, 80, 121, 31))
         self.framelabel.setObjectName("framelabel")
         self.recordbutton = QtWidgets.QPushButton(self.tracking_tab)
-        self.recordbutton.setGeometry(QtCore.QRect(110, 365, 90, 51))
+        self.recordbutton.setGeometry(QtCore.QRect(105, 365, 100, 51))
         self.recordbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -298,8 +334,10 @@ class Ui_MainWindow(object):
         self.maskdilationlabel.setGeometry(QtCore.QRect(10, 285, 121, 20))
         self.maskdilationlabel.setObjectName("maskdilationlabel")
         self.masksigmabox = QtWidgets.QDoubleSpinBox(self.tracking_tab)
-        self.masksigmabox.setGeometry(QtCore.QRect(120, 240, 81, 31))
-        self.masksigmabox.setMaximum(10.0)
+        self.masksigmabox.setGeometry(QtCore.QRect(140, 240, 61, 31))
+        self.masksigmabox.setDecimals(1)
+        self.masksigmabox.setMinimum(-8.0)
+        self.masksigmabox.setMaximum(30.0)
         self.masksigmabox.setSingleStep(0.1)
         self.masksigmabox.setProperty("value", 0.7)
         self.masksigmabox.setObjectName("masksigmabox")
@@ -313,6 +351,36 @@ class Ui_MainWindow(object):
         self.croplengthbox.setProperty("value", 40)
         self.croplengthbox.setDisplayIntegerBase(10)
         self.croplengthbox.setObjectName("croplengthbox")
+        self.resetdefaultbutton = QtWidgets.QPushButton(self.tracking_tab)
+        self.resetdefaultbutton.setGeometry(QtCore.QRect(30, 730, 141, 21))
+        font = QtGui.QFont()
+        font.setFamily("Avenir")
+        font.setPointSize(15)
+        font.setBold(False)
+        font.setItalic(False)
+        self.resetdefaultbutton.setFont(font)
+        self.resetdefaultbutton.setStyleSheet("QPushButton {\n"
+"                color: rgb(255, 255, 255);\n"
+"                background-color: rgb(100, 100, 100);\n"
+"                border-style: outset;\n"
+"                border-width: 2px;\n"
+"                border-radius: 10px;\n"
+"                border-color: rgb(100, 100, 100);\n"
+"                min-width: 1em;\n"
+"                padding: 1px;\n"
+"            }\n"
+"            QPushButton:hover {\n"
+"                background-color: rgb(200, 200, 200);\n"
+"                color: rgb(0, 0, 0);\n"
+"            }\n"
+"            QPushButton:pressed {\n"
+"                background-color: rgb(200, 200, 200);\n"
+"         \n"
+"                padding-left: 5px;\n"
+"                padding-top: 5px;\n"
+"                border-style: inset;\n"
+"                }")
+        self.resetdefaultbutton.setObjectName("resetdefaultbutton")
         self.label.raise_()
         self.robotblurlabel.raise_()
         self.rightbutton.raise_()
@@ -334,6 +402,7 @@ class Ui_MainWindow(object):
         self.masksigmabox.raise_()
         self.maskdilationbox.raise_()
         self.croplengthbox.raise_()
+        self.resetdefaultbutton.raise_()
         self.tabWidget.addTab(self.tracking_tab, "")
         self.control_tab = QtWidgets.QWidget()
         self.control_tab.setObjectName("control_tab")
@@ -364,7 +433,7 @@ class Ui_MainWindow(object):
 "            QPushButton:hover {\n"
 "                background-color: rgb(100, 100, 100);\n"
 "                color: rgb(255, 255, 255);\n"
-"                border-color: rgb(100, 100, 100);\n"
+"                border-color: rgb(0, 255, 0);\n"
 "                padding-left: 5px;\n"
 "                padding-top: 5px;\n"
 "            }")
@@ -526,11 +595,19 @@ class Ui_MainWindow(object):
 "    }")
         self.psidial.setMinimum(1)
         self.psidial.setMaximum(90)
+        self.psidial.setSingleStep(5)
         self.psidial.setProperty("value", 90)
+        self.psidial.setNotchTarget(10.0)
         self.psidial.setNotchesVisible(True)
         self.psidial.setObjectName("psidial")
         self.gammadial = QtWidgets.QDial(self.control_tab)
         self.gammadial.setGeometry(QtCore.QRect(110, 380, 91, 101))
+        font = QtGui.QFont()
+        font.setFamily("Avenir")
+        font.setPointSize(15)
+        font.setBold(False)
+        font.setItalic(False)
+        self.gammadial.setFont(font)
         self.gammadial.setStyleSheet("QDial {\n"
 "    background-color: qconicalgradient(cx:0.5, cy:0.5, angle:90, stop:0 #1a5276, stop:0.3 #2980b9, stop:0.7 #3498db, stop:1 #1a5276);\n"
 "    border: 2px solid #1a5276;\n"
@@ -548,13 +625,15 @@ class Ui_MainWindow(object):
 "")
         self.gammadial.setMaximum(180)
         self.gammadial.setSingleStep(5)
+        self.gammadial.setPageStep(10)
         self.gammadial.setProperty("value", 90)
         self.gammadial.setOrientation(QtCore.Qt.Horizontal)
-        self.gammadial.setWrapping(True)
+        self.gammadial.setWrapping(False)
+        self.gammadial.setNotchTarget(10.0)
         self.gammadial.setNotchesVisible(True)
         self.gammadial.setObjectName("gammadial")
         self.simulationbutton = QtWidgets.QPushButton(self.control_tab)
-        self.simulationbutton.setGeometry(QtCore.QRect(20, 725, 171, 21))
+        self.simulationbutton.setGeometry(QtCore.QRect(20, 730, 171, 21))
         self.simulationbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 255, 0);\n"
@@ -588,40 +667,8 @@ class Ui_MainWindow(object):
         self.simulationbutton.setCheckable(True)
         self.simulationbutton.setObjectName("simulationbutton")
         self.tabWidget.addTab(self.control_tab, "")
-        self.resetdefaultbutton = QtWidgets.QPushButton(self.centralwidget)
-        self.resetdefaultbutton.setGeometry(QtCore.QRect(50, 795, 121, 31))
-        self.resetdefaultbutton.setStyleSheet("QPushButton {\n"
-"                color: rgb(255, 255, 255);\n"
-"                background-color: rgb(100, 100, 100);\n"
-"                border-style: outset;\n"
-"                border-width: 3px;\n"
-"                border-radius: 10px;\n"
-"                border-color: rgb(100, 100, 100);\n"
-"                min-width: 1em;\n"
-"                padding: 6px;\n"
-"            }\n"
-"            QPushButton:hover {\n"
-"                background-color: rgb(200, 200, 200);\n"
-"                color: rgb(0, 0, 0);\n"
-"            }\n"
-"            QPushButton:pressed {\n"
-"                background-color: rgb(200, 200, 200);\n"
-"         \n"
-"                padding-left: 5px;\n"
-"                padding-top: 5px;\n"
-"                border-style: inset;\n"
-"                }")
-        self.resetdefaultbutton.setObjectName("resetdefaultbutton")
-        self.VideoFeedLabel = QtWidgets.QLabel(self.centralwidget)
-        self.VideoFeedLabel.setGeometry(QtCore.QRect(250, 5, 1330, 700))
-        self.VideoFeedLabel.setMouseTracking(True)
-        self.VideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
-        self.VideoFeedLabel.setText("")
-        self.VideoFeedLabel.setObjectName("VideoFeedLabel")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.dockWidget.setWidget(self.dockWidgetContents)
+        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dockWidget)
         self.actiondock = QtWidgets.QAction(MainWindow)
         self.actiondock.setMenuRole(QtWidgets.QAction.NoRole)
         self.actiondock.setObjectName("actiondock")
@@ -633,6 +680,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.frameslider.setFormat(_translate("MainWindow", "Frame %v"))
         self.robotblurlabel.setText(_translate("MainWindow", "Blur:"))
         self.rightbutton.setText(_translate("MainWindow", "..."))
         self.choosevideobutton.setText(_translate("MainWindow", "Choose Video"))
@@ -649,9 +697,10 @@ class Ui_MainWindow(object):
         self.framelabel.setText(_translate("MainWindow", "Frame: "))
         self.recordbutton.setText(_translate("MainWindow", "Record"))
         self.maskdilationlabel.setText(_translate("MainWindow", "Mask Dilation"))
+        self.resetdefaultbutton.setText(_translate("MainWindow", "Reset"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tracking_tab), _translate("MainWindow", "Tracking"))
         self.controlbutton.setText(_translate("MainWindow", "Control"))
-        self.arrivalthreshlabel.setText(_translate("MainWindow", "Arrival Thresh"))
+        self.arrivalthreshlabel.setText(_translate("MainWindow", "Arrive Thresh"))
         self.gammalabel.setText(_translate("MainWindow", "Gamma: 90"))
         self.rollingfrequencylabel.setText(_translate("MainWindow", "Frequency"))
         self.psilabel.setText(_translate("MainWindow", "Psi: 90"))
@@ -664,5 +713,4 @@ class Ui_MainWindow(object):
         self.swimradio.setText(_translate("MainWindow", "Swim"))
         self.simulationbutton.setText(_translate("MainWindow", "Simulation On"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.control_tab), _translate("MainWindow", "Control"))
-        self.resetdefaultbutton.setText(_translate("MainWindow", "Reset to Default"))
         self.actiondock.setText(_translate("MainWindow", "dock"))

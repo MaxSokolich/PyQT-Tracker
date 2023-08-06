@@ -12,7 +12,7 @@ class HelmholtzSimulator(FigureCanvas):
     def __init__(self, parent=None, width=200, height=200, dpi=100):
         fig = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
         fig.tight_layout()
-        fig.subplots_adjust(top=1, bottom=0, left=-0.2, right=1)
+        fig.subplots_adjust(top=1, bottom=0, left=-0.1, right=1)
         self.ax = fig.add_subplot(111, projection='3d')
 
         super().__init__(fig)
@@ -26,9 +26,9 @@ class HelmholtzSimulator(FigureCanvas):
         self.Bz = 0
         self.A = 1 #amplitude of rotating magetnic field
         self.alpha = 0
-        self.gamma = 0
+        self.gamma = np.pi/2
         self.psi = 0
-        self.freq = 0
+        self.freq = 1
         self.omega = 2*np.pi* float(self.freq)  #angular velocity of rotating field defined from input from Rotating Frequency Entry
         self.roll = False
     
@@ -38,7 +38,7 @@ class HelmholtzSimulator(FigureCanvas):
         self.start_time = time.time()
 
         #define 3D grid
-        grid_res = 8 
+        grid_res = 16
         min_x,min_y,min_z = -25, -25,-25
         max_x, max_y, max_z = 25, 25,25
 
@@ -46,10 +46,14 @@ class HelmholtzSimulator(FigureCanvas):
         Y = np.arange(min_y, max_y, grid_res)
         Z = np.arange(min_z, max_z, grid_res)
         self.x,self.y,self.z = np.meshgrid(X, Y, Z)
-        self.ax.scatter(self.x,self.y,self.z, s = 1, c= "b")
-        self.ax.set_xlabel('x') 
-        self.ax.set_ylabel('y') 
-        self.ax.set_zlabel('z')
+        self.ax.scatter(self.x,self.y,self.z, s = 2, c= "b")
+        self.ax.set_xlabel('x',labelpad=-15) 
+        self.ax.set_ylabel('y',labelpad=-15) 
+        self.ax.set_zlabel('z',labelpad=-17)
+        self.ax.set_xticks([])
+        self.ax.set_yticks([])
+        self.ax.set_zticks([])
+        
 
         
         self.timer = QTimer(self)
@@ -139,14 +143,16 @@ class HelmholtzSimulator(FigureCanvas):
             
             # Draw Bx,By,Bz field
             self.ax.clear()
-            self.show_axis_rotation(self.ax, 60)
+            self.show_axis_rotation(self.ax, 40)
             self.ax.set_xlabel('x') 
             self.ax.set_ylabel('y') 
             self.ax.set_zlabel('z')
+            self.ax.set_xticks([])
+            self.ax.set_yticks([])
+            self.ax.set_zticks([])
             speed = np.sqrt((BX)**2+(BY)**2+(BZ)**2).flatten()
             self.ax.quiver(self.x,self.y,self.z,BX,BY,BZ, color='black',length=1) #norm = colors.LogNorm(vmin=speed.min(), vmax=speed.max() ))#,density = 2)#norm = colors.LogNorm(vmin=speed.min(), vmax=speed.max() ))
-            self.ax.scatter(self.x,self.y,self.z, s = 1, c= "b")
-             
+            self.ax.scatter(self.x,self.y,self.z, s = 2, c= "b")
             self.draw()
 
 
@@ -162,15 +168,19 @@ class HelmholtzSimulator(FigureCanvas):
         ax.quiver(0,0,0,x,y,z,color='red',length=length)
 
 
+
     def start(self):
        self.timer.start(75)# Update plot every 10 ms
 
     def zero(self):
         self.ax.clear()
-        self.ax.scatter(self.x,self.y,self.z, s = 1, c= "b")
+        self.ax.scatter(self.x,self.y,self.z, s = 2, c= "b")
         self.ax.set_xlabel('x') 
         self.ax.set_ylabel('y') 
         self.ax.set_zlabel('z')
+        self.ax.set_xticks([])
+        self.ax.set_yticks([])
+        self.ax.set_zticks([])
         self.draw()
 
 

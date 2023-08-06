@@ -11,7 +11,6 @@ import cv2
 import os
 from os.path import expanduser
 
-print(PYQT_VERSION_STR)
 import pandas as pd
 from datetime import datetime
 import sys
@@ -21,16 +20,19 @@ import cv2
 import matplotlib.pyplot as plt 
 import time
 import platform
-import pygame
 os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
-
+import pygame
+try:
+    import EasyPySpin
+except Exception:
+    pass
 
 from classes.tracker_class import VideoThread
 from classes.gui_widgets import Ui_MainWindow
 from classes.robot_class import Robot
 from classes.arduino_class import ArduinoHandler
-from classes.joystick_class import ControllerActions
+from classes.joystick_class import Mac_Controller,Linux_Controller,Windows_Controller
 from classes.simulation_class import HelmholtzSimulator
 from classes.projection_class import AxisProjection
 from classes.acoustic_class import AcousticClass
@@ -44,14 +46,27 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.display_width = 1330# self.ui.frameGeometry().width()
-        self.display_height = 700 #keep this fixed, changed the width dpending on the aspect ratio
 
-        self.window_width = 1600
-        self.window_height = 860
+
+        #resize some widgets to fit the screen better
+        screen  = QtWidgets.QDesktopWidget().screenGeometry(-1)
+        
+        self.window_width = 1600#screen.width()
+        self.window_height = screen.height()-150
         self.resize(self.window_width, self.window_height)
-        self.ui.frameslider.hide()
 
+        self.display_width = self.window_width-265# self.ui.frameGeometry().width()
+        self.display_height = self.window_height-165 #keep this fixed, changed the width dpending on the aspect ratio
+
+        
+        self.ui.VideoFeedLabel.setGeometry(QtCore.QRect(10,  5,                       self.display_width,     self.display_height))
+        self.ui.frameslider.setGeometry(QtCore.QRect(10,    self.display_height+12,   self.display_width,     20))
+        self.ui.plainTextEdit.setGeometry(QtCore.QRect(10,  self.display_height+40,   self.display_width-400,     91))
+
+        #1600, 860
+         
+
+      
         #create folder in homerdiractory of user
         home_dir = expanduser("~")
         new_dir_name = "Tracking Data"
@@ -76,12 +91,15 @@ class MainWindow(QtWidgets.QMainWindow):
         if "mac" in platform.platform():
             self.tbprint("Detected OS: macos")
             PORT = "/dev/cu.usbmodem111101"
+            self.controller_actions = Mac_Controller()
         elif "Linux" in platform.platform():
             self.tbprint("Detected OS: Linux")
             PORT = "/dev/ttyACM0"
+            self.controller_actions = Linux_Controller()
         elif "Windows" in platform.platform():
             self.tbprint("Detected OS:  Windows")
             PORT = "COM3"
+            self.controller_actions = Windows_Controller()
         else:
             self.tbprint("undetected operating system")
             PORT = None
@@ -93,8 +111,7 @@ class MainWindow(QtWidgets.QMainWindow):
             #self.ui.controlbutton.hide()
         
         #define joystick class, simulator class, pojection class, and acoustic class
-        self.controller_actions = ControllerActions()
-        self.simulator = HelmholtzSimulator(self.ui.magneticfieldsimlabel, width=200, height=200, dpi=50)
+        self.simulator = HelmholtzSimulator(self.ui.magneticfieldsimlabel, width=200, height=200, dpi=125)
         self.projection = AxisProjection()
         self.acoustic_module = AcousticClass()
         
@@ -125,7 +142,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.maskdilationbox.valueChanged.connect(self.get_slider_vals)
         self.ui.croplengthbox.valueChanged.connect(self.get_slider_vals)
         self.ui.savedatabutton.clicked.connect(self.savedata)
-        self.ui.frameslider.valueChanged.connect(self.adjustframe)
         self.ui.VideoFeedLabel.installEventFilter(self)
         self.ui.recordbutton.clicked.connect(self.recordfunction)
 
@@ -138,6 +154,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.acousticfreq_spinBox.hide()
         self.ui.acousticfreqlabel.hide()
         self.ui.applyacousticbutton.hide()
+        #self.ui.frameslider.hide()
 
         self.ui.controlbutton.clicked.connect(self.toggle_control_status)
         self.ui.joystickbutton.clicked.connect(self.toggle_joystick_status)
@@ -151,9 +168,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.acousticfreq_spinBox.valueChanged.connect(self.get_acoustic_frequency)
         self.ui.resetdefaultbutton.clicked.connect(self.resetparams)
         self.ui.simulationbutton.clicked.connect(self.toggle_simulation)
+        self.ui.dockWidget.dockLocationChanged.connect(self.dockstatus)
         
 
-    
+    def dockstatus(self):
+        if self.ui.dockWidget.isFloating():
+            self.window_width -= 240#screen.width()
+            self.resize(self.window_width, self.window_height)
+        else:
+            self.window_width += 240#screen.width()
+            self.resize(self.window_width, self.window_height)
+
+
     def toggle_simulation(self):
         if self.ui.simulationbutton.isChecked():
             self.simulator.start()
@@ -197,7 +223,8 @@ class MainWindow(QtWidgets.QMainWindow):
         #if crop_length %2 ==0:
         #    self.ui.croplengthlabel.setText("Crop Length:       {}".format(crop_length) )
 
-
+        self.simulator.gamma = np.radians(gamma)
+        self.simulator.psi = np.radians(psi)
         
         
 
@@ -273,10 +300,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.simulator.By = By
             self.simulator.Bz = Bz
             self.simulator.alpha = alpha
-            self.simulator.gamma = gamma
             self.simulator.freq = freq/10
             self.simulator.omega = 2 * np.pi * self.simulator.freq
-            self.simulator.psi = psi
+ 
 
 
         elif self.joystick_status == True:
@@ -300,16 +326,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.simulator.By = By
             self.simulator.Bz = Bz
             self.simulator.alpha = alpha
-            self.simulator.gamma = gamma
             self.simulator.freq = freq/10
             self.simulator.omega = 2 * np.pi * self.simulator.freq
-            self.simulator.psi = psi
+     
        
     
     def get_acoustic_frequency(self):
-        self.acoustic_frequency = self.ui.acousticfreq_spinBox.value()
-        self.tbprint("Control On: {} Hz".format(self.acoustic_frequency))
-        self.apply_acoustic()
+        if self.ui.applyacousticbutton.isChecked():
+            self.acoustic_frequency = self.ui.acousticfreq_spinBox.value()
+            self.tbprint("Control On: {} Hz".format(self.acoustic_frequency))
+            self.apply_acoustic()
+        
     
     def apply_acoustic(self):
         if self.ui.applyacousticbutton.isChecked():
@@ -360,7 +387,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tbprint(file_name)
         else:
             self.videopath = 0
-            self.ui.choosevideobutton.setText(str(0))
+            self.ui.choosevideobutton.setText("Live")
             self.tbprint("Using Video Camera")
 
     def convert_coords(self,pos):
@@ -465,7 +492,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #update frame slider too
         if self.videopath !=0:
             self.ui.framelabel.setText("Frame:"+str(self.tracker.framenum))
-            self.ui.frameslider.setSliderPosition(self.tracker.framenum)
+            self.ui.frameslider.setValue(self.tracker.framenum)
 
         #also update robot info
         if len(self.tracker.robot_list) > 0:
@@ -496,92 +523,104 @@ class MainWindow(QtWidgets.QMainWindow):
     
     def track(self):
         if self.videopath is not None:
-            if self.ui.trackbutton.isChecked():
+            try:
                 
-                #start video thread
-                self.ui.pausebutton.show()
-                self.ui.leftbutton.show()
-                self.ui.rightbutton.show()
-                self.ui.maskbutton.show()
+                if self.ui.trackbutton.isChecked():
 
-                #need to resize the window in order to maintain proper aspect ratios
-                self.cap = cv2.VideoCapture(self.videopath)
-                self.video_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-                self.video_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-                self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
-                self.tbprint("Width: {}  --  Height: {}  --  Fps: {}".format(self.video_width,self.video_height,self.videofps))
-
-                self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
-
-                self.display_width = int(self.display_height * (self.video_width / self.video_height))
-                self.ui.VideoFeedLabel.setGeometry(QtCore.QRect(250, 5, self.display_width, self.display_height))
-                self.ui.VideoFeedLabel.setStyleSheet("border:2px solid rgb(0, 255, 0); ")
-                self.ui.CroppedVideoFeedLabel.setStyleSheet("border:2px solid rgb(0, 255, 0); ")
-
-                self.window_width = self.display_width+250+50
-                self.resize(self.window_width, self.window_height)
                 
-                if self.videopath != 0:
-                    self.ui.frameslider.show()
-                    self.ui.frameslider.setGeometry(QtCore.QRect(250, 710, self.display_width, 30))
-                    self.ui.frameslider.setMaximum(self.totalnumframes)
+                    if self.videopath == 0:
+                        self.cap  = EasyPySpin.VideoCapture(0)
+                        self.ui.maskbutton.show()
+                        
+                    else:
+                        self.cap  = cv2.VideoCapture(self.videopath)
+                        self.ui.pausebutton.show()
+                        self.ui.leftbutton.show()
+                        self.ui.rightbutton.show()
+                        self.ui.maskbutton.show()
+          
+                        
+                    
+
+
+                    self.cap = cv2.VideoCapture(self.videopath)
+                    self.video_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                    self.video_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                    self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
+                    self.tbprint("Width: {}  --  Height: {}  --  Fps: {}".format(self.video_width,self.video_height,self.videofps))
+
+                    self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+                    self.display_width = int(self.display_height * (self.video_width / self.video_height))
+                    self.ui.VideoFeedLabel.setGeometry(QtCore.QRect(10, 5, self.display_width, self.display_height))
+                    self.ui.VideoFeedLabel.setStyleSheet("border:2px solid rgb(0, 255, 0); ")
+                    self.ui.CroppedVideoFeedLabel.setStyleSheet("border:2px solid rgb(0, 255, 0); ")
+                    
+                    
+                    self.window_width = self.display_width+265
+                    self.resize(self.window_width, self.window_height)
+                    
+                    if self.videopath != 0:
+                        self.ui.frameslider.show()
+                        self.ui.frameslider.setGeometry(QtCore.QRect(10, self.display_height+12, self.display_width, 20))
+                        self.ui.frameslider.setMaximum(self.totalnumframes)
+                
+                    self.tracker = VideoThread(self)
+                    self.tracker.change_pixmap_signal.connect(self.update_image)
+                    self.tracker.cropped_frame_signal.connect(self.update_croppedimage)
+                    self.tracker.actions_signal.connect(self.update_actions)
+                    self.tracker.start()
+                    
+                    self.ui.trackbutton.setText("Stop")
+                    
+                    if self.videopath == 0:
+                        self.ui.pausebutton.hide()
+                        self.ui.leftbutton.hide()
+                        self.ui.rightbutton.hide()
+                        self.ui.frameslider.hide()
             
-                self.tracker = VideoThread(self)
-                self.tracker.change_pixmap_signal.connect(self.update_image)
-                self.tracker.cropped_frame_signal.connect(self.update_croppedimage)
-                self.tracker.actions_signal.connect(self.update_actions)
-                self.tracker.start()
-                
-                self.ui.trackbutton.setText("Stop")
-                
-                if self.videopath == 0:
-                    self.ui.pausebutton.hide()
-                    self.ui.leftbutton.hide()
-                    self.ui.rightbutton.hide()
-                    self.ui.frameslider.hide()
-         
-                
-            else:
-                self.ui.VideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
-                self.ui.CroppedVideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
-         
-                
-                if self.cap is not None:
-                    self.ui.trackbutton.setText("Track")
-                    self.tracker.stop()
                     
-                    #reset control button
-                    self.control_status = False
-                    self.ui.controlbutton.setText("Control")
-                    self.tbprint("Control Off")
-                    self.ui.controlbutton.setChecked(False)
-
-                    #reset joystick button
-                    self.joystick_status = False
-                    self.ui.joystickbutton.setText("Joystick")
-                    self.tbprint("Joystick Off")
-                    self.ui.joystickbutton.setChecked(False)
-
-                    #reset mask button
-                    self.tracker.mask_flag = False
-                    self.ui.maskbutton.setText("Mask")
-                    self.ui.maskbutton.setChecked(False)
-
+                else:
+                    self.ui.VideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
+                    self.ui.CroppedVideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
+            
                     
-                    #also reset pause button
-                    self.ui.pausebutton.setChecked(False)
-                    self.ui.pausebutton.setText("Pause")
+                    if self.cap is not None:
+                        self.ui.trackbutton.setText("Track")
+                        self.tracker.stop()
+                        
+                        #reset control button
+                        self.control_status = False
+                        self.ui.controlbutton.setText("Control")
+                        self.tbprint("Control Off")
+                        self.ui.controlbutton.setChecked(False)
 
-                    self.ui.pausebutton.hide()
-                    self.ui.leftbutton.hide()
-                    self.ui.rightbutton.hide()
-                    self.ui.maskbutton.hide()    
+                        #reset joystick button
+                        self.joystick_status = False
+                        self.ui.joystickbutton.setText("Joystick")
+                        self.tbprint("Joystick Off")
+                        self.ui.joystickbutton.setChecked(False)
 
-                    #zero arduino commands
-                    self.arduino.send(0,0,0,0,0,0,0)
+                        #reset mask button
+                        self.tracker.mask_flag = False
+                        self.ui.maskbutton.setText("Mask")
+                        self.ui.maskbutton.setChecked(False)
 
-        else:
-            self.ui.trackbutton.setText("No Video")
+                        
+                        #also reset pause button
+                        self.ui.pausebutton.setChecked(False)
+                        self.ui.pausebutton.setText("Pause")
+
+                        self.ui.pausebutton.hide()
+                        self.ui.leftbutton.hide()
+                        self.ui.rightbutton.hide()
+                        self.ui.maskbutton.hide()    
+
+                        #zero arduino commands
+                        self.arduino.send(0,0,0,0,0,0,0)
+            except Exception:
+                self.tbprint("No EasyPySpin Camera Available")
+        
             
 
     def showmask(self):
@@ -632,22 +671,17 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.pausebutton.setText("Pause")
                 
             
-    def adjustframe(self):
-        if self.videopath != 0:
-            self.tracker.framenum = self.ui.frameslider.value()
-            self.ui.framelabel.setText("Frame:"+str(self.tracker.framenum))
-
 
     def frameright(self):
         if self.videopath != 0:
             self.tracker.framenum+=1
-            self.ui.frameslider.setSliderPosition(self.tracker.framenum)
+            self.ui.frameslider.setValue(self.tracker.framenum)
             self.ui.framelabel.setText("Frame:"+str(self.tracker.framenum))
 
     def frameleft(self):
         if self.videopath != 0:
             self.tracker.framenum-=1
-            self.ui.frameslider.setSliderPosition(self.tracker.framenum)
+            self.ui.frameslider.setValue(self.tracker.framenum)
             self.ui.framelabel.setText("Frame:"+str(self.tracker.framenum))
 
 

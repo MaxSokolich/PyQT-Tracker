@@ -185,7 +185,7 @@ class RRT:
 
         i=1
         pathFound = False
-        for k in range(10000):#
+        for k in range(5000):#
             nx,ny = self.rnd_point(h,l)  #generate random point
             #print("Random points:",nx,ny)
 
