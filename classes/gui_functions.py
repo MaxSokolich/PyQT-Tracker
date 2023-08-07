@@ -29,13 +29,24 @@ except Exception:
     pass
 
 from classes.tracker_class import VideoThread
-from classes.gui_widgets import Ui_MainWindow
+from classes.gui_widgets_mac import Ui_MainWindow
+
 from classes.robot_class import Robot
 from classes.arduino_class import ArduinoHandler
 from classes.joystick_class import Mac_Controller,Linux_Controller,Windows_Controller
 from classes.simulation_class import HelmholtzSimulator
 from classes.projection_class import AxisProjection
 from classes.acoustic_class import AcousticClass
+
+
+if "mac" in platform.platform():
+    from classes.gui_widgets_mac import Ui_MainWindow
+elif "Linux" in platform.platform():
+    from classes.gui_widgets_linux import Ui_MainWindow
+elif "Windows" in platform.platform():
+    from classes.gui_widgets_windows import Ui_MainWindow
+else:
+    print("error")
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -534,7 +545,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 
                     if self.videopath == 0:
-                        self.cap  = EasyPySpin.VideoCapture(0)
+                        #self.cap  = EasyPySpin.VideoCapture(0)
+                        self.cap  = cv2.VideoCapture(0)
+
                         self.ui.maskbutton.show()
                         
                     else:

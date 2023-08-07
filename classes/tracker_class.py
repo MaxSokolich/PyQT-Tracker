@@ -211,11 +211,13 @@ class VideoThread(QThread):
             ret, frame = self.cap.read()
         
             #calcualte mask for control
-            control_mask = self.find_mask(frame)
-            #dilate mask 
-            if self.mask_dilation>0:
-                control_mask = ndimage.binary_dilation(control_mask,iterations=self.mask_dilation)
-            control_mask = control_mask.astype(np.uint8)*255   #convert to an unsigned byte
+            if self.framenum %10 == 0:
+                control_mask = self.find_mask(frame)
+                #dilate mask 
+                if self.mask_dilation>0:
+                    control_mask = ndimage.binary_dilation(control_mask,iterations=self.mask_dilation)
+                control_mask = control_mask.astype(np.uint8)*255   #convert to an unsigned byte
+            
             
             #control_mask = None
             if ret:
