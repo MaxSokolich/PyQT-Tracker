@@ -5,6 +5,8 @@ import sys
 from classes.gui_functions import MainWindow
 
 #issues mask calcuation so expesnive
+#add zoom feature?
+#add button to set mask?
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

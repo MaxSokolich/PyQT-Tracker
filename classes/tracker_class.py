@@ -15,7 +15,6 @@ class VideoThread(QThread):
     actions_signal = pyqtSignal(float, bool)
 
 
-
     def __init__(self, parent):
         super().__init__(parent=parent)
         self.parent = parent
@@ -218,21 +217,17 @@ class VideoThread(QThread):
             
             ret, frame = self.cap.read()
         
-            #calcualte mask for control
-            if self.framenum == 0:
-                control_mask = self.find_mask(frame)
-                #dilate mask 
-                if self.mask_dilation>0:
-                    control_mask = ndimage.binary_dilation(control_mask,iterations=self.mask_dilation)
-                control_mask = control_mask.astype(np.uint8)*255   #convert to an unsigned byte
-            
-            control_mask = self.find_mask(frame)
-           
-            
-            
             #control_mask = None
             if ret:
-                
+
+                #calcualte mask for control
+                if self.framenum %50 == 0:
+                    control_mask = self.find_mask(frame)
+                    #dilate mask 
+                    if self.mask_dilation>0:
+                        control_mask = ndimage.binary_dilation(control_mask,iterations=self.mask_dilation)
+                    control_mask = control_mask.astype(np.uint8)*255   #convert to an unsigned byte
+
                 
                 
                 #step 1 detect robot

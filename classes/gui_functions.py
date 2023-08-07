@@ -545,9 +545,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 
                     if self.videopath == 0:
-                        self.cap  = EasyPySpin.VideoCapture(0)
-                        #self.cap  = cv2.VideoCapture(0)
-
+                        try:
+                            self.cap  = EasyPySpin.VideoCapture(0)
+                        except Exception:
+                            self.cap  = cv2.VideoCapture(0)
                         self.ui.maskbutton.show()
                         
                     else:
