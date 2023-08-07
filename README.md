@@ -5,7 +5,7 @@ New microrobotic tracking and control UI
 
 --osx-entitlements-file Info.plist
 
-pyuic5 PyQt_Magscope.ui -o gui_widgets.py
+ pyuic5 MagscopeWindows.ui -o gui_widgets_windows.py
 
 mk-icns MagScopeBox.png 
 # Tracker Tab

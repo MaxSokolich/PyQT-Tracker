@@ -44,6 +44,12 @@ class VideoThread(QThread):
         self.RRTtreesize = 25
         self.memory = 15  #this isnt used as of now
         self.robot_list = []
+
+        #from classes.mask_class import MaskThread
+        #self.maskthread = MaskThread(self)
+        #self.maskthread.mask_signal.connect(self.updatemask)
+        #self.maskthread.start()
+        #self.mask = None
         
 
 
@@ -187,11 +193,13 @@ class VideoThread(QThread):
 
         return mask
     
-    
+    #def updatemask(self, mask):
+    #    self.mask = mask
+        
 
 
     def run(self):
-       
+        
         # capture from web camx
         while self._run_flag:
             self.fps.update()
@@ -211,12 +219,15 @@ class VideoThread(QThread):
             ret, frame = self.cap.read()
         
             #calcualte mask for control
-            if self.framenum %10 == 0:
+            if self.framenum == 0:
                 control_mask = self.find_mask(frame)
                 #dilate mask 
                 if self.mask_dilation>0:
                     control_mask = ndimage.binary_dilation(control_mask,iterations=self.mask_dilation)
                 control_mask = control_mask.astype(np.uint8)*255   #convert to an unsigned byte
+            
+            control_mask = self.find_mask(frame)
+           
             
             
             #control_mask = None
