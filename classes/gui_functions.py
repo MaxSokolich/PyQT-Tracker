@@ -251,6 +251,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.acousticfreq_spinBox.hide()
             self.ui.acousticfreqlabel.hide()
             self.ui.applyacousticbutton.hide()
+            self.arduino.send(0, 0, 0, 0, 0, 0, 0)  
             
     
 
@@ -265,6 +266,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.joystick_status = False
                 self.ui.joystickbutton.setText("Joystick")
                 self.tbprint("Joystick Off")
+                self.arduino.send(0, 0, 0, 0, 0, 0, 0)  
         else:
             self.tbprint("No Joystick Connected...")
 
@@ -328,6 +330,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.simulator.alpha = alpha
             self.simulator.freq = freq/10
             self.simulator.omega = 2 * np.pi * self.simulator.freq
+        
+  
      
        
     
@@ -442,6 +446,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     if event.buttons() == QtCore.Qt.RightButton: 
                         del self.tracker.robot_list[:]
                         del self.magnetic_field_list[:]
+                        self.arduino.send(0, 0, 0, 0, 0, 0, 0)  
                     
                             
                 elif event.type() == QtCore.QEvent.MouseMove:
@@ -542,14 +547,12 @@ class MainWindow(QtWidgets.QMainWindow):
                         
                     
 
-
-                    self.cap = cv2.VideoCapture(self.videopath)
                     self.video_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
                     self.video_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
                     self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
                     self.tbprint("Width: {}  --  Height: {}  --  Fps: {}".format(self.video_width,self.video_height,self.videofps))
 
-                    self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+                    
 
                     self.display_width = int(self.display_height * (self.video_width / self.video_height))
                     self.ui.VideoFeedLabel.setGeometry(QtCore.QRect(10, 5, self.display_width, self.display_height))
@@ -561,9 +564,10 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.resize(self.window_width, self.window_height)
                     
                     if self.videopath != 0:
-                        self.ui.frameslider.show()
+                        self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
                         self.ui.frameslider.setGeometry(QtCore.QRect(10, self.display_height+12, self.display_width, 20))
                         self.ui.frameslider.setMaximum(self.totalnumframes)
+                        self.ui.frameslider.show()
                 
                     self.tracker = VideoThread(self)
                     self.tracker.change_pixmap_signal.connect(self.update_image)
@@ -638,12 +642,13 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.ui.recordbutton.isChecked():
                 self.ui.recordbutton.setText("Stop")
                 self.tbprint("Start Record")
-                file_path  = os.path.join(self.new_dir_path, str(datetime.now())+".mp4")
+                date = datetime.now().strftime('%Y.%m.%d-%H.%M.%S')
+                file_path  = os.path.join(self.new_dir_path, date+".mp4")
                 self.rec_start_time = time.time()
                 self.result = cv2.VideoWriter(
                     file_path,
                     cv2.VideoWriter_fourcc(*"mp4v"),
-                    self.videofps,    
+                    10,    
                     (self.video_width, self.video_height), ) 
             else:
                 self.ui.recordbutton.setText("Record")
@@ -689,7 +694,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def savedata(self):
         if self.cap is not None and len(self.tracker.robot_list)>0:      
              #create dictionarys from the robot class
-            file_path  = os.path.join(self.new_dir_path, str(datetime.now())+".xlsx")
+            date = datetime.now().strftime('%Y.%m.%d-%H.%M.%S')
+            file_path  = os.path.join(self.new_dir_path, date+".xlsx")
             robot_dictionary = []
             for bot in self.tracker.robot_list:
                 robot_dictionary.append(bot.as_dict())

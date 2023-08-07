@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication
 import sys
 from classes.gui_functions import MainWindow
 
+#issues mask calcuation so expesnive
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

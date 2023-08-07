@@ -181,7 +181,6 @@ class VideoThread(QThread):
             imgdiff = np.mean(imgdiff)-imgdiff;#if invert is true then just keep the img as it is, this is for dark subjects. If invert is false then make it negative and shift by mean, this is for bright subjects
         
 
-
         maskdiff = imgdiff < img_threshold
         finalimg= np.where(maskdiff,np.zeros_like(im1),imgdiff)#setting dark pixels to zero
         mask = finalimg > (finalimg.mean() + mask_sigma*finalimg.std())
@@ -210,14 +209,15 @@ class VideoThread(QThread):
             
             
             ret, frame = self.cap.read()
-
+        
             #calcualte mask for control
             control_mask = self.find_mask(frame)
             #dilate mask 
             if self.mask_dilation>0:
                 control_mask = ndimage.binary_dilation(control_mask,iterations=self.mask_dilation)
             control_mask = control_mask.astype(np.uint8)*255   #convert to an unsigned byte
-
+            
+            #control_mask = None
             if ret:
                 
                 
