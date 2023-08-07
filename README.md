@@ -8,9 +8,14 @@ New microrobotic tracking and control UI
 pyuic5 PyQt_Magscope.ui -o gui_widgets.py
 
 mk-icns MagScopeBox.png 
+# Tracker Tab
+
+<img width="1683" alt="MagScopeTracker" src="https://github.com/MaxSokolich/PyQT-Tracker/assets/50302377/97b103b2-4e89-4b2e-89fc-73de8a278ae8">
+
+# Control Tab
+
+<img width="1680" alt="MagScopeControl" src="https://github.com/MaxSokolich/PyQT-Tracker/assets/50302377/fa50d165-aaee-476f-ab29-0af3a1e49d97">
 
 
 
-
-<img width="1594" alt="PyQT-Tracker" src="https://github.com/MaxSokolich/PyQT-Tracker/assets/50302377/4177282a-906d-4ded-8ba0-9130be71bef4">
 
