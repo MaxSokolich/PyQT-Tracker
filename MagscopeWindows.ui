@@ -21,6 +21,9 @@
   <property name="styleSheet">
    <string notr="true">font-family: Arial;</string>
   </property>
+  <property name="documentMode">
+   <bool>false</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPlainTextEdit" name="plainTextEdit">
     <property name="geometry">
@@ -74,12 +77,6 @@
       <width>1321</width>
       <height>20</height>
      </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Arial</family>
-      <pointsize>10</pointsize>
-     </font>
     </property>
     <property name="styleSheet">
      <string notr="true">    QProgressBar {
@@ -141,7 +138,7 @@
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">font-size: 12pt; font: Arial;</string>
+      <string notr="true">font-size: 15pt; font: Arial;</string>
      </property>
      <property name="currentIndex">
       <number>0</number>
@@ -204,7 +201,7 @@
         <bool>true</bool>
        </property>
        <property name="autoRepeatInterval">
-        <number>50</number>
+        <number>1</number>
        </property>
        <property name="arrowType">
         <enum>Qt::RightArrow</enum>
@@ -374,7 +371,10 @@
         </rect>
        </property>
        <property name="text">
-        <string>Mask Invert: True</string>
+        <string>Invert Mask: True</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
       <widget class="QPushButton" name="maskbutton">
@@ -471,7 +471,7 @@
         <bool>true</bool>
        </property>
        <property name="autoRepeatInterval">
-        <number>50</number>
+        <number>1</number>
        </property>
        <property name="arrowType">
         <enum>Qt::LeftArrow</enum>
@@ -516,7 +516,7 @@
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QLabel" name="masksigmalabel">
+      <widget class="QLabel" name="maskthreshlabel">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -526,7 +526,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Mask Sigma</string>
+        <string>Mask Thresh</string>
        </property>
       </widget>
       <widget class="QLabel" name="robotvelocitylabel">
@@ -638,31 +638,6 @@
         <string>Mask Dilation</string>
        </property>
       </widget>
-      <widget class="QDoubleSpinBox" name="masksigmabox">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>240</y>
-         <width>61</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="decimals">
-        <number>1</number>
-       </property>
-       <property name="minimum">
-        <double>-8.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>30.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.700000000000000</double>
-       </property>
-      </widget>
       <widget class="QSpinBox" name="maskdilationbox">
        <property name="geometry">
         <rect>
@@ -707,8 +682,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>12</pointsize>
-         <weight>50</weight>
+         <pointsize>15</pointsize>
          <italic>false</italic>
          <bold>false</bold>
         </font>
@@ -740,6 +714,22 @@
         <string>Reset</string>
        </property>
       </widget>
+      <widget class="QSpinBox" name="maskthreshbox">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>240</y>
+         <width>61</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="maximum">
+        <number>255</number>
+       </property>
+       <property name="value">
+        <number>128</number>
+       </property>
+      </widget>
       <zorder>label</zorder>
       <zorder>robotblurlabel</zorder>
       <zorder>rightbutton</zorder>
@@ -753,15 +743,15 @@
       <zorder>CroppedVideoFeedLabel</zorder>
       <zorder>leftbutton</zorder>
       <zorder>savedatabutton</zorder>
-      <zorder>masksigmalabel</zorder>
+      <zorder>maskthreshlabel</zorder>
       <zorder>robotvelocitylabel</zorder>
       <zorder>framelabel</zorder>
       <zorder>recordbutton</zorder>
       <zorder>maskdilationlabel</zorder>
-      <zorder>masksigmabox</zorder>
       <zorder>maskdilationbox</zorder>
       <zorder>croplengthbox</zorder>
       <zorder>resetdefaultbutton</zorder>
+      <zorder>maskthreshbox</zorder>
      </widget>
      <widget class="QWidget" name="control_tab">
       <attribute name="title">
@@ -1211,8 +1201,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>12</pointsize>
-         <weight>50</weight>
+         <pointsize>15</pointsize>
          <italic>false</italic>
          <bold>false</bold>
         </font>
