@@ -66,7 +66,7 @@ class Ui_MainWindow(object):
         self.dockWidgetContents.setObjectName("dockWidgetContents")
         self.tabWidget = QtWidgets.QTabWidget(self.dockWidgetContents)
         self.tabWidget.setGeometry(QtCore.QRect(15, 10, 221, 801))
-        self.tabWidget.setStyleSheet("font-size: 15pt; font: Arial;")
+        self.tabWidget.setStyleSheet("font-size: 13pt; font: Arial;")
         self.tabWidget.setObjectName("tabWidget")
         self.tracking_tab = QtWidgets.QWidget()
         self.tracking_tab.setObjectName("tracking_tab")
@@ -349,9 +349,10 @@ class Ui_MainWindow(object):
         self.resetdefaultbutton.setGeometry(QtCore.QRect(30, 730, 141, 21))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(15)
+        font.setPointSize(13)
         font.setBold(False)
         font.setItalic(False)
+        font.setWeight(50)
         self.resetdefaultbutton.setFont(font)
         self.resetdefaultbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
@@ -603,9 +604,10 @@ class Ui_MainWindow(object):
         self.gammadial.setGeometry(QtCore.QRect(110, 380, 91, 101))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(15)
+        font.setPointSize(13)
         font.setBold(False)
         font.setItalic(False)
+        font.setWeight(50)
         self.gammadial.setFont(font)
         self.gammadial.setStyleSheet("QDial {\n"
 "    background-color: qconicalgradient(cx:0.5, cy:0.5, angle:90, stop:0 #1a5276, stop:0.3 #2980b9, stop:0.7 #3498db, stop:1 #1a5276);\n"

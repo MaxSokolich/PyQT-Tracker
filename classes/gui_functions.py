@@ -320,6 +320,15 @@ class MainWindow(QtWidgets.QMainWindow):
             self.simulator.freq = freq/10
             self.simulator.omega = 2 * np.pi * self.simulator.freq
         
+        else:
+    
+            self.simulator.Bx = 0
+            self.simulator.By = 0
+            self.simulator.Bz = 0
+            self.simulator.alpha = 0
+            self.simulator.freq = 0 
+            self.simulator.omega =0
+        
   
      
        

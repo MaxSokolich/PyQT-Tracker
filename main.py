@@ -5,7 +5,8 @@ import sys
 from classes.gui_functions import MainWindow
 
 # try blur thing z
-
+#cv2.CAP_PROP_FRAME_COUN not on easypyspin
+#stop acoustic print and add reset button coustic [param]
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     w = MainWindow()

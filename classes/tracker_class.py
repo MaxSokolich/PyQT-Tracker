@@ -182,16 +182,16 @@ class VideoThread(QThread):
                     x1, y1, w, h = bot.cropped_frame[-1]
 
 
-                    cv2.circle(displayframe,(int(posx), int(posy)),5,(botcolor),-1,)
-                    cv2.rectangle(displayframe, (x1, y1), (x1 + w, y1 + h), (botcolor), 3)
+                    cv2.circle(displayframe,(int(posx), int(posy)),6,(botcolor),-1,)
+                    cv2.rectangle(displayframe, (x1, y1), (x1 + w, y1 + h), (botcolor), 4)
                     
                     pts = np.array(bot.position_list, np.int32)
-                    cv2.polylines(displayframe, [pts], False, botcolor, 3)
+                    cv2.polylines(displayframe, [pts], False, botcolor, 4)
 
                     targets = bot.trajectory
                     if len(targets) > 0:
                         pts = np.array(bot.trajectory, np.int32)
-                        cv2.polylines(displayframe, [pts], False, (1, 1, 255), 3)
+                        cv2.polylines(displayframe, [pts], False, (1, 1, 255), 4)
                         tar = targets[-1]
                         cv2.circle(displayframe,(int(tar[0]), int(tar[1])),6,(botcolor), -1,)
             
