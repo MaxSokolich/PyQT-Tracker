@@ -160,6 +160,7 @@ class VideoThread(QThread):
 
         displayframe = frame.copy()
         displaymask = self.find_mask(displayframe)   
+        print("df",displayframe.shape)
         if self.mask_flag == True:
             if len(self.robot_list) > 0:
                 #replace the bots locaton with black squre so dilation is not performed in it
@@ -200,6 +201,7 @@ class VideoThread(QThread):
                         cv2.polylines(displayframe, [pts], False, (1, 1, 255), 3)
                         tar = targets[-1]
                         cv2.circle(displayframe,(int(tar[0]), int(tar[1])),6,(botcolor), -1,)
+            print("cm",croppedmask.shape)
             croppedmask = cv2.cvtColor(croppedmask, cv2.COLOR_GRAY2BGR)
             
             if max_cnt is not None:
