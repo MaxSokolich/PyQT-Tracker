@@ -170,8 +170,11 @@ class VideoThread(QThread):
             
             if len(self.robot_list) > 0:
                 #recrop the robot back into frame
-                x,y,w,h = self.robot_list[-1].cropped_frame[-1]
-                displaymask[y:y+h, x:x+w] = croppedmask
+                try:
+                    x,y,w,h = self.robot_list[-1].cropped_frame[-1]
+                    displaymask[y:y+h, x:x+w] = croppedmask
+                except Exception:
+                    pass
             displayframe = cv2.cvtColor(displaymask, cv2.COLOR_GRAY2BGR)
 
 
