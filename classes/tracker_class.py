@@ -39,7 +39,7 @@ class VideoThread(QThread):
         self.mask_dilation = 0  #this is not used as of now
         self.maskinvert = True
         self.crop_length = 40
-        self.arrivalthresh = 25
+        self.arrivalthresh = 20
         self.RRTtreesize = 25
         self.memory = 15  #this isnt used as of now
         self.robot_list = []
@@ -157,22 +157,17 @@ class VideoThread(QThread):
         4) croppedmask: this is the cropped MONO mask surrounding the nearby robot """
 
         displayframe = frame.copy()
-        displaymask = self.find_mask(displayframe)   
-        print("df",displayframe.shape)
+        displaymask = self.find_mask(displayframe)  
+        displaymask = cv2.dilate(displaymask, None, iterations=self.mask_dilation) 
+
         
         if self.mask_flag == True:
-            if len(self.robot_list) > 0 and croppedmask is not None:
-                #replace the botslocaton with black squre so dilation is not performed in it
-                x,y,self.crop_length,self.crop_length = self.robot_list[-1].cropped_frame[-1]
-                cv2.rectangle(displaymask, (x, y), (x + w, y + h), (0, 0, 0), -1)
-                
-            displaymask = cv2.dilate(displaymask, None, iterations=self.mask_dilation)
             
             if len(self.robot_list) > 0 and croppedmask is not None:
-                #recrop the robot back into frame
-                
-                    x,y,self.crop_length,self.crop_length = self.robot_list[-1].cropped_frame[-1]
-                    displaymask[y:y+h, x:x+w] = croppedmask
+                #replace the botslocaton with black squre so dilation is not performed in it
+                if len(self.robot_list[-1].cropped_frame) > 1:
+                    x,y,w,h = self.robot_list[-1].cropped_frame[-2]
+                    displaymask[y:y+w , x:x+h] =  croppedmask #= croppedmask
             
             displayframe = cv2.cvtColor(displaymask, cv2.COLOR_GRAY2BGR)
 
@@ -200,7 +195,7 @@ class VideoThread(QThread):
                         tar = targets[-1]
                         cv2.circle(displayframe,(int(tar[0]), int(tar[1])),6,(botcolor), -1,)
             
-            print("cm",croppedmask.shape)
+   
             croppedmask = cv2.cvtColor(croppedmask, cv2.COLOR_GRAY2BGR)
             
             if max_cnt is not None:

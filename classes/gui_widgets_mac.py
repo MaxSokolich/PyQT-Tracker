@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'MagscopeMacLayout.ui'
+# Form implementation generated from reading ui file 'MagscopeMac.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1512, 887)
+        MainWindow.resize(1600, 887)
         font = QtGui.QFont()
         font.setFamily("Arial")
         MainWindow.setFont(font)
@@ -30,6 +30,12 @@ class Ui_MainWindow(object):
         self.plainTextEdit.setPlainText("")
         self.plainTextEdit.setCenterOnScroll(False)
         self.plainTextEdit.setObjectName("plainTextEdit")
+        self.VideoFeedLabel = QtWidgets.QLabel(self.centralwidget)
+        self.VideoFeedLabel.setGeometry(QtCore.QRect(10, 5, 1330, 700))
+        self.VideoFeedLabel.setMouseTracking(True)
+        self.VideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
+        self.VideoFeedLabel.setText("")
+        self.VideoFeedLabel.setObjectName("VideoFeedLabel")
         self.frameslider = QtWidgets.QProgressBar(self.centralwidget)
         self.frameslider.setGeometry(QtCore.QRect(10, 712, 1321, 20))
         self.frameslider.setStyleSheet("    QProgressBar {\n"
@@ -46,18 +52,6 @@ class Ui_MainWindow(object):
         self.frameslider.setMaximum(100)
         self.frameslider.setProperty("value", 0)
         self.frameslider.setObjectName("frameslider")
-        self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 1241, 691))
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.VideoFeedLabel = QtWidgets.QLabel(self.verticalLayoutWidget)
-        self.VideoFeedLabel.setMouseTracking(True)
-        self.VideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
-        self.VideoFeedLabel.setText("")
-        self.VideoFeedLabel.setObjectName("VideoFeedLabel")
-        self.verticalLayout_3.addWidget(self.VideoFeedLabel)
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -347,6 +341,7 @@ class Ui_MainWindow(object):
         self.maskdilationbox.setObjectName("maskdilationbox")
         self.croplengthbox = QtWidgets.QSpinBox(self.tracking_tab)
         self.croplengthbox.setGeometry(QtCore.QRect(140, 320, 61, 31))
+        self.croplengthbox.setMinimum(5)
         self.croplengthbox.setMaximum(300)
         self.croplengthbox.setProperty("value", 40)
         self.croplengthbox.setDisplayIntegerBase(10)
@@ -574,7 +569,7 @@ class Ui_MainWindow(object):
         self.arrivalthreshbox.setGeometry(QtCore.QRect(140, 300, 61, 31))
         self.arrivalthreshbox.setMinimum(1)
         self.arrivalthreshbox.setMaximum(100)
-        self.arrivalthreshbox.setProperty("value", 50)
+        self.arrivalthreshbox.setProperty("value", 20)
         self.arrivalthreshbox.setObjectName("arrivalthreshbox")
         self.rollingfrequencybox = QtWidgets.QSpinBox(self.control_tab)
         self.rollingfrequencybox.setGeometry(QtCore.QRect(140, 340, 61, 31))
