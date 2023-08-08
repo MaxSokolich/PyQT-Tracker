@@ -163,7 +163,7 @@ class VideoThread(QThread):
         if self.mask_flag == True:
             if len(self.robot_list) > 0 and croppedmask is not None:
                 #replace the botslocaton with black squre so dilation is not performed in it
-                x,y,w,h = self.robot_list[-1].cropped_frame[-1]
+                x,y,self.crop_length,self.crop_length = self.robot_list[-1].cropped_frame[-1]
                 cv2.rectangle(displaymask, (x, y), (x + w, y + h), (0, 0, 0), -1)
                 
             displaymask = cv2.dilate(displaymask, None, iterations=self.mask_dilation)
@@ -171,7 +171,7 @@ class VideoThread(QThread):
             if len(self.robot_list) > 0 and croppedmask is not None:
                 #recrop the robot back into frame
                 
-                    x,y,w,h = self.robot_list[-1].cropped_frame[-1]
+                    x,y,self.crop_length,self.crop_length = self.robot_list[-1].cropped_frame[-1]
                     displaymask[y:y+h, x:x+w] = croppedmask
             
             displayframe = cv2.cvtColor(displaymask, cv2.COLOR_GRAY2BGR)
