@@ -143,7 +143,8 @@ class HelmholtzSimulator(FigureCanvas):
             
             # Draw Bx,By,Bz field
             self.ax.clear()
-            self.show_axis_rotation(self.ax, 40)
+            if self.freq !=0:
+                self.show_axis_rotation(self.ax, 40)
             self.ax.set_xlabel('x') 
             self.ax.set_ylabel('y') 
             self.ax.set_zlabel('z')

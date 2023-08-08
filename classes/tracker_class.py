@@ -19,7 +19,7 @@ class VideoThread(QThread):
         super().__init__(parent=parent)
         self.parent = parent
         self.cap = self.parent.cap 
-        
+        video = self.parent.videopath 
         #initiate control class
         self.control_robot = algorithm()
         
@@ -28,13 +28,17 @@ class VideoThread(QThread):
         self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
-        self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        if video != 0:
+            self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        else:
+            self.totalnumframes = 0
 
         self._run_flag = True
         self._play_flag = True
         self.mask_flag = False
         self.framenum = 0
 
+        self.orientstatus = False
         self.mask_thresh = 128
         self.mask_dilation = 0  #this is not used as of now
         self.maskinvert = True
@@ -239,7 +243,7 @@ class VideoThread(QThread):
 
                 #step 2 control robot
                 if len(self.robot_list)>0 and len(self.robot_list[-1].trajectory) > 0:
-                    frame, actions, stopped = self.control_robot.run(frame, display_mask, self.robot_list, self.RRTtreesize, self.arrivalthresh)
+                    frame, actions, stopped = self.control_robot.run(frame, display_mask, self.robot_list, self.RRTtreesize, self.arrivalthresh, self.orientstatus)
                 else:
                     actions = [0,0,0,0]
                     stopped = True

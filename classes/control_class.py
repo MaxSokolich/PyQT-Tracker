@@ -17,7 +17,7 @@ class algorithm:
         self.T_R = 1
         self.theta_maps = np.array([])#added this so that we store the mapped angles
         self.theta = 0
-        self.orientstatus = False
+
 
     def reset(self):
         self.node = 0
@@ -29,15 +29,13 @@ class algorithm:
         self.T_R = 1
         self.theta_maps = np.array([])#added this so that we store the mapped angles
         self.theta = 0
-        self.orientstatus = False
+
     
  
 
     def orient(self, bot, direction_vec):
         if len(bot.velocity_list) >= 0:
             
-                  
-                    
             #find the velocity avearge over the last memory number of frames to mitigate noise: 
             vx = bot.velocity_list[-1][0]
             vy = bot.velocity_list[-1][1]
@@ -76,7 +74,7 @@ class algorithm:
         return [Bx,By,Bz,alpha]
 
 
-    def run(self, frame, mask, robot_list, stepsize, arrivialthresh):
+    def run(self, frame, mask, robot_list, stepsize, arrivialthresh, orientstatus):
         
         if self.count == 0: #% 10
         
@@ -138,8 +136,8 @@ class algorithm:
 
             self.actions = [0,0,0,alpha]
             
-            #if self.orientstatus == True:
-            #self.actions = self.orient(robot_list[-1], direction_vec)
+            if orientstatus == True:
+                self.actions = self.orient(robot_list[-1], direction_vec)
          
         
         self.count += 1

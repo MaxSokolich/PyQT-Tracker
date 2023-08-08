@@ -1023,7 +1023,7 @@
       <widget class="QRadioButton" name="rollradio">
        <property name="geometry">
         <rect>
-         <x>30</x>
+         <x>10</x>
          <y>65</y>
          <width>61</width>
          <height>20</height>
@@ -1039,9 +1039,9 @@
       <widget class="QRadioButton" name="swimradio">
        <property name="geometry">
         <rect>
-         <x>100</x>
+         <x>70</x>
          <y>65</y>
-         <width>99</width>
+         <width>61</width>
          <height>20</height>
         </rect>
        </property>
@@ -1297,6 +1297,19 @@ QDial::handle {
        </property>
        <property name="checkable">
         <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="orientradio">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>65</y>
+         <width>71</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Orient</string>
        </property>
       </widget>
      </widget>

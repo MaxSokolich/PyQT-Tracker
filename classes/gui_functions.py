@@ -174,6 +174,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.resetdefaultbutton.clicked.connect(self.resetparams)
         self.ui.simulationbutton.clicked.connect(self.toggle_simulation)
         self.ui.dockWidget.dockLocationChanged.connect(self.dockstatus)
+        self.ui.orientradio.toggled.connect(self.checkorient)
 
 
   
@@ -191,6 +192,11 @@ class MainWindow(QtWidgets.QMainWindow):
         
         
         
+    def checkorient(self):
+        if self.cap is not None:
+            self.tracker.orientstatus = self.ui.orientradio.isChecked()
+       
+
 
     def dockstatus(self):
         if self.ui.dockWidget.isFloating():
@@ -212,13 +218,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tbprint("Simulation On")
             self.ui.simulationbutton.setText("Simulation On")
    
-
-
-
-        
-
-        
-
     
     
     def toggle_control_status(self):
@@ -279,7 +278,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 alpha = alpha - np.pi/2
                 self.simulator.roll = True
             
-            freq = self.ui.rollingfrequencybox.value()
+            if self.ui.orientradio.isChecked():
+                freq = 0
+            else:
+                freq = self.ui.rollingfrequencybox.value()
             
             if stopped == True:
                 Bx, By, Bz, alpha, gamma, freq, psi = 0,0,0,0,0,0,0
@@ -329,8 +331,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.simulator.freq = 0 
             self.simulator.omega =0
         
-  
-     
        
     
     def get_acoustic_frequency(self):
@@ -809,6 +809,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.rollingfrequencybox.setValue(10)
         self.ui.gammadial.setSliderPosition(90)
         self.ui.psidial.setSliderPosition(90)
+        self.ui.acousticfreq_spinBox.setValue(1000000)
 
 
     def closeEvent(self, event):
