@@ -87,24 +87,21 @@ class VideoThread(QThread):
                 #find the mask
                 croppedmask  = self.find_mask(croppedframe)
             
-                #find contours from the mask
-                contours, _ = cv2.findContours(croppedmask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-                if len(contours) !=0:
-                    max_cnt = contours[0]
-                    for contour in contours:
-                        if cv2.contourArea(contour) > cv2.contourArea(max_cnt): 
-                            max_cnt = contour
-                    area = cv2.contourArea(max_cnt)
-                else:
-                    area = 0
-                    max_cnt = None
-            
+              
                 #label the mask
                 label_im, nb_labels = ndimage.label(croppedmask) 
                 sizes = ndimage.sum(croppedmask, label_im, range(nb_labels + 1)) 
                 num_bots=np.sum(sizes>50)
                 
                 if num_bots>0:
+                    #find contours from the mask
+                    contours, _ = cv2.findContours(croppedmask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+                    max_cnt = contours[0]
+                    for contour in contours:
+                        if cv2.contourArea(contour) > cv2.contourArea(max_cnt): 
+                            max_cnt = contour
+                    area = cv2.contourArea(max_cnt)
+                    
                     #find the center of mass from the mask
                     szsorted=np.argsort(sizes)
                     [ycord,xcord]=ndimage.center_of_mass(croppedmask,labels=label_im,index = szsorted[-(1)])
@@ -130,7 +127,7 @@ class VideoThread(QThread):
                     else:
                         velocity = [0,0,0]
 
-                    
+            
                     #find blur of original crop
                     blur = cv2.Laplacian(croppedframe, cv2.CV_64F).var()
                     
@@ -143,9 +140,10 @@ class VideoThread(QThread):
                     bot.add_area(area)
                     bot.add_blur(blur)
                     bot.set_avg_area(np.mean(bot.area_list))
-                
+                else:
+                    max_cnt = None
         else:
-            croppedmask = np.zeros((200, 200, 3), dtype=np.uint8) 
+            croppedmask = None
             max_cnt = None       
 
         return croppedmask, max_cnt
@@ -161,25 +159,25 @@ class VideoThread(QThread):
         displayframe = frame.copy()
         displaymask = self.find_mask(displayframe)   
         print("df",displayframe.shape)
+        
         if self.mask_flag == True:
-            if len(self.robot_list) > 0:
-                #replace the bots locaton with black squre so dilation is not performed in it
+            if len(self.robot_list) > 0 and croppedmask is not None:
+                #replace the botslocaton with black squre so dilation is not performed in it
                 x,y,w,h = self.robot_list[-1].cropped_frame[-1]
                 cv2.rectangle(displaymask, (x, y), (x + w, y + h), (0, 0, 0), -1)
                 
             displaymask = cv2.dilate(displaymask, None, iterations=self.mask_dilation)
             
-            if len(self.robot_list) > 0:
+            if len(self.robot_list) > 0 and croppedmask is not None:
                 #recrop the robot back into frame
-                try:
+                
                     x,y,w,h = self.robot_list[-1].cropped_frame[-1]
                     displaymask[y:y+h, x:x+w] = croppedmask
-                except Exception:
-                    pass
+            
             displayframe = cv2.cvtColor(displaymask, cv2.COLOR_GRAY2BGR)
 
 
-        if len(self.robot_list) > 0:
+        if len(self.robot_list) > 0 and croppedmask is not None:
 
             color = plt.cm.rainbow(np.linspace(1, 0, len(self.robot_list))) * 255
             for (bot, botcolor) in zip(self.robot_list, color):
@@ -201,6 +199,7 @@ class VideoThread(QThread):
                         cv2.polylines(displayframe, [pts], False, (1, 1, 255), 3)
                         tar = targets[-1]
                         cv2.circle(displayframe,(int(tar[0]), int(tar[1])),6,(botcolor), -1,)
+            
             print("cm",croppedmask.shape)
             croppedmask = cv2.cvtColor(croppedmask, cv2.COLOR_GRAY2BGR)
             
