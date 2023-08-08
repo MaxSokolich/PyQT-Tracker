@@ -179,8 +179,15 @@ class MainWindow(QtWidgets.QMainWindow):
   
 
 
-  
-     
+    def wheelEvent(self, event: QWheelEvent):
+        # Get the scroll amount (event.angleDelta().y()) and the scroll orientation (event.angleDelta().x())
+        scroll_amount = event.angleDelta().y()
+        if scroll_amount > 1:
+            del self.tracker.robot_list[:]
+            del self.magnetic_field_list[:]
+            self.arduino.send(0, 0, 0, 0, 0, 0, 0)
+
+      
         
         
         
@@ -257,14 +264,14 @@ class MainWindow(QtWidgets.QMainWindow):
     
 
 
-    def update_actions(self, alpha, arrived):
+    def update_actions(self, actions, stopped):
         #alpha argument is signal from tracker_class: actions_signal
         #output actions if control status is on
 
         gamma = np.radians(self.ui.gammadial.value())
         psi = np.radians(self.ui.psidial.value())
         if self.control_status == True:
-            
+            Bx, By, Bz, alpha = actions    
             if self.ui.swimradio.isChecked():
                 alpha=alpha
                 self.simulator.roll = False
@@ -274,10 +281,9 @@ class MainWindow(QtWidgets.QMainWindow):
             
             freq = self.ui.rollingfrequencybox.value()
             
-            if arrived == True:
+            if stopped == True:
                 Bx, By, Bz, alpha, gamma, freq, psi = 0,0,0,0,0,0,0
-            else:
-                Bx,By,Bz = 0,0,0
+     
             self.arduino.send(Bx, By, Bz, alpha, gamma, freq, psi)  
             self.actions = [self.tracker.framenum,Bx,By,Bz,alpha,gamma,freq,psi,self.acoustic_frequency]          
             self.magnetic_field_list.append(self.actions)
@@ -415,7 +421,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if object is self.ui.VideoFeedLabel: 
 
             if self.cap is not None:
-                if event.type() == QtCore.QEvent.MouseButtonDblClick:        
+                   
+                if event.type() == QtCore.QEvent.MouseButtonPress:   
                     if event.buttons() == QtCore.Qt.LeftButton:
                         newx, newy = self.convert_coords(event.pos())
                         #generate original bounding box
@@ -433,16 +440,14 @@ class MainWindow(QtWidgets.QMainWindow):
                         robot.add_frame(self.tracker.framenum)
                         robot.add_time(0)
                         robot.add_position([newx,newy])
-                        robot.add_velocity([0,0])
+                        robot.add_velocity([0,0,0])
                         robot.add_crop([x_1, y_1, w, h])
                         robot.add_area(0)
                         robot.add_blur(0)
                         
                         self.tracker.robot_list.append(robot)
-                        
-       
-                elif event.type() == QtCore.QEvent.MouseButtonPress:   
-                    if event.buttons() == QtCore.Qt.LeftButton: 
+
+                    if event.buttons() == QtCore.Qt.RightButton: 
                         self.drawing = True
                         newx, newy = self.convert_coords(event.pos())
                         if len(self.tracker.robot_list) > 0:
@@ -451,14 +456,14 @@ class MainWindow(QtWidgets.QMainWindow):
                             self.tracker.robot_list[-1].add_trajectory([newx, newy])
                 
                 
-                    if event.buttons() == QtCore.Qt.RightButton: 
+                    if event.buttons() == QtCore.Qt.MiddleButton: 
                         del self.tracker.robot_list[:]
                         del self.magnetic_field_list[:]
                         self.arduino.send(0, 0, 0, 0, 0, 0, 0)  
                     
                             
                 elif event.type() == QtCore.QEvent.MouseMove:
-                    if event.buttons() == QtCore.Qt.LeftButton:
+                    if event.buttons() == QtCore.Qt.RightButton:
                         if self.drawing == True:
                             if len(self.tracker.robot_list)>0:
                                 newx, newy = self.convert_coords(event.pos())
@@ -466,7 +471,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                 self.tracker.robot_list[-1].add_trajectory([newx, newy])
                 
                 elif event.type() == QtCore.QEvent.MouseButtonRelease:
-                    if event.buttons() == QtCore.Qt.LeftButton: 
+                    if event.buttons() == QtCore.Qt.RightButton: 
                         self.drawing = False
                         
                     
@@ -509,7 +514,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #also update robot info
         if len(self.tracker.robot_list) > 0:
             self.ui.robotarealabel.setText("Area: {0:.2f} px^2".format(self.tracker.robot_list[-1].avg_area))
-            self.ui.robotvelocitylabel.setText("Vx: {0:.2f}, Vy: {0:.2f} px/f".format(self.tracker.robot_list[-1].velocity_list[-1][0], self.tracker.robot_list[-1].velocity_list[-1][1]  )  )
+            self.ui.robotvelocitylabel.setText("Velocity: {0:.2f} px/f".format(self.tracker.robot_list[-1].velocity_list[-1][2]  )  )
             self.ui.robotblurlabel.setText("Blur: {0:.2f} units".format(self.tracker.robot_list[-1].blur_list[-1]))
 
         self.ui.VideoFeedLabel.setPixmap(qt_img)
@@ -732,9 +737,10 @@ class MainWindow(QtWidgets.QMainWindow):
                     
                         elif key == "Velocity":
                             if len(value) > 0:
-                                x_coords, y_coords = zip(*value)
+                                x_coords, y_coords, mag = zip(*value)
                                 df[f"{key}_X"] = pd.Series(x_coords, dtype='float64')
                                 df[f"{key}_Y"] = pd.Series(y_coords, dtype='float64')
+                                df[f"{key}_Mag"] = pd.Series(mag, dtype='float64')
                         
                         elif key == "Cropped Frame Dim":
                             if len(value) > 0:

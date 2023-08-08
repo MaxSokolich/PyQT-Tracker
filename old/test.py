@@ -1,80 +1,61 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsView, QGraphicsScene, QWidget, QVBoxLayout
-from PyQt5.QtGui import QPixmap, QImage,QPainter
-from PyQt5.QtCore import Qt, QPointF, QRectF
+import cv2
+import numpy as np
+def find_mask(frame):
+        
+
+    mask_thresh= int(128)
+
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    _, mask = cv2.threshold(frame, mask_thresh, 255, cv2.THRESH_BINARY)
+
+    
+    mask = cv2.bitwise_not(mask)
+
+    return mask
 
 
-class ZoomableImageViewer(QMainWindow):
-    def __init__(self, image_path):
-        super().__init__()
-
-        self.image = QImage(image_path)
-        self.pixmap = QPixmap.fromImage(self.image)
-        self.scale = 1.0
-        self.cursor_position = None
-
-        self.central_widget = QWidget()
-        self.setCentralWidget(self.central_widget)
-
-        self.view = QGraphicsView(self.central_widget)
-        self.scene = QGraphicsScene()
-        self.view.setScene(self.scene)
-        self.view.setRenderHint(QPainter.Antialiasing)
-        self.view.setRenderHint(QPainter.SmoothPixmapTransform)
-
-        self.scene.addPixmap(self.pixmap)
-
-        self.layout = QVBoxLayout(self.central_widget)
-        self.layout.addWidget(self.view)
-
-        self.view.viewport().installEventFilter(self)
-        self.view.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
-
-        self.show_image()
-
-    def show_image(self):
-        size = self.image.size() * self.scale
-        scaled_pixmap = self.pixmap.scaled(size)
-
-        if self.cursor_position:
-            self.view.setSceneRect(QRectF(self.cursor_position - size / 2, size))
-        else:
-            self.view.setSceneRect(QRectF(QPointF(0, 0), size))
-
-        self.view.fitInView(self.view.sceneRect(), Qt.KeepAspectRatio)
-
-    def eventFilter(self, source, event):
-        if event.type() == QEvent.Wheel:
-            self.cursor_position = self.view.mapToScene(event.pos())
-            if event.angleDelta().y() > 0:
-                self.scale *= 1.1
-            else:
-                self.scale /= 1.1
-
-            self.show_image()
-            return True
-
-        return super().eventFilter(source, event)
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    image_path = '/Users/bizzarohd/Desktop/MagScopeTracker.png'  # Replace with your image path
-    viewer = ZoomableImageViewer(image_path)
-    viewer.show()
-    sys.exit(app.exec_())
-
-   
+# Read the image
+image_path = '/Users/bizzarohd/Desktop/Screenshot 2023-08-08 at 10.25.56 AM.png'  # Replace with your image path
+image = cv2.imread(image_path)
 
 
 
+import cv2
+import numpy as np
 
-  def wheelEvent(self, event: QWheelEvent):
+# Load the original image and the mask
+original_image = cv2.imread('/Users/bizzarohd/Desktop/Screenshot 2023-08-08 at 10.25.56 AM.png')
+mask = find_mask(original_image)
 
-        scroll_amount = event.angleDelta().y()
-        scroll_direction = "Up" if scroll_amount > 0 else "Down"
-        print(f"Scroll Amount: {scroll_amount}, Scroll Direction: {scroll_direction}")
-        pos = event.pos()
-        self.curserx = pos.x()
-        self.cursery = pos.y()
-        self.zoom = scroll_amount
+# Invert the mask
+inverted_mask = cv2.bitwise_not(mask)
+
+# Crop the desired portion from the original image
+x, y, w, h = 100, 100, 200, 200
+cropped_portion = original_image[y:y+h, x:x+w]
+cropped_mask = find_mask(cropped_portion)
+
+dilatedmask = cv2.dilate(mask, None, iterations=5)
+
+# Apply the resized inverted mask to the cropped portion
+#masked_cropped_portion = cv2.bitwise_and(cropped_portion, cropped_portion, mask=cropped_mask)
+
+# Create a black canvas of the same size as the original image
+
+
+# Insert the masked cropped portion back into the original image at the same location
+dilatedmask[y:y+h, x:x+w] = cropped_mask
+
+# Apply the original mask to the entire result
+#final_result = cv2.bitwise_and(result, result, mask=mask)
+
+# Display the final image
+cv2.imshow("Final Image2", cropped_mask)
+cv2.imshow("Final Image1", cropped_mask)
+
+cv2.imshow("Final Image", dilatedmask)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+# To save the image:
+cv2.imwrite("final_image.jpg", final_result)

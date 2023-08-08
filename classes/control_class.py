@@ -10,14 +10,71 @@ class algorithm:
     def __init__(self):
         self.node = 0
         self.count = 0
-        self.arrived = False
-        self.alpha = 0.0
+        self.stopped = False
+        self.actions = [0,0,0,0]
+
+        self.B_vec = np.array([1,0])
+        self.T_R = 1
+        self.theta_maps = np.array([])#added this so that we store the mapped angles
+        self.theta = 0
+        self.orientstatus = False
 
     def reset(self):
         self.node = 0
         self.count = 0
-        self.arrived = False
-        self.alpha = 0.0
+        self.stopped = False
+        self.actions = [0,0,0,0]
+
+        self.B_vec = np.array([1,0])
+        self.T_R = 1
+        self.theta_maps = np.array([])#added this so that we store the mapped angles
+        self.theta = 0
+        self.orientstatus = False
+    
+ 
+
+    def orient(self, bot, direction_vec):
+        if len(bot.velocity_list) >= 0:
+            
+                  
+                    
+            #find the velocity avearge over the last memory number of frames to mitigate noise: 
+            vx = bot.velocity_list[-1][0]
+            vy = bot.velocity_list[-1][1]
+            
+            vel_bot = np.array([vx, vy])  # current velocity of self propelled robot
+            vd = np.linalg.norm(vel_bot)
+            bd = np.linalg.norm(self.B_vec)
+            
+            if vd != 0 and bd != 0:
+                costheta = np.dot(vel_bot, self.B_vec) / (vd * bd)
+                sintheta = (vel_bot[0] * self.B_vec[1] - vel_bot[1] * self.B_vec[0]) / (vd * bd)
+                self.theta =  np.arctan2(sintheta, costheta)   
+                if len(self.theta_maps) > 0:
+                    previous = self.theta_maps[-1]
+                    self.theta = self.theta + np.sign(previous-self.theta)*(2*np.pi)*(np.abs((previous-self.theta))//(2*np.pi*0.8))
+                    
+                
+                self.theta_maps = np.append(self.theta_maps,self.theta)
+        
+                if len(self.theta_maps) > 150:
+                    self.theta_maps = self.theta_maps[-150:len(self.theta_maps)]#this makes sure that we only look at the latest 150 frames of data to keep it adaptable. It should be bigger if there's a lot of noise (slow bot) and smaller if its traj is well defined (fast bot) 
+                thetaNew = np.median(self.theta_maps)#take the average, or median, so that the mapped angle is robust to noise                        
+                self.T_R = np.array([[np.cos(thetaNew), -np.sin(thetaNew)], [np.sin(thetaNew), np.cos(thetaNew)]])
+                
+                #self.T_R = np.array([[costhetaNew, -sinthetaNew], [sinthetaNew, costhetaNew]])
+            
+        self.B_vec = np.dot(self.T_R, direction_vec)
+
+        #OUTPUT SIGNAL      
+        
+        Bx = self.B_vec[0] / np.sqrt(self.B_vec[0] ** 2 + self.B_vec[1] ** 2)
+        By = self.B_vec[1] / np.sqrt(self.B_vec[0] ** 2 + self.B_vec[1] ** 2)
+        Bz = 0
+        alpha = np.arctan2(By, Bx)
+
+        return [Bx,By,Bz,alpha]
+
 
     def run(self, frame, mask, robot_list, stepsize, arrivialthresh):
         
@@ -28,7 +85,7 @@ class algorithm:
             endpos = robot_list[-1].trajectory[-1]
             
 
-            #print("this should update the trajectory")    
+            #remove robot so that itself is not mistaken for an obstacle
             x,y,w,h = robot_list[-1].cropped_frame[-1]
             cv2.rectangle(mask, (x, y), (x + w, y + h), (0, 0, 0), -1)
           
@@ -45,8 +102,8 @@ class algorithm:
         #logic for arrival condition
         if self.node == len(robot_list[-1].trajectory):
             #weve arrived
-            self.arrived = True
-            self.alpha = 0.0
+            self.stopped = True
+            self.actions = [0,0,0,0]
 
 
         #closed loop algorithm 
@@ -62,7 +119,8 @@ class algorithm:
             #calculate error between node and robot
             direction_vec = [targetx - robotx, targety - roboty]
             error = np.sqrt(direction_vec[0] ** 2 + direction_vec[1] ** 2)
-            self.alpha = np.arctan2(-direction_vec[1], direction_vec[0])
+            alpha = np.arctan2(-direction_vec[1], direction_vec[0])
+
 
 
             #draw error arrow
@@ -78,9 +136,27 @@ class algorithm:
                 self.node += 1
             
 
+            self.actions = [0,0,0,alpha]
+            
+            #if self.orientstatus == True:
+            #self.actions = self.orient(robot_list[-1], direction_vec)
+         
+        
         self.count += 1
     
-        return frame, self.alpha, self.arrived
+        return frame, self.actions, self.stopped
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class Nodes:

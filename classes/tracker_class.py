@@ -12,7 +12,7 @@ from classes.control_class import algorithm
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
     cropped_frame_signal = pyqtSignal(np.ndarray)
-    actions_signal = pyqtSignal(float, bool)
+    actions_signal = pyqtSignal(list, bool)
 
 
     def __init__(self, parent):
@@ -49,30 +49,32 @@ class VideoThread(QThread):
         #self.maskthread.mask_signal.connect(self.updatemask)
         #self.maskthread.start()
         #self.mask = None
+    
+    def find_mask(self,frame):
+        """
+        finds a mask of a given image based on a threshold value in black and white
+        """
         
+        invert = self.maskinvert
+        mask_thresh= int(self.mask_thresh)
 
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        _, mask = cv2.threshold(frame, mask_thresh, 255, cv2.THRESH_BINARY)
 
+        if invert:
+            mask = cv2.bitwise_not(mask)
+
+        return mask
+    
     def track_robot(self, frame):
         """
-        there are techincally 4 frames for analyse at a time:
-        1) displayframe:  this is the raw BGR frame from the videofeed
-        2) croppedframe: this is the cropped BGR frame surrounding the nearby robot 
-        3) displaymask: this is the raw MONO mask from the videofeed
-        4) croppedmask: this is the cropped MONO mask surrounding the nearby robot 
-        
+        Returns:
+            cropped_mask: to visualize tracking parameters
+            max_cnt found from finding contours
         """
-        displayframe = frame.copy()
-
-        if self.mask_flag == True:
-            displaymask = self.find_mask(displayframe)   
-            displaymask = cv2.dilate(displaymask, None, iterations=self.mask_dilation)
-            displayframe = cv2.cvtColor(displaymask, cv2.COLOR_GRAY2BGR)
-
-
+    
         if len(self.robot_list) > 0:
-            
-            color = plt.cm.rainbow(np.linspace(1, 0, len(self.robot_list))) * 255
-            for (bot, botcolor) in zip(self.robot_list, color): #for each bot with a position botx, boty, find the cropped frame around the bot
+            for bot in self.robot_list: #for each bot with a position botx, boty, find the cropped frame around the bot
                
                 #current cropped frame dim
                 x1, y1, w, h = bot.cropped_frame[-1]
@@ -84,7 +86,7 @@ class VideoThread(QThread):
                 
                 #find the mask
                 croppedmask  = self.find_mask(croppedframe)
-
+            
                 #find contours from the mask
                 contours, _ = cv2.findContours(croppedmask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
                 if len(contours) !=0:
@@ -95,8 +97,8 @@ class VideoThread(QThread):
                     area = cv2.contourArea(max_cnt)
                 else:
                     area = 0
+                    max_cnt = None
             
-
                 #label the mask
                 label_im, nb_labels = ndimage.label(croppedmask) 
                 sizes = ndimage.sum(croppedmask, label_im, range(nb_labels + 1)) 
@@ -111,7 +113,6 @@ class VideoThread(QThread):
                     #derive the global current location
                     current_pos = [xcord + x1,   ycord + y1] #xcord ycord are relative to the cropped frame. need to convert to the overall frame dim
 
-                    
                     #generate new cropped frame based on the new robots position
                     x1_new = int(current_pos[0] - self.crop_length/2)
                     y1_new = int(current_pos[1] - self.crop_length/2)
@@ -121,29 +122,71 @@ class VideoThread(QThread):
 
                     #find velocity:
                     if len(bot.position_list) > self.memory:
-                        displacement = (np.array(current_pos) - np.array(bot.position_list[-self.memory])).astype(float).round(2)
-                    else:
-                        displacement = [0,0]
+                        velocity = (np.array(current_pos) - np.array(bot.position_list[-self.memory])).astype(float).round(2)
 
+                        magnitude = np.sqrt(velocity[0]**2 + velocity[1]**2)
+                        velocity = np.append(velocity, magnitude)
+
+                    else:
+                        velocity = [0,0,0]
+
+                    
                     #find blur of original crop
                     blur = cv2.Laplacian(croppedframe, cv2.CV_64F).var()
                     
                     #store the data in the instance of RobotClasss
-                    
                     bot.add_frame(self.framenum)
-                    bot.add_time(self.cap.get(cv2.CAP_PROP_POS_MSEC)/1000) #original in ms
+                    bot.add_time(1/self.fps.get_fps()) #original in ms
                     bot.add_position([current_pos[0], current_pos[1]])
-                    bot.add_velocity(displacement)
+                    bot.add_velocity(velocity)
                     bot.add_crop(new_crop)
                     bot.add_area(area)
                     bot.add_blur(blur)
                     bot.set_avg_area(np.mean(bot.area_list))
                 
-                    
-                    
-                    #display visuals
-                    cv2.circle(displayframe,(int(xcord + x1), int(ycord + y1)),5,(botcolor),-1,)
-                    cv2.rectangle(displayframe, (x1_new, y1_new), (x1_new + w_new, y1_new + h_new), (botcolor), 3)
+        else:
+            croppedmask = np.zeros((200, 200, 3), dtype=np.uint8) 
+            max_cnt = None       
+
+        return croppedmask, max_cnt
+ 
+
+    def display_hud(self,frame, croppedmask, max_cnt):
+        """there are techincally 4 frames for analyse at a time:
+        1) displayframe:  this is the raw BGR frame from the videofeed
+        2) croppedframe: this is the cropped BGR frame surrounding the nearby robot 
+        3) displaymask: this is the raw MONO mask from the videofeed
+        4) croppedmask: this is the cropped MONO mask surrounding the nearby robot """
+
+        displayframe = frame.copy()
+        displaymask = self.find_mask(displayframe)   
+        if self.mask_flag == True:
+            if len(self.robot_list) > 0:
+                #replace the bots locaton with black squre so dilation is not performed in it
+                x,y,w,h = self.robot_list[-1].cropped_frame[-1]
+                cv2.rectangle(displaymask, (x, y), (x + w, y + h), (0, 0, 0), -1)
+                
+            displaymask = cv2.dilate(displaymask, None, iterations=self.mask_dilation)
+            
+            if len(self.robot_list) > 0:
+                #recrop the robot back into frame
+                x,y,w,h = self.robot_list[-1].cropped_frame[-1]
+                displaymask[y:y+h, x:x+w] = croppedmask
+            displayframe = cv2.cvtColor(displaymask, cv2.COLOR_GRAY2BGR)
+
+
+        if len(self.robot_list) > 0:
+
+            color = plt.cm.rainbow(np.linspace(1, 0, len(self.robot_list))) * 255
+            for (bot, botcolor) in zip(self.robot_list, color):
+
+                    posx = bot.position_list[-1][0]
+                    posy = bot.position_list[-1][1]
+                    x1, y1, w, h = bot.cropped_frame[-1]
+
+
+                    cv2.circle(displayframe,(int(posx), int(posy)),5,(botcolor),-1,)
+                    cv2.rectangle(displayframe, (x1, y1), (x1 + w, y1 + h), (botcolor), 3)
                     
                     pts = np.array(bot.position_list, np.int32)
                     cv2.polylines(displayframe, [pts], False, botcolor, 3)
@@ -154,34 +197,16 @@ class VideoThread(QThread):
                         cv2.polylines(displayframe, [pts], False, (1, 1, 255), 3)
                         tar = targets[-1]
                         cv2.circle(displayframe,(int(tar[0]), int(tar[1])),6,(botcolor), -1,)
-                             
-          
             croppedmask = cv2.cvtColor(croppedmask, cv2.COLOR_GRAY2BGR)
-            if len(contours) !=0:
+            
+            if max_cnt is not None:
                 cv2.drawContours(croppedmask, [max_cnt], -1, (0, 255, 255), 1)
 
         else:
             croppedmask = np.zeros((200, 200, 3), dtype=np.uint8) 
-
-        return displayframe, croppedmask
- 
-
-
-
-    def find_mask(self,frame):
         
-        invert = self.maskinvert
-        mask_thresh= int(self.mask_thresh)
+        return displayframe, croppedmask, displaymask
 
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        _, mask = cv2.threshold(frame, mask_thresh, 255, cv2.THRESH_BINARY)
-
-        if invert:
-            mask = cv2.bitwise_not(mask)
-
-        return mask
-
-        
 
 
     def run(self):
@@ -205,22 +230,20 @@ class VideoThread(QThread):
             ret, frame = self.cap.read()
         
             #control_mask = None
-            if ret:
-
-                #calcualte mask for control
-                #if self.framenum %50 == 0:
-                control_mask = self.find_mask(frame)
-                control_mask = cv2.dilate(control_mask, None, iterations=self.mask_dilation)
+            if ret:               
                 
                 #step 1 detect robot
-                frame, croppedframe = self.track_robot(frame) 
-            
+                croppedmask, max_cnt = self.track_robot(frame) 
+
+                #step 2: display visuals
+                frame, croppedmask, display_mask = self.display_hud(frame, croppedmask, max_cnt)
+
                 #step 2 control robot
                 if len(self.robot_list)>0 and len(self.robot_list[-1].trajectory) > 0:
-                    frame, actions, arrived = self.control_robot.run(frame, control_mask, self.robot_list, self.RRTtreesize, self.arrivalthresh)
+                    frame, actions, stopped = self.control_robot.run(frame, display_mask, self.robot_list, self.RRTtreesize, self.arrivalthresh)
                 else:
-                    actions = 0.0
-                    arrived = True
+                    actions = [0,0,0,0]
+                    stopped = True
 
                 cv2.putText(frame,"fps:"+str(int(self.fps.get_fps())),
                     (int(self.width  / 80),int(self.height / 30)),
@@ -231,9 +254,9 @@ class VideoThread(QThread):
                 
 
                 #step 3: emit croppedframe, frame from this thread to the main thread
-                self.cropped_frame_signal.emit(croppedframe)
+                self.cropped_frame_signal.emit(croppedmask)
                 self.change_pixmap_signal.emit(frame)
-                self.actions_signal.emit(actions, arrived)
+                self.actions_signal.emit(actions, stopped)
 
                 
                 #step 4: delay based on fps

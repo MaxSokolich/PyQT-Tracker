@@ -47,9 +47,10 @@ class ArduinoHandler:
 
          Args:
             actions = [Bx, By, Bz, alpha, gamma, freq]
-
         """
-
+        alpha = round(alpha,3)
+        gamma = round(gamma,3)
+        psi = round(psi,3)
         data = [float(Bx), float(By), float(Bz), float(alpha), float(gamma), float(freq),float(psi)]
         if self.conn is None:
             self.printer("Connection not initialized..."+ str(data))    
