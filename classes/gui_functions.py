@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication
 import sys
-
+from PyQt5.QtGui import QWheelEvent
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPixmap,QIcon
@@ -63,16 +63,16 @@ class MainWindow(QtWidgets.QMainWindow):
         screen  = QtWidgets.QDesktopWidget().screenGeometry(-1)
         
         self.window_width = 1600#screen.width()
-        self.window_height = screen.height()-150
+        self.window_height = 860
         self.resize(self.window_width, self.window_height)
 
         self.display_width = self.window_width-265# self.ui.frameGeometry().width()
         self.display_height = self.window_height-165 #keep this fixed, changed the width dpending on the aspect ratio
 
         
-        self.ui.VideoFeedLabel.setGeometry(QtCore.QRect(10,  5,                       self.display_width,     self.display_height))
-        self.ui.frameslider.setGeometry(QtCore.QRect(10,    self.display_height+12,   self.display_width,     20))
-        self.ui.plainTextEdit.setGeometry(QtCore.QRect(10,  self.display_height+40,   self.display_width-400,     91))
+        #self.ui.VideoFeedLabel.setGeometry(QtCore.QRect(10,  5,                       self.display_width,     self.display_height))
+        #self.ui.frameslider.setGeometry(QtCore.QRect(10,    self.display_height+12,   self.display_width,     20))
+        #self.ui.plainTextEdit.setGeometry(QtCore.QRect(10,  self.display_height+40,   self.display_width-400,     91))
 
         #1600, 860
          
@@ -97,6 +97,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.magnetic_field_list = []
         self.actions = [0,0,0,0,0,0,0,0,0]
 
+        #control tab functions
+        self.control_status = False
+        self.joystick_status = False
+
 
         #connect to arduino
         if "mac" in platform.platform():
@@ -118,8 +122,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.arduino = ArduinoHandler(self.tbprint)
         self.arduino.connect(PORT)
         
-        #if self.arduino.conn is None:
-            #self.ui.controlbutton.hide()
         
         #define joystick class, simulator class, pojection class, and acoustic class
         self.simulator = HelmholtzSimulator(self.ui.magneticfieldsimlabel, width=200, height=200, dpi=125)
@@ -141,6 +143,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.leftbutton.hide()
         self.ui.rightbutton.hide()
         self.ui.maskbutton.hide()
+        self.ui.led.hide()
+        self.ui.acousticfreq_spinBox.hide()
+        self.ui.acousticfreqlabel.hide()
+        self.ui.applyacousticbutton.hide()
         
         self.ui.choosevideobutton.clicked.connect(self.selectFile)
         self.ui.trackbutton.clicked.connect(self.track)
@@ -149,24 +155,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.leftbutton.clicked.connect(self.frameleft)
         self.ui.maskbutton.clicked.connect(self.showmask)
         self.ui.maskinvert_checkBox.toggled.connect(self.invertmaskcommand)
-        self.ui.masksigmabox.valueChanged.connect(self.get_slider_vals)
+        self.ui.maskthreshbox.valueChanged.connect(self.get_slider_vals)
         self.ui.maskdilationbox.valueChanged.connect(self.get_slider_vals)
         self.ui.croplengthbox.valueChanged.connect(self.get_slider_vals)
         self.ui.savedatabutton.clicked.connect(self.savedata)
         self.ui.VideoFeedLabel.installEventFilter(self)
         self.ui.recordbutton.clicked.connect(self.recordfunction)
-
-
-        #control tab functions
-        self.control_status = False
-        self.joystick_status = False
-
-        self.ui.led.hide()
-        self.ui.acousticfreq_spinBox.hide()
-        self.ui.acousticfreqlabel.hide()
-        self.ui.applyacousticbutton.hide()
-        #self.ui.frameslider.hide()
-
         self.ui.controlbutton.clicked.connect(self.toggle_control_status)
         self.ui.joystickbutton.clicked.connect(self.toggle_joystick_status)
         self.ui.memorybox.valueChanged.connect(self.get_slider_vals)
@@ -180,12 +174,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.resetdefaultbutton.clicked.connect(self.resetparams)
         self.ui.simulationbutton.clicked.connect(self.toggle_simulation)
         self.ui.dockWidget.dockLocationChanged.connect(self.dockstatus)
+
+
+  
+
+
+  
+     
+        
+        
         
 
     def dockstatus(self):
         if self.ui.dockWidget.isFloating():
             self.window_width -= 240#screen.width()
             self.resize(self.window_width, self.window_height)
+            
         else:
             self.window_width += 240#screen.width()
             self.resize(self.window_width, self.window_height)
@@ -203,40 +207,7 @@ class MainWindow(QtWidgets.QMainWindow):
    
 
 
-    def get_slider_vals(self):
-        memory = self.ui.memorybox.value()
-        RRTtreesize = self.ui.RRTtreesizebox.value()
-        arrivalthresh = self.ui.arrivalthreshbox.value()
-        rollingfreq = self.ui.rollingfrequencybox.value()
-        gamma = self.ui.gammadial.value()
-        psi = self.ui.psidial.value()
-        sigma = self.ui.masksigmabox.value() /10
-        dilation = self.ui.maskdilationbox.value() 
-        crop_length = self.ui.croplengthbox.value()
 
-        if self.cap is not None: 
-            self.tracker.memory = memory
-            self.tracker.RRTtreesize = RRTtreesize
-            self.tracker.arrivalthresh = arrivalthresh
-            self.tracker.mask_sigma = sigma
-            self.tracker.mask_dilation = dilation
-            self.tracker.crop_length = crop_length
-    
-
-        #self.ui.memorylabel.setText("Memory:            {}".format(memory))
-        #self.ui.RRTtreesizelabel.setText("RRT Tree Size:     {}".format(RRTtreesize))
-        #self.ui.arrivalthreshlabel.setText("Arrival Thresh:    {}".format(arrivalthresh))
-        #self.ui.rollingfrequencylabel.setText("Rolling Frequency: {}".format(rollingfreq))
-        self.ui.gammalabel.setText("Gamma: {}".format(gamma))
-        self.ui.psilabel.setText("Psi: {}".format(psi))
-        #self.ui.masksigmalabel.setText("Mask Sigma:       {}".format(sigma) )
-        #self.ui.maskdilationlabel.setText("Mask Dilation:     {}".format(dilation) )
-        #if crop_length %2 ==0:
-        #    self.ui.croplengthlabel.setText("Crop Length:       {}".format(crop_length) )
-
-        self.simulator.gamma = np.radians(gamma)
-        self.simulator.psi = np.radians(psi)
-        
         
 
         
@@ -244,6 +215,7 @@ class MainWindow(QtWidgets.QMainWindow):
     
     
     def toggle_control_status(self):
+        
         if self.ui.controlbutton.isChecked():
             self.control_status = True
             self.ui.controlbutton.setText("Stop")
@@ -387,6 +359,32 @@ class MainWindow(QtWidgets.QMainWindow):
         #print to textbox
         self.ui.plainTextEdit.appendPlainText("$ "+ text)
         
+    def get_slider_vals(self):
+        memory = self.ui.memorybox.value()
+        RRTtreesize = self.ui.RRTtreesizebox.value()
+        arrivalthresh = self.ui.arrivalthreshbox.value()
+        rollingfreq = self.ui.rollingfrequencybox.value()
+        gamma = self.ui.gammadial.value()
+        psi = self.ui.psidial.value()
+        thresh = self.ui.maskthreshbox.value() 
+        dilation = self.ui.maskdilationbox.value() 
+        crop_length = self.ui.croplengthbox.value()
+
+        if self.cap is not None: 
+            self.tracker.memory = memory
+            self.tracker.RRTtreesize = RRTtreesize
+            self.tracker.arrivalthresh = arrivalthresh
+            self.tracker.mask_thresh = thresh
+            self.tracker.mask_dilation = dilation
+            self.tracker.crop_length = crop_length
+
+
+        self.ui.gammalabel.setText("Gamma: {}".format(gamma))
+        self.ui.psilabel.setText("Psi: {}".format(psi))
+        self.simulator.gamma = np.radians(gamma)
+        self.simulator.psi = np.radians(psi)
+        
+
 
     def selectFile(self):
         options = QtWidgets.QFileDialog.Options()
@@ -405,6 +403,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.choosevideobutton.setText("Live")
             self.tbprint("Using Video Camera")
 
+
     def convert_coords(self,pos):
         #need a way to convert the video position of mouse to the actually coordinate in the window
         newx = int(pos.x() * (self.video_width / self.display_width)) 
@@ -416,7 +415,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if object is self.ui.VideoFeedLabel: 
 
             if self.cap is not None:
-                
                 if event.type() == QtCore.QEvent.MouseButtonDblClick:        
                     if event.buttons() == QtCore.Qt.LeftButton:
                         newx, newy = self.convert_coords(event.pos())
@@ -439,7 +437,6 @@ class MainWindow(QtWidgets.QMainWindow):
                         robot.add_crop([x_1, y_1, w, h])
                         robot.add_area(0)
                         robot.add_blur(0)
-                        
                         
                         self.tracker.robot_list.append(robot)
                         
@@ -476,8 +473,6 @@ class MainWindow(QtWidgets.QMainWindow):
         return super().eventFilter(object, event)
         
 
-
-
     def update_image(self, frame):
         """Updates the image_label with a new opencv image"""
         if self.result is not None:
@@ -491,6 +486,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.result.write(frame)
         
         
+
         if self.control_status == True or self.joystick_status == True:
             _, Bx,By,Bz,alpha,gamma,_,_,_ = self.actions
             self.projection.roll = self.ui.rollradio.isChecked()
@@ -789,7 +785,7 @@ class MainWindow(QtWidgets.QMainWindow):
             
     
     def resetparams(self):
-        self.ui.masksigmabox.setValue(0.7)
+        self.ui.maskthreshbox.setValue(128)
         self.ui.maskdilationbox.setValue(0)
         self.ui.croplengthbox.setValue(40)
         self.ui.memorybox.setValue(15)

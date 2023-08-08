@@ -35,7 +35,7 @@ class VideoThread(QThread):
         self.mask_flag = False
         self.framenum = 0
 
-        self.mask_thresh = 128
+        self.mask_sigma = 128
         self.mask_dilation = 0  #this is not used as of now
         self.maskinvert = True
         self.crop_length = 40
@@ -64,10 +64,11 @@ class VideoThread(QThread):
         displayframe = frame.copy()
 
         if self.mask_flag == True:
-            displaymask = self.find_mask(displayframe)   
-            displaymask = cv2.dilate(displaymask, None, iterations=self.mask_dilation)
+            displaymask = self.find_mask(displayframe)
+            if self.mask_dilation>0:
+                displaymask = ndimage.binary_dilation(displaymask,iterations=self.mask_dilation)
+            displaymask = displaymask.astype(np.uint8)*255   #convert to an unsigned byte
             displayframe = cv2.cvtColor(displaymask, cv2.COLOR_GRAY2BGR)
-
 
         if len(self.robot_list) > 0:
             
@@ -83,7 +84,7 @@ class VideoThread(QThread):
                 croppedframe = frame[y1 : y1 + h, x1 : x1 + w]
                 
                 #find the mask
-                croppedmask  = self.find_mask(croppedframe)
+                croppedmask  = self.find_mask(croppedframe).astype(np.uint8)*255 
 
                 #find contours from the mask
                 contours, _ = cv2.findContours(croppedmask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -166,21 +167,33 @@ class VideoThread(QThread):
         return displayframe, croppedmask
  
 
+            
 
 
-    def find_mask(self,frame):
-        
+    def find_mask(self, frame):
+
+        im1 = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         invert = self.maskinvert
-        mask_thresh= int(self.mask_thresh)
+        mask_sigma= self.mask_sigma
+        img_threshold=0
 
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        _, mask = cv2.threshold(frame, mask_thresh, 255, cv2.THRESH_BINARY)
 
-        if invert:
-            mask = cv2.bitwise_not(mask)
+        BackgroundImg =  np.ones_like(im1)#BackgroundImage;#I only take every 10th image, any more is likely unnecessary, depends on fps but this can be slow
+        meanBackgroundImg = np.median(BackgroundImg)
+        
+        imgdiff=(-(meanBackgroundImg-np.median(im1))+  BackgroundImg - im1)
+        if not invert:
+            imgdiff = np.mean(imgdiff)-imgdiff;#if invert is true then just keep the img as it is, this is for dark subjects. If invert is false then make it negative and shift by mean, this is for bright subjects
+        
+
+        maskdiff = imgdiff < img_threshold
+        finalimg= np.where(maskdiff,np.zeros_like(im1),imgdiff)#setting dark pixels to zero
+        mask = finalimg > (finalimg.mean() + mask_sigma*finalimg.std())
 
         return mask
-
+    
+    #def updatemask(self, mask):
+    #    self.mask = mask
         
 
 
@@ -208,9 +221,14 @@ class VideoThread(QThread):
             if ret:
 
                 #calcualte mask for control
-                #if self.framenum %50 == 0:
-                control_mask = self.find_mask(frame)
-                control_mask = cv2.dilate(control_mask, None, iterations=self.mask_dilation)
+                if self.framenum %50 == 0:
+                    control_mask = self.find_mask(frame)
+                    #dilate mask 
+                    if self.mask_dilation>0:
+                        control_mask = ndimage.binary_dilation(control_mask,iterations=self.mask_dilation)
+                    control_mask = control_mask.astype(np.uint8)*255   #convert to an unsigned byte
+
+                
                 
                 #step 1 detect robot
                 frame, croppedframe = self.track_robot(frame) 

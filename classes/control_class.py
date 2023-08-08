@@ -28,7 +28,6 @@ class algorithm:
             endpos = robot_list[-1].trajectory[-1]
             
 
-            
             #print("this should update the trajectory")    
             x,y,w,h = robot_list[-1].cropped_frame[-1]
             cv2.rectangle(mask, (x, y), (x + w, y + h), (0, 0, 0), -1)
