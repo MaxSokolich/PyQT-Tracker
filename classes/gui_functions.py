@@ -44,7 +44,7 @@ if "mac" in platform.platform():
 elif "Linux" in platform.platform():
     from classes.gui_widgets_linux import Ui_MainWindow
 elif "Windows" in platform.platform():
-    from classes.gui_widgets_windows import Ui_MainWindow
+    from classes.gui_widgets_mac import Ui_MainWindow
 else:
     print("error")
 
