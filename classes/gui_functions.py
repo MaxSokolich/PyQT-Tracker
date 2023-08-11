@@ -57,24 +57,29 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-
-
+        
+        #self.showFullScreen()
+        #self.showMaximised()
+        #self.showMaximized()
         #resize some widgets to fit the screen better
         screen  = QtWidgets.QDesktopWidget().screenGeometry(-1)
         
-        self.window_width = 1600#screen.width()
-        self.window_height = 860
+        self.window_width = screen.width()
+        self.window_height = screen.height()
         self.resize(self.window_width, self.window_height)
-
         self.display_width = self.window_width-265# self.ui.frameGeometry().width()
-        self.display_height = self.window_height-165 #keep this fixed, changed the width dpending on the aspect ratio
 
+        self.displayheightratio = 0.789
+        self.framesliderheightratio = 0.025
+        self.textheightratio = .125
+        self.tabheightratio = 0.925
         
-        #self.ui.VideoFeedLabel.setGeometry(QtCore.QRect(10,  5,                       self.display_width,     self.display_height))
-        #self.ui.frameslider.setGeometry(QtCore.QRect(10,    self.display_height+12,   self.display_width,     20))
-        #self.ui.plainTextEdit.setGeometry(QtCore.QRect(10,  self.display_height+40,   self.display_width-400,     91))
+        self.aspectratio = 4/3
+        
+        
+        self.resize_widgets()
 
-        #1600, 860
+     
          
 
       
@@ -105,7 +110,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #connect to arduino
         if "mac" in platform.platform():
             self.tbprint("Detected OS: macos")
-            PORT = "/dev/cu.usbmodem111101"
+            PORT = "/dev/cu.usbmodem2101"
             self.controller_actions = Mac_Controller()
         elif "Linux" in platform.platform():
             self.tbprint("Detected OS: Linux")
@@ -176,8 +181,34 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.dockWidget.dockLocationChanged.connect(self.dockstatus)
         self.ui.orientradio.toggled.connect(self.checkorient)
 
+        
+    def resize_widgets(self):
+        self.display_height = self.window_height*self.displayheightratio #keep this fixed, changed the width dpending on the aspect ratio
+        self.framesliderheight = self.window_height*self.framesliderheightratio
+        self.textheight = self.window_height*self.textheightratio
+        self.tabheight = self.window_height*self.tabheightratio
 
-  
+        self.display_width = int(self.display_height * self.aspectratio)
+
+        self.ui.VideoFeedLabel.setGeometry(QtCore.QRect(10,  5,                       self.display_width,     self.display_height))
+        self.ui.frameslider.setGeometry(QtCore.QRect(10,    self.display_height+12,   self.display_width,     self.framesliderheight))
+        self.ui.plainTextEdit.setGeometry(QtCore.QRect(10,  self.display_height+self.framesliderheight+20,   self.display_width-400,     self.textheight))
+
+        self.ui.tabWidget.setGeometry(QtCore.QRect(12,  6,  260 ,     self.tabheight))
+
+
+
+    def resizeEvent(self, event):
+
+        #if self.cap is not None:
+
+        windowsize = event.size()
+
+        self.window_width = windowsize.width()
+        self.window_height = windowsize.height()
+
+        self.resize_widgets()
+        #return super().resizeEvent(event)
 
 
     def wheelEvent(self, event: QWheelEvent):
@@ -544,7 +575,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.CroppedVideoFeedLabel.setPixmap(qt_cimg)
         
 
-
+    
 
     
     def track(self):
@@ -568,24 +599,23 @@ class MainWindow(QtWidgets.QMainWindow):
                         self.ui.rightbutton.show()
                         self.ui.maskbutton.show()
           
-                        
-                    
 
                     self.video_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
                     self.video_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
                     self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
                     self.tbprint("Width: {}  --  Height: {}  --  Fps: {}".format(self.video_width,self.video_height,self.videofps))
 
-                    
+                    #self.window_width = windowsize.width()
+                    #self.window_height = windowsize.height()
+            
+                    self.aspectratio = (self.video_width / self.video_height)
 
-                    self.display_width = int(self.display_height * (self.video_width / self.video_height))
-                    self.ui.VideoFeedLabel.setGeometry(QtCore.QRect(10, 5, self.display_width, self.display_height))
+                    self.resize_widgets()
+                              
+                    
                     self.ui.VideoFeedLabel.setStyleSheet("border:2px solid rgb(0, 255, 0); ")
                     self.ui.CroppedVideoFeedLabel.setStyleSheet("border:2px solid rgb(0, 255, 0); ")
-                    
-                    
-                    self.window_width = self.display_width+265
-                    self.resize(self.window_width, self.window_height)
+         
                     
                     if self.videopath != 0:
                         self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
