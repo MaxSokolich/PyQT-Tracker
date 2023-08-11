@@ -28,7 +28,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication
 import sys
 
-import EasyPySpin
+#import EasyPySpin
 
 
 
@@ -43,9 +43,11 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__(parent=parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        #self.window_width = 1600#screen.width()
-        #self.window_height = 860
-        #self.resize(self.window_width, self.window_height)
+
+        screen  = QtWidgets.QDesktopWidget().screenGeometry(-1)
+        self.window_width = screen.width()
+        self.window_height = screen.height()
+        self.resize(self.window_width, self.window_height)
 
         #self.display_width = #self.ui.VideoFeedLabel.frameGeometry().width()# self.ui.frameGeometry().width()
         #self.display_height = # self.ui.VideoFeedLabel.frameGeometry().height() #keep this fixed, changed the width dpending on the aspect ratio
@@ -74,13 +76,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.windowaspect = 16/9
 
 
-        self.display_width = None#self.ui.VideoFeedLabel.frameGeometry().width()
-        self.display_height = None#int(self.display_width * self.aspect)
+        self.display_width = self.ui.VideoFeedLabel.frameGeometry().width()
+        self.display_height = int(self.display_width * self.aspect)
         
         self.video_width  = self.display_width
         self.video_height = self.display_height
 
-        self.tar = [500,500]
+        self.tar = [500, 500]
     
     
     
@@ -112,7 +114,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def track(self):
         if self.videopath is not None:
             if self.ui.trackbutton.isChecked():
-                self.cap  = EasyPySpin.VideoCapture(0)
+                self.cap  = cv2.VideoCapture(0)
                 
                         
                 #self.video_width  = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
