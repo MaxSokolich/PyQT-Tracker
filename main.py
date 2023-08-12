@@ -9,6 +9,7 @@ from classes.gui_functions import MainWindow
 #Convert blur into z position
 #add slots for field values
 #remeasure pix2metric conversion
+#add sensorvals to magnetic_field_list and save
 
 
 # maybe add robot list

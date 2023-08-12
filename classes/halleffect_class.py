@@ -8,6 +8,8 @@ to:
 
 Jetson.GPIO.setmode(GPIO.BOARD)
 """
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread,QTimer
+import time as time
 try:
     import board
     import busio
@@ -16,22 +18,22 @@ try:
     import adafruit_ads1x15.ads1115 as ADS
     from adafruit_ads1x15.analog_in import AnalogIn
     from scipy.interpolate import interp1d
-    import multiprocessing
-    #multiprocessing.set_start_method('forkserver', force=True)
-    #multiprocessing.freeze_support()
-    from multiprocessing import Process, Queue, Event
+   
     
     import time
     
-    class HallEffect:
+    class HallEffect(QThread):
         """
         Class for managing the Hall Effect sensors via i2c
         Args:
             None
         """
 
+        sensor_signal = pyqtSignal(list)
 
-        def __init__(self):
+        def __init__(self, parent):
+            super().__init__(parent=parent)
+            self.parent = parent
             #set up sensor I2C
             #GPIO.setmode(GPIO.BOARD)
             self.i2c = busio.I2C(board.SCL, board.SDA)
@@ -42,8 +44,9 @@ try:
             self.chanNegY = AnalogIn(self.ads, ADS.P0)  # one of the 4 coil config Em
             self.chanNegX = AnalogIn(self.ads, ADS.P3)
 
-            #set up queue and exit condition
-            self.exit = Event()
+            self.run_flag = True
+
+   
 
         def createBounds(self):
             """
@@ -78,56 +81,56 @@ try:
             mapped_field = int(m(VAL))
             return mapped_field
         
-        def showFIELD(self,sense_q):
-            """
-            continously updates queue with sensor value from mulitprocssing.Process
-            Args:
-                q: Queue 
-            Returns:
-                None
-            """             
+        def run(self):
+              
             posY = self.createBounds() #create bounds for positive Y EM sensor
             posX = self.createBounds() #create bounds for positive X EM sensor
             negY = self.createBounds() #create bounds for negative Y EM sensor
             negX = self.createBounds() #create bounds for negative X EM sensor
-            while not self.exit.is_set():
+            while self.run_flag:
                 
                 s1 = self.readFIELD(self.chanPosY, posY)
                 s2 = self.readFIELD(self.chanPosX, posX)
                 s3 = self.readFIELD(self.chanNegY, negY)
                 s4 = self.readFIELD(self.chanNegX, negX)
 
-
+                self.sensor_signal.emit([s1,s2,s3])
+                time.sleep(.1)
             print(" -- Sensor Process Terminated -- ")
 
-        """def start(self,sense_q):
-            print("Start Hall Effect Sensor")
-            sensor_process = Process(target = self.showFIELD, args = (sense_q,))
-            sensor_process.start()"""
 
-        def shutdown(self):
+        def stop(self):
             self.run_flag = False
             
 except Exception:
-    class HallEffect:
-        def __init__(self):
-            pass
+    class HallEffect(QThread):
+        sensor_signal = pyqtSignal(list)
+        def __init__(self, parent):
+            super().__init__(parent=parent)
+            self.parent = parent
+            self.run_flag = True
+            
         def createBounds(self):
             pass
-        def readFIELD(self, channel,bound):
+        def readFIELD(self, channel, bound):
             pass
-        def showFIELD(self,sense_q):
+        def showFIELD(self):
             pass
-        def start(self,sense_q):
-            pass
-        def shutdown(self):
-            pass
+        def run(self):
+            i=0
+            while self.run_flag:
+                
+                s1 = i
+                s2 = 2
+                s3 = 3
+
+
+                self.sensor_signal.emit([s1,s2,s3])
+                time.sleep(.1)
+                i+=1
+        def stop(self):
+            self.run_flag = False
         
 
 
-"""if __name__ == "__main__":
-    Sense = HallEffect()
-
-    Sense.showFIELD(None)
-"""
 

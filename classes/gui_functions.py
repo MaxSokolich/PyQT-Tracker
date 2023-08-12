@@ -38,6 +38,7 @@ from classes.simulation_class import HelmholtzSimulator
 from classes.projection_class import AxisProjection
 from classes.acoustic_class import AcousticClass
 from classes.openloop_class import OpenLoop
+from classes.halleffect_class import HallEffect
 
 
 if "mac" in platform.platform():
@@ -136,7 +137,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.simulator = HelmholtzSimulator(self.ui.magneticfieldsimlabel, width=300, height=300, dpi=125)
         self.projection = AxisProjection()
         self.acoustic_module = AcousticClass()
-        
+        self.halleffect = HallEffect(self)
+        self.halleffect.sensor_signal.connect(self.update_halleffect_sensor)
+        self.halleffect.start()
         
         
         
@@ -148,6 +151,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.joystick = pygame.joystick.Joystick(0)
             self.joystick.init()
             self.tbprint("Connected to: "+str(self.joystick.get_name()))
+        
+        
 
      
 
@@ -188,7 +193,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.orientradio.toggled.connect(self.checkorient)
         self.ui.objectivebox.valueChanged.connect(self.get_objective)
         self.ui.exposurebox.valueChanged.connect(self.get_exposure)
-
+        self.ui.joystickbutton.clicked.connect(self.toggle_joystick_status)
         self.ui.leftfieldbutton.clicked.connect(self.quickfieldleft)
         self.ui.rightfieldbutton.clicked.connect(self.quickfieldright)
         self.ui.upfieldbutton.clicked.connect(self.quickfieldup)
@@ -196,116 +201,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.plusZbutton.clicked.connect(self.quickfieldplusZ)
         self.ui.minusZbutton.clicked.connect(self.quickfieldminusZ)
 
-        self.ui.joystickbutton.clicked.connect(self.toggle_joystick_status)
+       
+        
+
+        
 
 
-
-
+    def update_halleffect_sensor(self, vals):
+        sensorBx, sensorBy, sensorBz = vals
+        self.ui.bxlabel.setText("Bx:   {} mT".format(sensorBx))
+        self.ui.bylabel.setText("By:   {} mT".format(sensorBy))
+        self.ui.bzlabel.setText("Bz:   {} mT".format(sensorBz))
    
         
-    def quickfieldleft(self):
-        if self.ui.leftfieldbutton.isChecked():
-            self.ui.upfieldbutton.setChecked(False)
-            self.ui.downfieldbutton.setChecked(False)
-            self.ui.rightfieldbutton.setChecked(False)
-            self.ui.plusZbutton.setChecked(False)
-            self.ui.minusZbutton.setChecked(False)
-            self.Bx = -1
-            self.By = 0
-            self.Bz = 0
-            self.alpha = 0
-            self.apply_actions(True)
-        else:
-            self.apply_actions(False)
-      
-            
-            
     
-    def quickfieldright(self):
-        if self.ui.rightfieldbutton.isChecked():
-            self.ui.upfieldbutton.setChecked(False)
-            self.ui.downfieldbutton.setChecked(False)
-            self.ui.leftfieldbutton.setChecked(False)
-            self.ui.plusZbutton.setChecked(False)
-            self.ui.minusZbutton.setChecked(False)
-            self.Bx = 1
-            self.By = 0
-            self.Bz = 0
-            self.alpha = 0
-            self.apply_actions(True)
-        else:
-            self.apply_actions(False)
-   
-            
-            
-            
-
-    def quickfieldup(self):
-        if self.ui.upfieldbutton.isChecked():
-            self.ui.rightfieldbutton.setChecked(False)
-            self.ui.downfieldbutton.setChecked(False)
-            self.ui.leftfieldbutton.setChecked(False)
-            self.ui.plusZbutton.setChecked(False)
-            self.ui.minusZbutton.setChecked(False)
-            self.By = 1
-            self.Bx = 0
-            self.Bz = 0
-            self.alpha = 0
-            self.apply_actions(True)
-        else:
-            self.apply_actions(False)
-          
-            
-            
-            
-
-    def quickfielddown(self):
-        if self.ui.downfieldbutton.isChecked():
-            self.ui.upfieldbutton.setChecked(False)
-            self.ui.rightfieldbutton.setChecked(False)
-            self.ui.leftfieldbutton.setChecked(False)
-            self.ui.plusZbutton.setChecked(False)
-            self.ui.minusZbutton.setChecked(False)
-            self.By = -1
-            self.Bx = 0
-            self.Bz = 0
-            self.alpha = 0
-            self.apply_actions(True)
-        else:
-            self.apply_actions(False)
-
-
-    def quickfieldplusZ(self):
-        if self.ui.plusZbutton.isChecked():
-            self.ui.upfieldbutton.setChecked(False)
-            self.ui.rightfieldbutton.setChecked(False)
-            self.ui.leftfieldbutton.setChecked(False)
-            self.ui.minusZbutton.setChecked(False)
-            self.ui.downfieldbutton.setChecked(False)
-            self.Bz = 1
-            self.By = 0
-            self.Bx = 0
-            self.alpha = 0
-            self.apply_actions(True)
-        else:
-            self.apply_actions(False)
-
-    def quickfieldminusZ(self):
-        if self.ui.minusZbutton.isChecked():
-            self.ui.upfieldbutton.setChecked(False)
-            self.ui.rightfieldbutton.setChecked(False)
-            self.ui.leftfieldbutton.setChecked(False)
-            self.ui.plusZbutton.setChecked(False)
-            self.ui.downfieldbutton.setChecked(False)
-            self.Bz = -1
-            self.By = 0
-            self.Bx = 0
-            self.alpha = 0
-            self.apply_actions(True)
-        else:
-            self.apply_actions(False)
-         
-            
     
 
     
@@ -397,8 +306,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self.apply_actions(True)
    
-
-
 
 
 
@@ -896,7 +803,97 @@ class MainWindow(QtWidgets.QMainWindow):
                 df2[f"acoustic_frequency"] = pd.Series(acoustic_freq, dtype='float64')
                 df2.to_excel(writer, sheet_name=f"Magnetic Field", index=False)
             
-    
+    def quickfieldleft(self):
+        if self.ui.leftfieldbutton.isChecked():
+            self.ui.upfieldbutton.setChecked(False)
+            self.ui.downfieldbutton.setChecked(False)
+            self.ui.rightfieldbutton.setChecked(False)
+            self.ui.plusZbutton.setChecked(False)
+            self.ui.minusZbutton.setChecked(False)
+            self.Bx = -1
+            self.By = 0
+            self.Bz = 0
+            self.alpha = 0
+            self.apply_actions(True)
+        else:
+            self.apply_actions(False)
+
+    def quickfieldright(self):
+        if self.ui.rightfieldbutton.isChecked():
+            self.ui.upfieldbutton.setChecked(False)
+            self.ui.downfieldbutton.setChecked(False)
+            self.ui.leftfieldbutton.setChecked(False)
+            self.ui.plusZbutton.setChecked(False)
+            self.ui.minusZbutton.setChecked(False)
+            self.Bx = 1
+            self.By = 0
+            self.Bz = 0
+            self.alpha = 0
+            self.apply_actions(True)
+        else:
+            self.apply_actions(False)
+
+    def quickfieldup(self):
+        if self.ui.upfieldbutton.isChecked():
+            self.ui.rightfieldbutton.setChecked(False)
+            self.ui.downfieldbutton.setChecked(False)
+            self.ui.leftfieldbutton.setChecked(False)
+            self.ui.plusZbutton.setChecked(False)
+            self.ui.minusZbutton.setChecked(False)
+            self.By = 1
+            self.Bx = 0
+            self.Bz = 0
+            self.alpha = 0
+            self.apply_actions(True)
+        else:
+            self.apply_actions(False)
+          
+    def quickfielddown(self):
+        if self.ui.downfieldbutton.isChecked():
+            self.ui.upfieldbutton.setChecked(False)
+            self.ui.rightfieldbutton.setChecked(False)
+            self.ui.leftfieldbutton.setChecked(False)
+            self.ui.plusZbutton.setChecked(False)
+            self.ui.minusZbutton.setChecked(False)
+            self.By = -1
+            self.Bx = 0
+            self.Bz = 0
+            self.alpha = 0
+            self.apply_actions(True)
+        else:
+            self.apply_actions(False)
+
+    def quickfieldplusZ(self):
+        if self.ui.plusZbutton.isChecked():
+            self.ui.upfieldbutton.setChecked(False)
+            self.ui.rightfieldbutton.setChecked(False)
+            self.ui.leftfieldbutton.setChecked(False)
+            self.ui.minusZbutton.setChecked(False)
+            self.ui.downfieldbutton.setChecked(False)
+            self.Bz = 1
+            self.By = 0
+            self.Bx = 0
+            self.alpha = 0
+            self.apply_actions(True)
+        else:
+            self.apply_actions(False)
+
+    def quickfieldminusZ(self):
+        if self.ui.minusZbutton.isChecked():
+            self.ui.upfieldbutton.setChecked(False)
+            self.ui.rightfieldbutton.setChecked(False)
+            self.ui.leftfieldbutton.setChecked(False)
+            self.ui.plusZbutton.setChecked(False)
+            self.ui.downfieldbutton.setChecked(False)
+            self.Bz = -1
+            self.By = 0
+            self.Bx = 0
+            self.alpha = 0
+            self.apply_actions(True)
+        else:
+            self.apply_actions(False)
+         
+        
     def resetparams(self):
         self.ui.maskthreshbox.setValue(128)
         self.ui.maskdilationbox.setValue(0)
@@ -948,4 +945,5 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tracker.stop()
         self.simulator.stop()
         self.apply_actions(False)
+        self.halleffect.stop()
         self.arduino.close()
