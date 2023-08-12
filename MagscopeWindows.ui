@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1600</width>
-    <height>887</height>
+    <width>1590</width>
+    <height>950</height>
    </rect>
   </property>
   <property name="font">
@@ -108,13 +108,7 @@
   <widget class="QDockWidget" name="dockWidget">
    <property name="minimumSize">
     <size>
-     <width>245</width>
-     <height>830</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>524287</width>
+     <width>270</width>
      <height>850</height>
     </size>
    </property>
@@ -128,96 +122,33 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
-    <widget class="QTabWidget" name="tabWidget">
-     <property name="geometry">
-      <rect>
-       <x>15</x>
-       <y>10</y>
-       <width>221</width>
-       <height>801</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">font-size: 13pt; font: Arial;</string>
-     </property>
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="tracking_tab">
-      <attribute name="title">
-       <string>Tracking</string>
-      </attribute>
-      <widget class="QLabel" name="robotblurlabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>480</y>
-         <width>161</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Blur:</string>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="rightbutton">
-       <property name="geometry">
-        <rect>
-         <x>110</x>
-         <y>140</y>
-         <width>60</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QToolButton {
-                color: rgb(255, 255, 255);
-                background-color: rgb(0, 0, 0);
-                border-style: outset;
-                border-width: px;
-                border-radius: 10px;
-                border: 2px solid rgb(0, 0, 0);
-                font: bold 16px;
-                min-width: 1em;
-                padding: 1px;
-            }
-            QToolButton:hover {
-                background-color: rgb(100, 100, 100);
-                color: rgb(255, 255, 255);
-                border: 2px solid rgb(0, 255, 0);
-            }
-            QToolButton:pressed {
-                background-color: rgb(100, 100, 100);
-                border: 2px solid rgb(255, 0, 0);
-                border-style: inset;
-                padding-left: 5px;
-                padding-top: 5px;
-            }</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="autoRepeat">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="enabled">
         <bool>true</bool>
        </property>
-       <property name="autoRepeatInterval">
-        <number>1</number>
-       </property>
-       <property name="arrowType">
-        <enum>Qt::RightArrow</enum>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="choosevideobutton">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>0</y>
-         <width>165</width>
-         <height>25</height>
-        </rect>
-       </property>
        <property name="styleSheet">
-        <string notr="true">     QPushButton {
+        <string notr="true">font-size: 15pt; font: Arial;</string>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="tracking_tab">
+        <attribute name="title">
+         <string>Tracking</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0" colspan="4">
+          <widget class="QPushButton" name="choosevideobutton">
+           <property name="maximumSize">
+            <size>
+             <width>300</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">     QPushButton {
                 color: rgb(255, 255, 255);
                 background-color: rgb(0, 0, 0);
                 border-style: outset;
@@ -234,35 +165,85 @@
             
             
             }</string>
-       </property>
-       <property name="text">
-        <string>Choose Video</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="croplengthlabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>325</y>
-         <width>101</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Crop Length</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pausebutton">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>110</y>
-         <width>160</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
+           </property>
+           <property name="text">
+            <string>Choose Video</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="4">
+          <widget class="QPushButton" name="trackbutton">
+           <property name="maximumSize">
+            <size>
+             <width>300</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>ArrowCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+                color: rgb(255, 255, 255);
+                background-color: rgb(0, 0, 255);
+                border-style: outset;
+                border-width: 3px;
+                border-radius: 10px;
+                border-color: rgb(0, 0, 255);
+                min-width: 1em;
+                padding: 6px;
+            }
+      
+            QPushButton:checked {
+                color: rgb(255, 255, 255);
+                background-color: rgb(255, 0, 0);
+                border-style: inset;
+                border-width: 3px;
+                border-radius: 10px;
+                border-color: rgb(255, 0, 0);
+                font: bold 16px;
+                min-width: 1em;
+               
+            }
+            QPushButton:hover {
+                background-color: rgb(100, 100, 100);
+                color: rgb(255, 255, 255);
+                border-color: rgb(0, 255, 0);
+                padding-left: 5px;
+                padding-top: 5px;
+            }</string>
+           </property>
+           <property name="text">
+            <string>Track</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="4">
+          <widget class="QLabel" name="framelabel">
+           <property name="maximumSize">
+            <size>
+             <width>300</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Frame: </string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="4">
+          <widget class="QPushButton" name="pausebutton">
+           <property name="maximumSize">
+            <size>
+             <width>300</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
                 color: rgb(255, 255, 255);
                 background-color: rgb(150, 0, 0);
                 border-style: outset;
@@ -290,157 +271,25 @@
                 padding-left: 2px;
                 padding-top: 2px;
             }</string>
-       </property>
-       <property name="text">
-        <string>Pause</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="trackbutton">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>30</y>
-         <width>160</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="cursor">
-        <cursorShape>ArrowCursor</cursorShape>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-                color: rgb(255, 255, 255);
-                background-color: rgb(0, 0, 255);
-                border-style: outset;
-                border-width: 3px;
-                border-radius: 10px;
-                border-color: rgb(0, 0, 255);
-                min-width: 1em;
-                padding: 6px;
-            }
-      
-            QPushButton:checked {
-                color: rgb(255, 255, 255);
-                background-color: rgb(255, 0, 0);
-                border-style: inset;
-                border-width: 3px;
-                border-radius: 10px;
-                border-color: rgb(255, 0, 0);
-                font: bold 16px;
-                min-width: 1em;
-               
-            }
-            QPushButton:hover {
-                background-color: rgb(100, 100, 100);
-                color: rgb(255, 255, 255);
-                border-color: rgb(0, 255, 0);
-                padding-left: 5px;
-                padding-top: 5px;
-            }</string>
-       </property>
-       <property name="text">
-        <string>Track</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="robotarealabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>440</y>
-         <width>161</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Area:</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="maskinvert_checkBox">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>210</y>
-         <width>191</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Invert Mask: True</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="maskbutton">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>174</y>
-         <width>161</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-                color: rgb(255, 255, 255);
-                background-color: rgb(0, 0, 0);
-                border-style: outset;
-                border-width: 2px;
-                border-radius: 10px;
-                border-color: rgb(0, 0, 0);
-                min-width: 1em;
-                padding: 1px;
-            }
-            QPushButton:hover {
-                background-color: rgb(100, 100, 100);
-                color: rgb(255, 255, 255);
-                border-style: inset;
-			  border-color: rgb(0, 255, 0);
-            }</string>
-       </property>
-       <property name="text">
-        <string>Mask</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="CroppedVideoFeedLabel">
-       <property name="geometry">
-        <rect>
-         <x>5</x>
-         <y>520</y>
-         <width>200</width>
-         <height>200</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); </string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="leftbutton">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>140</y>
-         <width>60</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QToolButton {
+           </property>
+           <property name="text">
+            <string>Pause</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QToolButton" name="leftbutton">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QToolButton {
                 color: rgb(255, 255, 255);
                 background-color: rgb(0, 0, 0);
                 border-style: outset;
@@ -463,31 +312,203 @@
                 padding-left: 5px;
                 padding-top: 5px;
             }</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="autoRepeat">
-        <bool>true</bool>
-       </property>
-       <property name="autoRepeatInterval">
-        <number>1</number>
-       </property>
-       <property name="arrowType">
-        <enum>Qt::LeftArrow</enum>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="savedatabutton">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>365</y>
-         <width>100</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="autoRepeat">
+            <bool>true</bool>
+           </property>
+           <property name="autoRepeatInterval">
+            <number>1</number>
+           </property>
+           <property name="arrowType">
+            <enum>Qt::LeftArrow</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2" colspan="2">
+          <widget class="QToolButton" name="rightbutton">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QToolButton {
+                color: rgb(255, 255, 255);
+                background-color: rgb(0, 0, 0);
+                border-style: outset;
+                border-width: px;
+                border-radius: 10px;
+                border: 2px solid rgb(0, 0, 0);
+                font: bold 16px;
+                min-width: 1em;
+                padding: 1px;
+            }
+            QToolButton:hover {
+                background-color: rgb(100, 100, 100);
+                color: rgb(255, 255, 255);
+                border: 2px solid rgb(0, 255, 0);
+            }
+            QToolButton:pressed {
+                background-color: rgb(100, 100, 100);
+                border: 2px solid rgb(255, 0, 0);
+                border-style: inset;
+                padding-left: 5px;
+                padding-top: 5px;
+            }</string>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="autoRepeat">
+            <bool>true</bool>
+           </property>
+           <property name="autoRepeatInterval">
+            <number>1</number>
+           </property>
+           <property name="arrowType">
+            <enum>Qt::RightArrow</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0" colspan="4">
+          <widget class="QPushButton" name="maskbutton">
+           <property name="maximumSize">
+            <size>
+             <width>300</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+                color: rgb(255, 255, 255);
+                background-color: rgb(0, 0, 0);
+                border-style: outset;
+                border-width: 2px;
+                border-radius: 10px;
+                border-color: rgb(0, 0, 0);
+                min-width: 1em;
+                padding: 1px;
+            }
+            QPushButton:hover {
+                background-color: rgb(100, 100, 100);
+                color: rgb(255, 255, 255);
+                border-style: inset;
+			  border-color: rgb(0, 255, 0);
+            }</string>
+           </property>
+           <property name="text">
+            <string>Mask</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0" colspan="4">
+          <widget class="QCheckBox" name="maskinvert_checkBox">
+           <property name="maximumSize">
+            <size>
+             <width>300</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Invert Mask: True</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0" colspan="3">
+          <widget class="QLabel" name="maskthreshlabel">
+           <property name="maximumSize">
+            <size>
+             <width>150</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Mask Thresh</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="3">
+          <widget class="QSpinBox" name="maskthreshbox">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+           <property name="value">
+            <number>128</number>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0" colspan="3">
+          <widget class="QLabel" name="maskdilationlabel">
+           <property name="maximumSize">
+            <size>
+             <width>150</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Mask Dilation</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="3">
+          <widget class="QSpinBox" name="maskdilationbox">
+           <property name="maximum">
+            <number>40</number>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0" colspan="2">
+          <widget class="QLabel" name="croplengthlabel">
+           <property name="maximumSize">
+            <size>
+             <width>150</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Crop Length</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="3">
+          <widget class="QSpinBox" name="croplengthbox">
+           <property name="minimum">
+            <number>5</number>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="value">
+            <number>40</number>
+           </property>
+           <property name="displayIntegerBase">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0">
+          <widget class="QPushButton" name="savedatabutton">
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
                 color: rgb(0, 0, 0);
                 background-color: rgb(255, 255, 0);
                 border-style: outset;
@@ -508,64 +529,25 @@
                 padding-top: 5px;
                 border-style: inset;
                 }</string>
-       </property>
-       <property name="text">
-        <string>Save Data</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="maskthreshlabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>245</y>
-         <width>111</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Mask Thresh</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="robotvelocitylabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>460</y>
-         <width>161</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Velocity:</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="framelabel">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>80</y>
-         <width>121</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Frame: </string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="recordbutton">
-       <property name="geometry">
-        <rect>
-         <x>105</x>
-         <y>365</y>
-         <width>100</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
+           </property>
+           <property name="text">
+            <string>Save Data</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1" colspan="3">
+          <widget class="QPushButton" name="recordbutton">
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
                 color: rgb(255, 255, 255);
                 background-color: rgb(0, 0, 0);
                 border-style: outset;
@@ -594,102 +576,82 @@
                 padding-left: 5px;
                 padding-top: 5px;
             }</string>
-       </property>
-       <property name="text">
-        <string>Record</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>430</y>
-         <width>205</width>
-         <height>80</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">color: rgb(0, 0, 0);
-                background-color: rgb(255, 255, 255);
-                border-style: outset;
-                border-width: 3px;
-                border-radius: 10px;
-                border-color: rgb(0, 0, 0);
-                min-width: 1em;
-                padding: 6px;</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-      <widget class="QLabel" name="maskdilationlabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>285</y>
-         <width>121</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Mask Dilation</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="maskdilationbox">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>280</y>
-         <width>61</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="maximum">
-        <number>40</number>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="croplengthbox">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>320</y>
-         <width>61</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="maximum">
-        <number>300</number>
-       </property>
-       <property name="value">
-        <number>40</number>
-       </property>
-       <property name="displayIntegerBase">
-        <number>10</number>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="resetdefaultbutton">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>730</y>
-         <width>141</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>13</pointsize>
-         <weight>50</weight>
-         <italic>false</italic>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
+           </property>
+           <property name="text">
+            <string>Record</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0" colspan="4">
+          <widget class="QLabel" name="robotarealabel">
+           <property name="maximumSize">
+            <size>
+             <width>300</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Area:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="0" colspan="4">
+          <widget class="QLabel" name="robotvelocitylabel">
+           <property name="maximumSize">
+            <size>
+             <width>300</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Velocity:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="0" colspan="4">
+          <widget class="QLabel" name="robotblurlabel">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Blur:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="0" colspan="4">
+          <widget class="QLabel" name="CroppedVideoFeedLabel">
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); </string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="0" colspan="4">
+          <widget class="QPushButton" name="resetdefaultbutton">
+           <property name="maximumSize">
+            <size>
+             <width>300</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <pointsize>15</pointsize>
+             <italic>false</italic>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
                 color: rgb(255, 255, 255);
                 background-color: rgb(100, 100, 100);
                 border-style: outset;
@@ -710,65 +672,29 @@
                 padding-top: 5px;
                 border-style: inset;
                 }</string>
-       </property>
-       <property name="text">
-        <string>Reset</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="maskthreshbox">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>240</y>
-         <width>61</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="maximum">
-        <number>255</number>
-       </property>
-       <property name="value">
-        <number>128</number>
-       </property>
-      </widget>
-      <zorder>label</zorder>
-      <zorder>robotblurlabel</zorder>
-      <zorder>rightbutton</zorder>
-      <zorder>choosevideobutton</zorder>
-      <zorder>croplengthlabel</zorder>
-      <zorder>pausebutton</zorder>
-      <zorder>trackbutton</zorder>
-      <zorder>robotarealabel</zorder>
-      <zorder>maskinvert_checkBox</zorder>
-      <zorder>maskbutton</zorder>
-      <zorder>CroppedVideoFeedLabel</zorder>
-      <zorder>leftbutton</zorder>
-      <zorder>savedatabutton</zorder>
-      <zorder>maskthreshlabel</zorder>
-      <zorder>robotvelocitylabel</zorder>
-      <zorder>framelabel</zorder>
-      <zorder>recordbutton</zorder>
-      <zorder>maskdilationlabel</zorder>
-      <zorder>maskdilationbox</zorder>
-      <zorder>croplengthbox</zorder>
-      <zorder>resetdefaultbutton</zorder>
-      <zorder>maskthreshbox</zorder>
-     </widget>
-     <widget class="QWidget" name="control_tab">
-      <attribute name="title">
-       <string>Control</string>
-      </attribute>
-      <widget class="QPushButton" name="controlbutton">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>5</y>
-         <width>160</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
+           </property>
+           <property name="text">
+            <string>Reset</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="control_tab">
+        <attribute name="title">
+         <string>Control</string>
+        </attribute>
+        <widget class="QPushButton" name="controlbutton">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>5</y>
+           <width>160</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
                 color: rgb(255, 255, 255);
                 background-color: rgb(0, 0, 255);
                 border-style: outset;
@@ -797,93 +723,93 @@
                 padding-left: 5px;
                 padding-top: 5px;
             }</string>
-       </property>
-       <property name="text">
-        <string>Control</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="arrivalthreshlabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>310</y>
-         <width>131</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Arrive Thresh</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="gammalabel">
-       <property name="geometry">
-        <rect>
-         <x>110</x>
-         <y>490</y>
-         <width>101</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Gamma: 90</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="rollingfrequencylabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>350</y>
-         <width>91</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Frequency</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="psilabel">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>490</y>
-         <width>71</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Psi: 90</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="magneticfieldsimlabel">
-       <property name="geometry">
-        <rect>
-         <x>5</x>
-         <y>520</y>
-         <width>200</width>
-         <height>200</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); </string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="joystickbutton">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>90</y>
-         <width>141</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
+         </property>
+         <property name="text">
+          <string>Control</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="arrivalthreshlabel">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>310</y>
+           <width>131</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Arrive Thresh</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="gammalabel">
+         <property name="geometry">
+          <rect>
+           <x>110</x>
+           <y>490</y>
+           <width>101</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Gamma: 90</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="rollingfrequencylabel">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>350</y>
+           <width>91</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Frequency</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="psilabel">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>490</y>
+           <width>71</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Psi: 90</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="magneticfieldsimlabel">
+         <property name="geometry">
+          <rect>
+           <x>5</x>
+           <y>520</y>
+           <width>200</width>
+           <height>200</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); </string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="joystickbutton">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>90</y>
+           <width>141</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
                 color: rgb(255, 255, 255);
                 background-color: rgb(255, 0, 255);
                 border-style: outset;
@@ -914,51 +840,51 @@
                 padding-left: 5px;
                 padding-top: 5px;
             }</string>
-       </property>
-       <property name="text">
-        <string>Joystick</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="acousticfreq_spinBox">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>150</y>
-         <width>171</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="maximum">
-        <number>3000000</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="acousticfreqlabel">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>130</y>
-         <width>171</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Acoustic Frequency</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="applyacousticbutton">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>190</y>
-         <width>111</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
+         </property>
+         <property name="text">
+          <string>Joystick</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QSpinBox" name="acousticfreq_spinBox">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>150</y>
+           <width>171</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="maximum">
+          <number>3000000</number>
+         </property>
+        </widget>
+        <widget class="QLabel" name="acousticfreqlabel">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>130</y>
+           <width>171</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Acoustic Frequency</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="applyacousticbutton">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>190</y>
+           <width>111</width>
+           <height>25</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
                 color: rgb(255, 255, 255);
                 background-color: rgb(0, 0, 0);
                 border-style: outset;
@@ -984,80 +910,80 @@
                 min-width: 1em;
                 padding: 1px;
 }</string>
-       </property>
-       <property name="text">
-        <string>Apply</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QLabel" name="RRTtreesizelabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>270</y>
-         <width>131</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>RRT Tree Size</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="memorylabel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>230</y>
-         <width>61</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Memory</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="rollradio">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>65</y>
-         <width>61</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Roll</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="swimradio">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>65</y>
-         <width>99</width>
-         <height>20</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Swim</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="led">
-       <property name="geometry">
-        <rect>
-         <x>150</x>
-         <y>190</y>
-         <width>25</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">
+         </property>
+         <property name="text">
+          <string>Apply</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="RRTtreesizelabel">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>270</y>
+           <width>131</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>RRT Tree Size</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="memorylabel">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>230</y>
+           <width>61</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Memory</string>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="rollradio">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>65</y>
+           <width>61</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Roll</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="swimradio">
+         <property name="geometry">
+          <rect>
+           <x>70</x>
+           <y>65</y>
+           <width>61</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Swim</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="led">
+         <property name="geometry">
+          <rect>
+           <x>150</x>
+           <y>190</y>
+           <width>25</width>
+           <height>25</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">
                 background-color: rgb(255, 0, 0);
                 border-style: outset;
                 border-width: 3px;
@@ -1065,98 +991,98 @@
                 border-color: rgb(255, 0, 0);
          
                 padding: 6px;</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="memorybox">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>220</y>
-         <width>61</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="value">
-        <number>15</number>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="RRTtreesizebox">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>260</y>
-         <width>61</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="value">
-        <number>25</number>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="arrivalthreshbox">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>300</y>
-         <width>61</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>100</number>
-       </property>
-       <property name="value">
-        <number>50</number>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="rollingfrequencybox">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>340</y>
-         <width>61</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>40</number>
-       </property>
-       <property name="value">
-        <number>10</number>
-       </property>
-      </widget>
-      <widget class="QDial" name="psidial">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>380</y>
-         <width>91</width>
-         <height>101</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QDial
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+        <widget class="QSpinBox" name="memorybox">
+         <property name="geometry">
+          <rect>
+           <x>140</x>
+           <y>220</y>
+           <width>61</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>15</number>
+         </property>
+        </widget>
+        <widget class="QSpinBox" name="RRTtreesizebox">
+         <property name="geometry">
+          <rect>
+           <x>140</x>
+           <y>260</y>
+           <width>61</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>25</number>
+         </property>
+        </widget>
+        <widget class="QSpinBox" name="arrivalthreshbox">
+         <property name="geometry">
+          <rect>
+           <x>140</x>
+           <y>300</y>
+           <width>61</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>20</number>
+         </property>
+        </widget>
+        <widget class="QSpinBox" name="rollingfrequencybox">
+         <property name="geometry">
+          <rect>
+           <x>140</x>
+           <y>340</y>
+           <width>61</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="minimum">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <number>40</number>
+         </property>
+         <property name="value">
+          <number>10</number>
+         </property>
+        </widget>
+        <widget class="QDial" name="psidial">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>380</y>
+           <width>91</width>
+           <height>101</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QDial
     {
         background-color:QLinearGradient( 
             x1: 0.177, y1: 0.004, x2: 0.831, y2: 0.911, 
@@ -1170,46 +1096,45 @@
             stop: 0.983 #2e2e2e
         );
     }</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>90</number>
-       </property>
-       <property name="singleStep">
-        <number>5</number>
-       </property>
-       <property name="value">
-        <number>90</number>
-       </property>
-       <property name="notchTarget">
-        <double>10.000000000000000</double>
-       </property>
-       <property name="notchesVisible">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QDial" name="gammadial">
-       <property name="geometry">
-        <rect>
-         <x>110</x>
-         <y>380</y>
-         <width>91</width>
-         <height>101</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>13</pointsize>
-         <weight>50</weight>
-         <italic>false</italic>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QDial {
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>90</number>
+         </property>
+         <property name="singleStep">
+          <number>5</number>
+         </property>
+         <property name="value">
+          <number>90</number>
+         </property>
+         <property name="notchTarget">
+          <double>10.000000000000000</double>
+         </property>
+         <property name="notchesVisible">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QDial" name="gammadial">
+         <property name="geometry">
+          <rect>
+           <x>110</x>
+           <y>380</y>
+           <width>91</width>
+           <height>101</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>15</pointsize>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QDial {
     background-color: qconicalgradient(cx:0.5, cy:0.5, angle:90, stop:0 #1a5276, stop:0.3 #2980b9, stop:0.7 #3498db, stop:1 #1a5276);
     border: 2px solid #1a5276;
     padding: 5px;
@@ -1224,43 +1149,43 @@ QDial::handle {
     margin: -5px;
 }
 </string>
-       </property>
-       <property name="maximum">
-        <number>180</number>
-       </property>
-       <property name="singleStep">
-        <number>5</number>
-       </property>
-       <property name="pageStep">
-        <number>10</number>
-       </property>
-       <property name="value">
-        <number>90</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="wrapping">
-        <bool>false</bool>
-       </property>
-       <property name="notchTarget">
-        <double>10.000000000000000</double>
-       </property>
-       <property name="notchesVisible">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="simulationbutton">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>730</y>
-         <width>171</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
+         </property>
+         <property name="maximum">
+          <number>180</number>
+         </property>
+         <property name="singleStep">
+          <number>5</number>
+         </property>
+         <property name="pageStep">
+          <number>10</number>
+         </property>
+         <property name="value">
+          <number>90</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="wrapping">
+          <bool>false</bool>
+         </property>
+         <property name="notchTarget">
+          <double>10.000000000000000</double>
+         </property>
+         <property name="notchesVisible">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="simulationbutton">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>730</y>
+           <width>171</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
                 color: rgb(255, 255, 255);
                 background-color: rgb(0, 255, 0);
                 border-style: outset;
@@ -1290,16 +1215,31 @@ QDial::handle {
                 padding-left: 5px;
                 padding-top: 5px;
             }</string>
-       </property>
-       <property name="text">
-        <string>Simulation On</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
+         </property>
+         <property name="text">
+          <string>Simulation On</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="orientradio">
+         <property name="geometry">
+          <rect>
+           <x>140</x>
+           <y>65</y>
+           <width>71</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Orient</string>
+         </property>
+        </widget>
+       </widget>
       </widget>
-     </widget>
-    </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <action name="actiondock">

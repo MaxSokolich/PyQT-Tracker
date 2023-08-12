@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from scipy import ndimage 
 import time
 
-from classes.control_class import algorithm
+from classes.closedloop_class import algorithm
     
 #add unique crop length 
 class VideoThread(QThread):

@@ -37,6 +37,7 @@ from classes.joystick_class import Mac_Controller,Linux_Controller,Windows_Contr
 from classes.simulation_class import HelmholtzSimulator
 from classes.projection_class import AxisProjection
 from classes.acoustic_class import AcousticClass
+from classes.openloop_class import OpenLoop
 
 
 if "mac" in platform.platform():
@@ -44,7 +45,7 @@ if "mac" in platform.platform():
 elif "Linux" in platform.platform():
     from classes.gui_widgets_linux import Ui_MainWindow
 elif "Windows" in platform.platform():
-    from classes.gui_widgets_mac import Ui_MainWindow
+    from classes.gui_widgets_windows import Ui_MainWindow
 else:
     print("error")
 
@@ -59,8 +60,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         
         #self.showFullScreen()
-        #self.showMaximised()
         #self.showMaximized()
+
         #resize some widgets to fit the screen better
         screen  = QtWidgets.QDesktopWidget().screenGeometry(-1)
         
@@ -69,14 +70,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.resize(self.window_width, self.window_height)
         self.display_width = self.window_width-265# self.ui.frameGeometry().width()
 
-        self.displayheightratio = 0.789
-        self.framesliderheightratio = 0.025
-        self.textheightratio = .125
-        self.tabheightratio = 0.925
+        self.displayheightratio = 0.805
+        self.framesliderheightratio = 0.0311
+        self.textheightratio = .1112
+        #self.tabheightratio = 0.925
         
         self.aspectratio = 4/3
-        
-        
         self.resize_widgets()
 
      
@@ -100,7 +99,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.drawing = False
         self.acoustic_frequency = 0
         self.magnetic_field_list = []
+        
         self.actions = [0,0,0,0,0,0,0,0,0]
+        self.Bx, self.By, self.Bz = 0,0,0
+        self.Mx, self.My, self.Mz = 0,0,0
+        self.alpha, self.gamma, self.psi, self.freq = 0,0,0,0
+        self.acoustic_status = 0
 
         #control tab functions
         self.control_status = False
@@ -128,10 +132,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.arduino.connect(PORT)
         
         
-        #define joystick class, simulator class, pojection class, and acoustic class
-        self.simulator = HelmholtzSimulator(self.ui.magneticfieldsimlabel, width=200, height=200, dpi=125)
+        #define, simulator class, pojection class, and acoustic class
+        self.simulator = HelmholtzSimulator(self.ui.magneticfieldsimlabel, width=300, height=300, dpi=125)
         self.projection = AxisProjection()
         self.acoustic_module = AcousticClass()
+        
+        
+        
         
         pygame.init()
         if pygame.joystick.get_count() == 0:
@@ -142,12 +149,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.joystick.init()
             self.tbprint("Connected to: "+str(self.joystick.get_name()))
 
+     
 
         #tracker tab functions
         self.ui.pausebutton.hide()
         self.ui.leftbutton.hide()
         self.ui.rightbutton.hide()
-        self.ui.maskbutton.hide()
         self.ui.led.hide()
         self.ui.acousticfreq_spinBox.hide()
         self.ui.acousticfreqlabel.hide()
@@ -167,76 +174,92 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.VideoFeedLabel.installEventFilter(self)
         self.ui.recordbutton.clicked.connect(self.recordfunction)
         self.ui.controlbutton.clicked.connect(self.toggle_control_status)
-        self.ui.joystickbutton.clicked.connect(self.toggle_joystick_status)
         self.ui.memorybox.valueChanged.connect(self.get_slider_vals)
         self.ui.RRTtreesizebox.valueChanged.connect(self.get_slider_vals)
         self.ui.arrivalthreshbox.valueChanged.connect(self.get_slider_vals)
-        self.ui.rollingfrequencybox.valueChanged.connect(self.get_slider_vals)
+        self.ui.magneticfrequencydial.valueChanged.connect(self.get_slider_vals)
         self.ui.gammadial.valueChanged.connect(self.get_slider_vals)
         self.ui.psidial.valueChanged.connect(self.get_slider_vals)
         self.ui.applyacousticbutton.clicked.connect(self.apply_acoustic)
         self.ui.acousticfreq_spinBox.valueChanged.connect(self.get_acoustic_frequency)
         self.ui.resetdefaultbutton.clicked.connect(self.resetparams)
         self.ui.simulationbutton.clicked.connect(self.toggle_simulation)
-        self.ui.dockWidget.dockLocationChanged.connect(self.dockstatus)
+        #self.ui.dockWidget.dockLocationChanged.connect(self.dockstatus)
         self.ui.orientradio.toggled.connect(self.checkorient)
+        self.ui.objectivebox.valueChanged.connect(self.get_objective)
+        self.ui.exposurebox.valueChanged.connect(self.get_exposure)
 
+        self.ui.leftfieldbutton.clicked.connect(self.quickfieldleft)
+        self.ui.rightfieldbutton.clicked.connect(self.quickfieldright)
+        self.ui.upfieldbutton.clicked.connect(self.quickfieldup)
+        self.ui.downfieldbutton.clicked.connect(self.quickfielddown)
+
+        self.ui.joystickbutton.clicked.connect(self.toggle_joystick_status)
+
+        #self.openloop_actions = OpenLoop(self)
+        #self.openloop_actions.openloopactions.connect(self.update_openloop_actions)
+        #self.openloop_actions.start()
+
+
+   
         
-    def resize_widgets(self):
-        self.display_height = self.window_height*self.displayheightratio #keep this fixed, changed the width dpending on the aspect ratio
-        self.framesliderheight = self.window_height*self.framesliderheightratio
-        self.textheight = self.window_height*self.textheightratio
-        self.tabheight = self.window_height*self.tabheightratio
+    def quickfieldleft(self):
+        if self.ui.leftfieldbutton.isChecked():
+            self.ui.upfieldbutton.setChecked(False)
+            self.ui.downfieldbutton.setChecked(False)
+            self.ui.rightfieldbutton.setChecked(False)
+            self.Bx = -1
+            self.apply_actions(True)
+        else:
+            self.apply_actions(False)
+            
+    
+    def quickfieldright(self):
+        if self.ui.rightfieldbutton.isChecked():
+            self.ui.upfieldbutton.setChecked(False)
+            self.ui.downfieldbutton.setChecked(False)
+            self.ui.leftfieldbutton.setChecked(False)
+            self.Bx = 1
+            self.apply_actions(True)
+        else:
+            self.apply_actions(False)
+            
+            
 
-        self.display_width = int(self.display_height * self.aspectratio)
+    def quickfieldup(self):
+        if self.ui.upfieldbutton.isChecked():
+            self.ui.rightfieldbutton.setChecked(False)
+            self.ui.downfieldbutton.setChecked(False)
+            self.ui.leftfieldbutton.setChecked(False)
+            self.By = 1
+            self.apply_actions(True)
+        else:
+            self.apply_actions(False)
+            
+            
 
-        self.ui.VideoFeedLabel.setGeometry(QtCore.QRect(10,  5,                       self.display_width,     self.display_height))
-        self.ui.frameslider.setGeometry(QtCore.QRect(10,    self.display_height+12,   self.display_width,     self.framesliderheight))
-        self.ui.plainTextEdit.setGeometry(QtCore.QRect(10,  self.display_height+self.framesliderheight+20,   self.display_width-400,     self.textheight))
+    def quickfielddown(self):
+        if self.ui.downfieldbutton.isChecked():
+            self.ui.upfieldbutton.setChecked(False)
+            self.ui.rightfieldbutton.setChecked(False)
+            self.ui.leftfieldbutton.setChecked(False)
+            self.By = -1
+            self.apply_actions(True)
+        else:
+            self.apply_actions(False)
+            
+    
 
-        self.ui.tabWidget.setGeometry(QtCore.QRect(12,  6,  260 ,     self.tabheight))
+    
 
-
-
-    def resizeEvent(self, event):
-
-        #if self.cap is not None:
-
-        windowsize = event.size()
-
-        self.window_width = windowsize.width()
-        self.window_height = windowsize.height()
-
-        self.resize_widgets()
-        #return super().resizeEvent(event)
-
-
-    def wheelEvent(self, event: QWheelEvent):
-        # Get the scroll amount (event.angleDelta().y()) and the scroll orientation (event.angleDelta().x())
-        scroll_amount = event.angleDelta().y()
-        if scroll_amount > 1:
-            del self.tracker.robot_list[:]
-            del self.magnetic_field_list[:]
-            self.arduino.send(0, 0, 0, 0, 0, 0, 0)
-
-      
-        
-        
-        
-    def checkorient(self):
-        if self.cap is not None:
-            self.tracker.orientstatus = self.ui.orientradio.isChecked()
-       
-
-
-    def dockstatus(self):
+        """    def dockstatus(self):
         if self.ui.dockWidget.isFloating():
             self.window_width -= 240#screen.width()
             self.resize(self.window_width, self.window_height)
             
         else:
             self.window_width += 240#screen.width()
-            self.resize(self.window_width, self.window_height)
+            self.resize(self.window_width, self.window_height)"""
 
 
     def toggle_simulation(self):
@@ -251,8 +274,7 @@ class MainWindow(QtWidgets.QMainWindow):
    
     
     
-    def toggle_control_status(self):
-        
+    def toggle_control_status(self): 
         if self.ui.controlbutton.isChecked():
             self.control_status = True
             self.ui.controlbutton.setText("Stop")
@@ -271,7 +293,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.acousticfreq_spinBox.hide()
             self.ui.acousticfreqlabel.hide()
             self.ui.applyacousticbutton.hide()
-            self.arduino.send(0, 0, 0, 0, 0, 0, 0)  
+            self.apply_actions(False)
+            
             
     
 
@@ -286,84 +309,87 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.joystick_status = False
                 self.ui.joystickbutton.setText("Joystick")
                 self.tbprint("Joystick Off")
-                self.arduino.send(0, 0, 0, 0, 0, 0, 0)  
+                self.apply_actions(False)
+            
         else:
             self.tbprint("No Joystick Connected...")
 
 
     
+    """def update_openloop_actions(self, actions):
+        #self.tbprint(str(actions2))
+        self.gamma = np.radians(self.ui.gammadial.value())
+        self.psi = np.radians(self.ui.psidial.value())
+        
+        if self.joystick_status == True and self.control_status == False:
+            self.Bx, self.By, self.Bz, self.alpha, self.freq = self.controller_actions.run(self.joystick)
+            
+            if self.freq !=0:
+                self.freq = self.ui.magneticfrequencydial.value()
+
+        self.apply_actions(True)
+    """
 
 
-    def update_actions(self, actions, stopped):
+    def update_closedloop_actions(self, actions, stopped):
         #alpha argument is signal from tracker_class: actions_signal
         #output actions if control status is on
-
-        gamma = np.radians(self.ui.gammadial.value())
-        psi = np.radians(self.ui.psidial.value())
         if self.control_status == True:
-            Bx, By, Bz, alpha = actions    
-            if self.ui.swimradio.isChecked():
-                alpha=alpha
-                self.simulator.roll = False
-            elif self.ui.rollradio.isChecked():
-                alpha = alpha - np.pi/2
-                self.simulator.roll = True
-            
+            self.gamma = np.radians(self.ui.gammadial.value())
+            self.psi = np.radians(self.ui.psidial.value())
+            self.Bx, self.By, self.Bz, self.alpha = actions    
             if self.ui.orientradio.isChecked():
-                freq = 0
+                self.freq = 0
             else:
-                freq = self.ui.rollingfrequencybox.value()
-            
+                self.freq = self.ui.magneticfrequencydial.value()
             if stopped == True:
-                Bx, By, Bz, alpha, gamma, freq, psi = 0,0,0,0,0,0,0
-     
-            self.arduino.send(Bx, By, Bz, alpha, gamma, freq, psi)  
-            self.actions = [self.tracker.framenum,Bx,By,Bz,alpha,gamma,freq,psi,self.acoustic_frequency]          
-            self.magnetic_field_list.append(self.actions)
-            self.simulator.Bx = Bx
-            self.simulator.By = By
-            self.simulator.Bz = Bz
-            self.simulator.alpha = alpha
-            self.simulator.freq = freq/10
-            self.simulator.omega = 2 * np.pi * self.simulator.freq
- 
+                self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi = 0,0,0,0,0,0,0
 
-
+            self.apply_actions(True)
+        
         elif self.joystick_status == True:
-            Bx, By, Bz, alpha, freq = self.controller_actions.run(self.joystick)
+            self.Bx, self.By, self.Bz, self.alpha, self.freq = self.controller_actions.run(self.joystick)
             
-            if self.ui.swimradio.isChecked():
-                alpha=alpha
-                self.simulator.roll = False
-            elif self.ui.rollradio.isChecked():
-                alpha = alpha - np.pi/2
-                self.simulator.roll = True
-            
-            
-            if freq !=0:
-                freq = self.ui.rollingfrequencybox.value()
+            if self.freq !=0:
+                self.freq = self.ui.magneticfrequencydial.value()
+                
+            self.apply_actions(True)
 
-            self.arduino.send(Bx, By, Bz, alpha, gamma, freq, psi)
-            self.actions = [self.tracker.framenum,Bx,By,Bz,alpha,gamma,freq,psi, self.acoustic_frequency]
-            self.magnetic_field_list.append(self.actions)
-            self.simulator.Bx = Bx
-            self.simulator.By = By
-            self.simulator.Bz = Bz
-            self.simulator.alpha = alpha
-            self.simulator.freq = freq/10
-            self.simulator.omega = 2 * np.pi * self.simulator.freq
+
+
+
+    def apply_actions(self, status):
+        #the purpose of this function is to output the actions via arduino, 
+        # show the actions via the simulator
+        # and record the actions by appending the field_list
         
+        if self.ui.swimradio.isChecked():
+            self.simulator.roll = False
+        elif self.ui.rollradio.isChecked():
+            self.alpha = self.alpha - np.pi/2
+            self.simulator.roll = True
+
+        if status == False:
+            self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi = 0,0,0,0,0,0,0
+
+        self.arduino.send(self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi)
+        if self.cap is not None:
+            self.actions = [self.tracker.framenum,self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency]
         else:
+            self.actions = [0,self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency]
+        self.magnetic_field_list.append(self.actions)
+        self.simulator.Bx = self.Bx
+        self.simulator.By = self.By
+        self.simulator.Bz = self.Bz
+        self.simulator.alpha = self.alpha
+        self.simulator.freq = self.freq/10
+        self.simulator.omega = 2 * np.pi * self.simulator.freq
     
-            self.simulator.Bx = 0
-            self.simulator.By = 0
-            self.simulator.Bz = 0
-            self.simulator.alpha = 0
-            self.simulator.freq = 0 
-            self.simulator.omega =0
-        
-       
-    
+            
+
+
+
+
     def get_acoustic_frequency(self):
         if self.ui.applyacousticbutton.isChecked():
             self.acoustic_frequency = self.ui.acousticfreq_spinBox.value()
@@ -409,7 +435,7 @@ class MainWindow(QtWidgets.QMainWindow):
         memory = self.ui.memorybox.value()
         RRTtreesize = self.ui.RRTtreesizebox.value()
         arrivalthresh = self.ui.arrivalthreshbox.value()
-        rollingfreq = self.ui.rollingfrequencybox.value()
+        magneticfreq = self.ui.magneticfrequencydial.value()
         gamma = self.ui.gammadial.value()
         psi = self.ui.psidial.value()
         thresh = self.ui.maskthreshbox.value() 
@@ -424,9 +450,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tracker.mask_dilation = dilation
             self.tracker.crop_length = crop_length
 
-
         self.ui.gammalabel.setText("Gamma: {}".format(gamma))
         self.ui.psilabel.setText("Psi: {}".format(psi))
+        self.ui.rollingfrequencylabel.setText("Freq: {}".format(magneticfreq))
         self.simulator.gamma = np.radians(gamma)
         self.simulator.psi = np.radians(psi)
         
@@ -457,11 +483,8 @@ class MainWindow(QtWidgets.QMainWindow):
         return newx, newy
 
     def eventFilter(self, object, event):
-        
         if object is self.ui.VideoFeedLabel: 
-
             if self.cap is not None:
-                   
                 if event.type() == QtCore.QEvent.MouseButtonPress:   
                     if event.buttons() == QtCore.Qt.LeftButton:
                         newx, newy = self.convert_coords(event.pos())
@@ -553,9 +576,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
         #also update robot info
         if len(self.tracker.robot_list) > 0:
-            self.ui.robotarealabel.setText("Area: {0:.2f} px^2".format(self.tracker.robot_list[-1].avg_area))
-            self.ui.robotvelocitylabel.setText("Velocity: {0:.2f} px/f".format(self.tracker.robot_list[-1].velocity_list[-1][2]  )  )
-            self.ui.robotblurlabel.setText("Blur: {0:.2f} units".format(self.tracker.robot_list[-1].blur_list[-1]))
+            robot_diameter = round(np.sqrt(4*self.tracker.robot_list[-1].avg_area/np.pi),1)
+            if self.videopath == 0:
+                self.ui.robotsizelabel.setText("Size: {0:.2f} um".format(robot_diameter))
+                self.ui.robotvelocitylabel.setText("Velocity: {0:.2f} um/s".format(self.tracker.robot_list[-1].velocity_list[-1][2]  )  )
+                self.ui.robotblurlabel.setText("Blur: {0:.2f} units".format(self.tracker.robot_list[-1].blur_list[-1]))
+            else:
+                self.ui.robotsizelabel.setText("Size: {0:.2f} px".format(robot_diameter))
+                self.ui.robotvelocitylabel.setText("Velocity: {0:.2f} px/s".format(self.tracker.robot_list[-1].velocity_list[-1][2]  )  )
+                self.ui.robotblurlabel.setText("Blur: {0:.2f} units".format(self.tracker.robot_list[-1].blur_list[-1]))
 
         self.ui.VideoFeedLabel.setPixmap(qt_img)
         
@@ -570,114 +599,103 @@ class MainWindow(QtWidgets.QMainWindow):
         
         bytes_per_line = ch * w
         convert_to_Qt_format = QtGui.QImage(rgb_image.data, w, h, bytes_per_line, QtGui.QImage.Format_RGB888)
-        p = convert_to_Qt_format.scaled(200, 200, Qt.KeepAspectRatio)
+        p = convert_to_Qt_format.scaled(300, 300, Qt.KeepAspectRatio)
         qt_cimg = QPixmap.fromImage(p)
         self.ui.CroppedVideoFeedLabel.setPixmap(qt_cimg)
         
 
-    
-
-    
     def track(self):
         if self.videopath is not None:
-            try:
-                
-                if self.ui.trackbutton.isChecked():
-
-                
-                    if self.videopath == 0:
-                        try:
-                            self.cap  = EasyPySpin.VideoCapture(0)
-                        except Exception:
-                            self.cap  = cv2.VideoCapture(0)
-                        self.ui.maskbutton.show()
                         
-                    else:
-                        self.cap  = cv2.VideoCapture(self.videopath)
-                        self.ui.pausebutton.show()
-                        self.ui.leftbutton.show()
-                        self.ui.rightbutton.show()
-                        self.ui.maskbutton.show()
-          
+            if self.ui.trackbutton.isChecked():
 
-                    self.video_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-                    self.video_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-                    self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
-                    self.tbprint("Width: {}  --  Height: {}  --  Fps: {}".format(self.video_width,self.video_height,self.videofps))
-
-                    #self.window_width = windowsize.width()
-                    #self.window_height = windowsize.height()
-            
-                    self.aspectratio = (self.video_width / self.video_height)
-
-                    self.resize_widgets()
-                              
-                    
-                    self.ui.VideoFeedLabel.setStyleSheet("border:2px solid rgb(0, 255, 0); ")
-                    self.ui.CroppedVideoFeedLabel.setStyleSheet("border:2px solid rgb(0, 255, 0); ")
-         
-                    
-                    if self.videopath != 0:
-                        self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
-                        self.ui.frameslider.setGeometry(QtCore.QRect(10, self.display_height+12, self.display_width, 20))
-                        self.ui.frameslider.setMaximum(self.totalnumframes)
-                        self.ui.frameslider.show()
-                
-                    self.tracker = VideoThread(self)
-                    self.tracker.change_pixmap_signal.connect(self.update_image)
-                    self.tracker.cropped_frame_signal.connect(self.update_croppedimage)
-                    self.tracker.actions_signal.connect(self.update_actions)
-                    self.tracker.start()
-                    
-                    self.ui.trackbutton.setText("Stop")
-                    
-                    if self.videopath == 0:
-                        self.ui.pausebutton.hide()
-                        self.ui.leftbutton.hide()
-                        self.ui.rightbutton.hide()
-                        self.ui.frameslider.hide()
-            
-                    
+                if self.videopath == 0:
+                    try:
+                        self.cap  = EasyPySpin.VideoCapture(0)
+                    except Exception:
+                        self.cap  = cv2.VideoCapture(0) 
+                        self.tbprint("No EasyPySpin Camera Available")
+        
                 else:
-                    self.ui.VideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
-                    self.ui.CroppedVideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
+                    self.cap  = cv2.VideoCapture(self.videopath)
+                    self.ui.pausebutton.show()
+                    self.ui.leftbutton.show()
+                    self.ui.rightbutton.show()
+                
+    
+                self.video_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                self.video_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
+                self.tbprint("Width: {}  --  Height: {}  --  Fps: {}".format(self.video_width,self.video_height,self.videofps))
+
+                self.aspectratio = (self.video_width / self.video_height)
+
+                self.resize_widgets()        
+                
+                self.ui.VideoFeedLabel.setStyleSheet("border:2px solid rgb(0, 255, 0); ")
+                self.ui.CroppedVideoFeedLabel.setStyleSheet("border:2px solid rgb(0, 255, 0); ")
+        
+                
+                if self.videopath != 0:
+                    self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+                    self.ui.frameslider.setGeometry(QtCore.QRect(10, self.display_height+12, self.display_width, 20))
+                    self.ui.frameslider.setMaximum(self.totalnumframes)
+                    self.ui.frameslider.show()
             
+                self.tracker = VideoThread(self)
+                self.tracker.change_pixmap_signal.connect(self.update_image)
+                self.tracker.cropped_frame_signal.connect(self.update_croppedimage)
+                self.tracker.actions_signal.connect(self.update_closedloop_actions)
+                self.tracker.start()
+                
+                self.ui.trackbutton.setText("Stop")
+                
+                if self.videopath == 0:
+                    self.ui.pausebutton.hide()
+                    self.ui.leftbutton.hide()
+                    self.ui.rightbutton.hide()
+                    self.ui.frameslider.hide()
+        
+                
+            else:
+                self.ui.VideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
+                self.ui.CroppedVideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
+        
+                
+                if self.cap is not None:
+                    self.ui.trackbutton.setText("Track")
+                    self.tracker.stop()
                     
-                    if self.cap is not None:
-                        self.ui.trackbutton.setText("Track")
-                        self.tracker.stop()
-                        
-                        #reset control button
-                        self.control_status = False
-                        self.ui.controlbutton.setText("Control")
-                        self.tbprint("Control Off")
-                        self.ui.controlbutton.setChecked(False)
+                    #reset control button
+                    self.control_status = False
+                    self.ui.controlbutton.setText("Control")
+                    self.tbprint("Control Off")
+                    self.ui.controlbutton.setChecked(False)
 
-                        #reset joystick button
-                        self.joystick_status = False
-                        self.ui.joystickbutton.setText("Joystick")
-                        self.tbprint("Joystick Off")
-                        self.ui.joystickbutton.setChecked(False)
+                    #reset joystick button
+                    self.joystick_status = False
+                    self.ui.joystickbutton.setText("Joystick")
+                    self.tbprint("Joystick Off")
+                    self.ui.joystickbutton.setChecked(False)
 
-                        #reset mask button
-                        self.tracker.mask_flag = False
-                        self.ui.maskbutton.setText("Mask")
-                        self.ui.maskbutton.setChecked(False)
+                    #reset mask button
+                    self.tracker.mask_flag = False
+                    self.ui.maskbutton.setText("Mask")
+                    self.ui.maskbutton.setChecked(False)
 
-                        
-                        #also reset pause button
-                        self.ui.pausebutton.setChecked(False)
-                        self.ui.pausebutton.setText("Pause")
+                    
+                    #also reset pause button
+                    self.ui.pausebutton.setChecked(False)
+                    self.ui.pausebutton.setText("Pause")
 
-                        self.ui.pausebutton.hide()
-                        self.ui.leftbutton.hide()
-                        self.ui.rightbutton.hide()
-                        self.ui.maskbutton.hide()    
+                    self.ui.pausebutton.hide()
+                    self.ui.leftbutton.hide()
+                    self.ui.rightbutton.hide()
+                
 
-                        #zero arduino commands
-                        self.arduino.send(0,0,0,0,0,0,0)
-            except Exception:
-                self.tbprint("No EasyPySpin Camera Available")
+                    #zero arduino commands
+                    self.arduino.send(0,0,0,0,0,0,0)
+     
         
             
 
@@ -713,6 +731,17 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.savedata()
                     
          
+    def get_objective(self):
+        if self.cap is not None:
+            self.tracker.objective = self.ui.objectivebox.value()
+
+    def get_exposure(self):
+        if self.cap is not None:
+            self.tracker.exposure = self.ui.exposurebox.value()
+            
+    def checkorient(self):
+        if self.cap is not None:
+            self.tracker.orientstatus = self.ui.orientradio.isChecked()
 
     def invertmaskcommand(self):
         if self.cap is not None:
@@ -729,8 +758,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tracker._play_flag = True
                 self.ui.pausebutton.setText("Pause")
                 
-            
-
     def frameright(self):
         if self.videopath != 0:
             self.tracker.framenum+=1
@@ -743,20 +770,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.frameslider.setValue(self.tracker.framenum)
             self.ui.framelabel.setText("Frame:"+str(self.tracker.framenum))
 
-
-
     def savedata(self):
-        if self.cap is not None and len(self.tracker.robot_list)>0:      
-             #create dictionarys from the robot class
-            date = datetime.now().strftime('%Y.%m.%d-%H.%M.%S')
-            file_path  = os.path.join(self.new_dir_path, date+".xlsx")
-            robot_dictionary = []
-            for bot in self.tracker.robot_list:
-                robot_dictionary.append(bot.as_dict())
-           
-
+        date = datetime.now().strftime('%Y.%m.%d-%H.%M.%S')
+        file_path  = os.path.join(self.new_dir_path, date+".xlsx")
+        robot_dictionary = []
+        for bot in self.tracker.robot_list:
+            robot_dictionary.append(bot.as_dict())
+        
+        with pd.ExcelWriter(file_path) as writer:
             
-            with pd.ExcelWriter(file_path) as writer:
+            if self.cap is not None and len(self.tracker.robot_list)>0:      
+        
                 for idx, mydict in enumerate(robot_dictionary, start=0):
                     # Create a DataFrame from the dictionary
                     df = pd.DataFrame()
@@ -812,21 +836,21 @@ class MainWindow(QtWidgets.QMainWindow):
                         # Write the DataFrame to a separate sheet with sheet name "Sheet_<idx>"
                         df.to_excel(writer, sheet_name=f"Robot_{idx+1}", index=False)
                         
-                        #also save the magnetic field params 
-                        if len(self.magnetic_field_list) > 0:     
-                            df2 = pd.DataFrame()      
+            #also save the magnetic field params 
+            if len(self.magnetic_field_list) > 0:     
+                df2 = pd.DataFrame()      
 
-                            MFFrame, Bx, By, Bz, alpha, gamma, freq, psi, acoustic_freq = zip(*self.magnetic_field_list)
-                            df2[f"Applied on Frame"] = pd.Series(MFFrame, dtype='float64')
-                            df2[f"Bx"] = pd.Series(Bx, dtype='float64')
-                            df2[f"By"] = pd.Series(By, dtype='float64')
-                            df2[f"Bz"] = pd.Series(Bz, dtype='float64')
-                            df2[f"alpha"] = pd.Series(alpha, dtype='float64')
-                            df2[f"gamma"] = pd.Series(gamma, dtype='float64')
-                            df2[f"freq"] = pd.Series(freq, dtype='float64')
-                            df2[f"psi"] = pd.Series(psi, dtype='float64')
-                            df2[f"acoustic_frequency"] = pd.Series(acoustic_freq, dtype='float64')
-                            df2.to_excel(writer, sheet_name=f"Magnetic Field", index=False)
+                MFFrame, Bx, By, Bz, alpha, gamma, freq, psi, acoustic_freq = zip(*self.magnetic_field_list)
+                df2[f"Applied on Frame"] = pd.Series(MFFrame, dtype='float64')
+                df2[f"Bx"] = pd.Series(Bx, dtype='float64')
+                df2[f"By"] = pd.Series(By, dtype='float64')
+                df2[f"Bz"] = pd.Series(Bz, dtype='float64')
+                df2[f"alpha"] = pd.Series(alpha, dtype='float64')
+                df2[f"gamma"] = pd.Series(gamma, dtype='float64')
+                df2[f"freq"] = pd.Series(freq, dtype='float64')
+                df2[f"psi"] = pd.Series(psi, dtype='float64')
+                df2[f"acoustic_frequency"] = pd.Series(acoustic_freq, dtype='float64')
+                df2.to_excel(writer, sheet_name=f"Magnetic Field", index=False)
             
     
     def resetparams(self):
@@ -836,11 +860,41 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.memorybox.setValue(15)
         self.ui.RRTtreesizebox.setValue(25)
         self.ui.arrivalthreshbox.setValue(15)
-        self.ui.rollingfrequencybox.setValue(10)
         self.ui.gammadial.setSliderPosition(90)
         self.ui.psidial.setSliderPosition(90)
+        self.ui.magneticfrequencydial.setSliderPosition(10)
         self.ui.acousticfreq_spinBox.setValue(1000000)
+        self.ui.objectivebox.setValue(10)
+        self.ui.exposurebox.setValue(5000)
 
+    def resizeEvent(self, event):
+        windowsize = event.size()
+        self.window_width = windowsize.width()
+        self.window_height = windowsize.height()
+        self.resize_widgets()
+ 
+    def resize_widgets(self):
+        self.display_height = self.window_height*self.displayheightratio #keep this fixed, changed the width dpending on the aspect ratio
+        self.framesliderheight = self.window_height*self.framesliderheightratio
+        self.textheight = self.window_height*self.textheightratio
+        #self.tabheight = self.window_height*self.tabheightratio
+
+        self.display_width = int(self.display_height * self.aspectratio)
+
+        self.ui.VideoFeedLabel.setGeometry(QtCore.QRect(10,  5,                       self.display_width,     self.display_height))
+        self.ui.frameslider.setGeometry(QtCore.QRect(10,    self.display_height+12,   self.display_width,     self.framesliderheight))
+        self.ui.plainTextEdit.setGeometry(QtCore.QRect(10,  self.display_height+self.framesliderheight+20,   self.display_width-400,     self.textheight))
+
+        #self.ui.tabWidget.setGeometry(QtCore.QRect(12,  6,  260 ,     self.tabheight))
+
+    def wheelEvent(self, event: QWheelEvent):
+        # Get the scroll amount (event.angleDelta().y()) and the scroll orientation (event.angleDelta().x())
+        if self.cap is not None:
+            scroll_amount = event.angleDelta().y()
+            if scroll_amount > 1:
+                del self.tracker.robot_list[:]
+                del self.magnetic_field_list[:]
+                self.arduino.send(0, 0, 0, 0, 0, 0, 0)
 
     def closeEvent(self, event):
         """
@@ -849,4 +903,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.cap is not None:
             self.tracker.stop()
         self.simulator.stop()
+        self.openloop_actions.stop()
+        self.apply_actions(False)
         self.arduino.close()

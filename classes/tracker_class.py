@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from scipy import ndimage 
 import time
 
-from classes.control_class import algorithm
+from classes.closedloop_class import algorithm
     
 #add unique crop length 
 class VideoThread(QThread):
@@ -28,11 +28,7 @@ class VideoThread(QThread):
         self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
-        if video != 0:
-            self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        else:
-            self.totalnumframes = 0
-
+        
         self._run_flag = True
         self._play_flag = True
         self.mask_flag = False
@@ -43,16 +39,25 @@ class VideoThread(QThread):
         self.mask_dilation = 0  #this is not used as of now
         self.maskinvert = True
         self.crop_length = 40
+        self.exposure = 5000
+        self.objective = 10
+
+
         self.arrivalthresh = 20
         self.RRTtreesize = 25
         self.memory = 15  #this isnt used as of now
         self.robot_list = []
 
-        #from classes.mask_class import MaskThread
-        #self.maskthread = MaskThread(self)
-        #self.maskthread.mask_signal.connect(self.updatemask)
-        #self.maskthread.start()
-        #self.mask = None
+        if video != 0:
+            self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            self.pix2metric = 1
+        else:
+            self.totalnumframes = 0
+            self.pix2metric = ((2048/212.4) / 100) * self.objective  
+
+
+
+ 
     
     def find_mask(self,frame):
         """
@@ -70,6 +75,8 @@ class VideoThread(QThread):
 
         return mask
     
+
+
     def track_robot(self, frame):
         """
         Returns:
@@ -104,7 +111,7 @@ class VideoThread(QThread):
                     for contour in contours:
                         if cv2.contourArea(contour) > cv2.contourArea(max_cnt): 
                             max_cnt = contour
-                    area = cv2.contourArea(max_cnt)
+                    area = cv2.contourArea(max_cnt)* (1/self.pix2metric**2)
                     
                     #find the center of mass from the mask
                     szsorted=np.argsort(sizes)
@@ -123,10 +130,11 @@ class VideoThread(QThread):
 
                     #find velocity:
                     if len(bot.position_list) > self.memory:
-                        velocity = (np.array(current_pos) - np.array(bot.position_list[-self.memory])).astype(float).round(2)
+                        vx = (current_pos[0] - bot.position_list[-self.memory][0]) * (self.fps.get_fps()/self.memory) / self.pix2metric
+                        vy = (current_pos[1] - bot.position_list[-self.memory][1]) * (self.fps.get_fps()/self.memory) / self.pix2metric
+                        magnitude = np.sqrt(vx**2 + vy**2)
 
-                        magnitude = np.sqrt(velocity[0]**2 + velocity[1]**2)
-                        velocity = np.append(velocity, magnitude)
+                        velocity = [vx,vy,magnitude]
 
                     else:
                         velocity = [0,0,0]
@@ -206,7 +214,7 @@ class VideoThread(QThread):
                 cv2.drawContours(croppedmask, [max_cnt], -1, (0, 255, 255), 1)
 
         else:
-            croppedmask = np.zeros((200, 200, 3), dtype=np.uint8) 
+            croppedmask = np.zeros((300, 300, 3), dtype=np.uint8) 
         
         return displayframe, croppedmask, displaymask
 
@@ -234,7 +242,9 @@ class VideoThread(QThread):
         
             #control_mask = None
             if ret:               
-                
+                self.cap.set(cv2.CAP_PROP_EXPOSURE, self.exposure)
+          
+
                 #step 1 detect robot
                 croppedmask, max_cnt = self.track_robot(frame) 
 
@@ -244,9 +254,8 @@ class VideoThread(QThread):
                 #step 2 control robot
                 if len(self.robot_list)>0 and len(self.robot_list[-1].trajectory) > 0:
                     frame, actions, stopped = self.control_robot.run(frame, display_mask, self.robot_list, self.RRTtreesize, self.arrivalthresh, self.orientstatus)
-                else:
-                    actions = [0,0,0,0]
-                    stopped = True
+                    self.actions_signal.emit(actions, stopped)
+        
 
                 cv2.putText(frame,"fps:"+str(int(self.fps.get_fps())),
                     (int(self.width  / 80),int(self.height / 30)),
@@ -259,7 +268,7 @@ class VideoThread(QThread):
                 #step 3: emit croppedframe, frame from this thread to the main thread
                 self.cropped_frame_signal.emit(croppedmask)
                 self.change_pixmap_signal.emit(frame)
-                self.actions_signal.emit(actions, stopped)
+                
 
                 
                 #step 4: delay based on fps

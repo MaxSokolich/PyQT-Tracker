@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
 from PyQt5.QtCore import Qt, QTimer
 
 class HelmholtzSimulator(FigureCanvas):
-    def __init__(self, parent=None, width=200, height=200, dpi=100):
+    def __init__(self, parent=None, width=300, height=300, dpi=100):
         fig = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
         fig.tight_layout()
         fig.subplots_adjust(top=1, bottom=0, left=-0.1, right=1)

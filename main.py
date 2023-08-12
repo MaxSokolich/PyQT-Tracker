@@ -4,14 +4,13 @@ from PyQt5.QtWidgets import QApplication
 import sys
 from classes.gui_functions import MainWindow
 
-#test mask speed increase and Linux
-#Remake ui for Linux machine ( make it so it can resize)
+#test new openloopjoystick arch
+
 #Convert blur into z position
 #add slots for field values
-# add exposure spinbox
-# add fps spin box? 
-# add objective spin box
-# still try and activily adjust window size
+#remeasure pix2metric conversion
+
+
 # maybe add robot list
 
 if __name__ == "__main__":
