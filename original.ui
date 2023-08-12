@@ -696,8 +696,7 @@
           </rect>
          </property>
          <property name="styleSheet">
-          <string notr="true">
-                </string>
+          <string notr="true"/>
          </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
@@ -1021,7 +1020,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>260</y>
+           <y>270</y>
            <width>51</width>
            <height>31</height>
           </rect>
@@ -1071,7 +1070,7 @@
          <property name="geometry">
           <rect>
            <x>130</x>
-           <y>260</y>
+           <y>270</y>
            <width>51</width>
            <height>31</height>
           </rect>
@@ -1121,7 +1120,7 @@
          <property name="geometry">
           <rect>
            <x>70</x>
-           <y>280</y>
+           <y>290</y>
            <width>51</width>
            <height>31</height>
           </rect>
@@ -1171,7 +1170,7 @@
          <property name="geometry">
           <rect>
            <x>70</x>
-           <y>240</y>
+           <y>250</y>
            <width>51</width>
            <height>31</height>
           </rect>
@@ -1228,7 +1227,7 @@
            <x>50</x>
            <y>190</y>
            <width>101</width>
-           <height>41</height>
+           <height>21</height>
           </rect>
          </property>
          <property name="text">
@@ -1804,6 +1803,106 @@ QDial::handle {
            <string>Acoustic Frequency</string>
           </property>
          </widget>
+        </widget>
+        <widget class="QToolButton" name="plusZbutton">
+         <property name="geometry">
+          <rect>
+           <x>130</x>
+           <y>220</y>
+           <width>51</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton {
+                color: rgb(255, 255, 255);
+                background-color: rgb(0, 0, 0);
+                border-style: outset;
+                border-width: px;
+                border-radius: 10px;
+                border: 2px solid rgb(0, 0, 0);
+                font: bold 16px;
+                min-width: 1em;
+                padding: 1px;
+            }
+            QToolButton:hover {
+                background-color: rgb(100, 100, 100);
+                color: rgb(255, 255, 255);
+                border: 2px solid rgb(0, 255, 0);
+            }
+            QToolButton:checked {
+                background-color: rgb(100, 100, 100);
+                border: 2px solid rgb(255, 0, 0);
+                border-style: inset;
+                padding-left: 5px;
+                padding-top: 5px;
+            }</string>
+         </property>
+         <property name="text">
+          <string>+Z</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoRepeat">
+          <bool>false</bool>
+         </property>
+         <property name="autoRepeatInterval">
+          <number>1</number>
+         </property>
+         <property name="arrowType">
+          <enum>Qt::NoArrow</enum>
+         </property>
+        </widget>
+        <widget class="QToolButton" name="minusZbutton">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>220</y>
+           <width>51</width>
+           <height>31</height>
+          </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton {
+                color: rgb(255, 255, 255);
+                background-color: rgb(0, 0, 0);
+                border-style: outset;
+                border-width: px;
+                border-radius: 10px;
+                border: 2px solid rgb(0, 0, 0);
+                font: bold 16px;
+                min-width: 1em;
+                padding: 1px;
+            }
+            QToolButton:hover {
+                background-color: rgb(100, 100, 100);
+                color: rgb(255, 255, 255);
+                border: 2px solid rgb(0, 255, 0);
+            }
+            QToolButton:checked {
+                background-color: rgb(100, 100, 100);
+                border: 2px solid rgb(255, 0, 0);
+                border-style: inset;
+                padding-left: 5px;
+                padding-top: 5px;
+            }</string>
+         </property>
+         <property name="text">
+          <string>-Z</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="autoRepeat">
+          <bool>false</bool>
+         </property>
+         <property name="autoRepeatInterval">
+          <number>1</number>
+         </property>
+         <property name="arrowType">
+          <enum>Qt::NoArrow</enum>
+         </property>
         </widget>
        </widget>
       </widget>

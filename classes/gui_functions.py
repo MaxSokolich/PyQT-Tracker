@@ -193,12 +193,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.rightfieldbutton.clicked.connect(self.quickfieldright)
         self.ui.upfieldbutton.clicked.connect(self.quickfieldup)
         self.ui.downfieldbutton.clicked.connect(self.quickfielddown)
+        self.ui.plusZbutton.clicked.connect(self.quickfieldplusZ)
+        self.ui.minusZbutton.clicked.connect(self.quickfieldminusZ)
 
         self.ui.joystickbutton.clicked.connect(self.toggle_joystick_status)
 
-        #self.openloop_actions = OpenLoop(self)
-        #self.openloop_actions.openloopactions.connect(self.update_openloop_actions)
-        #self.openloop_actions.start()
+
 
 
    
@@ -208,10 +208,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.upfieldbutton.setChecked(False)
             self.ui.downfieldbutton.setChecked(False)
             self.ui.rightfieldbutton.setChecked(False)
+            self.ui.plusZbutton.setChecked(False)
+            self.ui.minusZbutton.setChecked(False)
             self.Bx = -1
+            self.By = 0
+            self.Bz = 0
+            self.alpha = 0
             self.apply_actions(True)
         else:
             self.apply_actions(False)
+      
+            
             
     
     def quickfieldright(self):
@@ -219,10 +226,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.upfieldbutton.setChecked(False)
             self.ui.downfieldbutton.setChecked(False)
             self.ui.leftfieldbutton.setChecked(False)
+            self.ui.plusZbutton.setChecked(False)
+            self.ui.minusZbutton.setChecked(False)
             self.Bx = 1
+            self.By = 0
+            self.Bz = 0
+            self.alpha = 0
             self.apply_actions(True)
         else:
             self.apply_actions(False)
+   
+            
             
             
 
@@ -231,10 +245,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.rightfieldbutton.setChecked(False)
             self.ui.downfieldbutton.setChecked(False)
             self.ui.leftfieldbutton.setChecked(False)
+            self.ui.plusZbutton.setChecked(False)
+            self.ui.minusZbutton.setChecked(False)
             self.By = 1
+            self.Bx = 0
+            self.Bz = 0
+            self.alpha = 0
             self.apply_actions(True)
         else:
             self.apply_actions(False)
+          
+            
             
             
 
@@ -243,10 +264,47 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.upfieldbutton.setChecked(False)
             self.ui.rightfieldbutton.setChecked(False)
             self.ui.leftfieldbutton.setChecked(False)
+            self.ui.plusZbutton.setChecked(False)
+            self.ui.minusZbutton.setChecked(False)
             self.By = -1
+            self.Bx = 0
+            self.Bz = 0
+            self.alpha = 0
             self.apply_actions(True)
         else:
             self.apply_actions(False)
+
+
+    def quickfieldplusZ(self):
+        if self.ui.plusZbutton.isChecked():
+            self.ui.upfieldbutton.setChecked(False)
+            self.ui.rightfieldbutton.setChecked(False)
+            self.ui.leftfieldbutton.setChecked(False)
+            self.ui.minusZbutton.setChecked(False)
+            self.ui.downfieldbutton.setChecked(False)
+            self.Bz = 1
+            self.By = 0
+            self.Bx = 0
+            self.alpha = 0
+            self.apply_actions(True)
+        else:
+            self.apply_actions(False)
+
+    def quickfieldminusZ(self):
+        if self.ui.minusZbutton.isChecked():
+            self.ui.upfieldbutton.setChecked(False)
+            self.ui.rightfieldbutton.setChecked(False)
+            self.ui.leftfieldbutton.setChecked(False)
+            self.ui.plusZbutton.setChecked(False)
+            self.ui.downfieldbutton.setChecked(False)
+            self.Bz = -1
+            self.By = 0
+            self.Bx = 0
+            self.alpha = 0
+            self.apply_actions(True)
+        else:
+            self.apply_actions(False)
+         
             
     
 
@@ -315,22 +373,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tbprint("No Joystick Connected...")
 
 
-    
-    """def update_openloop_actions(self, actions):
-        #self.tbprint(str(actions2))
-        self.gamma = np.radians(self.ui.gammadial.value())
-        self.psi = np.radians(self.ui.psidial.value())
-        
-        if self.joystick_status == True and self.control_status == False:
-            self.Bx, self.By, self.Bz, self.alpha, self.freq = self.controller_actions.run(self.joystick)
-            
-            if self.freq !=0:
-                self.freq = self.ui.magneticfrequencydial.value()
-
-        self.apply_actions(True)
-    """
-
-
     def update_closedloop_actions(self, actions, stopped):
         #alpha argument is signal from tracker_class: actions_signal
         #output actions if control status is on
@@ -352,8 +394,10 @@ class MainWindow(QtWidgets.QMainWindow):
             
             if self.freq !=0:
                 self.freq = self.ui.magneticfrequencydial.value()
-                
+
             self.apply_actions(True)
+   
+
 
 
 
@@ -883,7 +927,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.ui.VideoFeedLabel.setGeometry(QtCore.QRect(10,  5,                       self.display_width,     self.display_height))
         self.ui.frameslider.setGeometry(QtCore.QRect(10,    self.display_height+12,   self.display_width,     self.framesliderheight))
-        self.ui.plainTextEdit.setGeometry(QtCore.QRect(10,  self.display_height+self.framesliderheight+20,   self.display_width-400,     self.textheight))
+        self.ui.plainTextEdit.setGeometry(QtCore.QRect(10,  self.display_height+20+self.framesliderheight,   self.display_width-400,     self.textheight))
 
         #self.ui.tabWidget.setGeometry(QtCore.QRect(12,  6,  260 ,     self.tabheight))
 
@@ -903,6 +947,5 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.cap is not None:
             self.tracker.stop()
         self.simulator.stop()
-        self.openloop_actions.stop()
         self.apply_actions(False)
         self.arduino.close()

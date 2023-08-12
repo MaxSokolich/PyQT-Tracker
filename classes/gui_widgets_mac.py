@@ -368,8 +368,7 @@ class Ui_MainWindow(object):
         self.robotblurlabel.setObjectName("robotblurlabel")
         self.trackerparamsframe = QtWidgets.QFrame(self.tracking_tab)
         self.trackerparamsframe.setGeometry(QtCore.QRect(10, 205, 311, 211))
-        self.trackerparamsframe.setStyleSheet("\n"
-"                ")
+        self.trackerparamsframe.setStyleSheet("")
         self.trackerparamsframe.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.trackerparamsframe.setFrameShadow(QtWidgets.QFrame.Raised)
         self.trackerparamsframe.setObjectName("trackerparamsframe")
@@ -482,7 +481,7 @@ class Ui_MainWindow(object):
         self.bxlabel_3.setGeometry(QtCore.QRect(230, 280, 91, 41))
         self.bxlabel_3.setObjectName("bxlabel_3")
         self.leftfieldbutton = QtWidgets.QToolButton(self.control_tab)
-        self.leftfieldbutton.setGeometry(QtCore.QRect(10, 260, 51, 31))
+        self.leftfieldbutton.setGeometry(QtCore.QRect(10, 270, 51, 31))
         self.leftfieldbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -512,7 +511,7 @@ class Ui_MainWindow(object):
         self.leftfieldbutton.setArrowType(QtCore.Qt.LeftArrow)
         self.leftfieldbutton.setObjectName("leftfieldbutton")
         self.rightfieldbutton = QtWidgets.QToolButton(self.control_tab)
-        self.rightfieldbutton.setGeometry(QtCore.QRect(130, 260, 51, 31))
+        self.rightfieldbutton.setGeometry(QtCore.QRect(130, 270, 51, 31))
         self.rightfieldbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -542,7 +541,7 @@ class Ui_MainWindow(object):
         self.rightfieldbutton.setArrowType(QtCore.Qt.RightArrow)
         self.rightfieldbutton.setObjectName("rightfieldbutton")
         self.downfieldbutton = QtWidgets.QToolButton(self.control_tab)
-        self.downfieldbutton.setGeometry(QtCore.QRect(70, 280, 51, 31))
+        self.downfieldbutton.setGeometry(QtCore.QRect(70, 290, 51, 31))
         self.downfieldbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -572,7 +571,7 @@ class Ui_MainWindow(object):
         self.downfieldbutton.setArrowType(QtCore.Qt.DownArrow)
         self.downfieldbutton.setObjectName("downfieldbutton")
         self.upfieldbutton = QtWidgets.QToolButton(self.control_tab)
-        self.upfieldbutton.setGeometry(QtCore.QRect(70, 240, 51, 31))
+        self.upfieldbutton.setGeometry(QtCore.QRect(70, 250, 51, 31))
         self.upfieldbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -605,7 +604,7 @@ class Ui_MainWindow(object):
         self.upfieldbutton.setArrowType(QtCore.Qt.UpArrow)
         self.upfieldbutton.setObjectName("upfieldbutton")
         self.bylabel_3 = QtWidgets.QLabel(self.control_tab)
-        self.bylabel_3.setGeometry(QtCore.QRect(50, 190, 101, 41))
+        self.bylabel_3.setGeometry(QtCore.QRect(50, 190, 101, 21))
         self.bylabel_3.setObjectName("bylabel_3")
         self.controlparamsframe = QtWidgets.QFrame(self.control_tab)
         self.controlparamsframe.setGeometry(QtCore.QRect(10, 330, 321, 221))
@@ -873,6 +872,66 @@ class Ui_MainWindow(object):
         self.acousticfreqlabel = QtWidgets.QLabel(self.frame)
         self.acousticfreqlabel.setGeometry(QtCore.QRect(55, 105, 181, 21))
         self.acousticfreqlabel.setObjectName("acousticfreqlabel")
+        self.plusZbutton = QtWidgets.QToolButton(self.control_tab)
+        self.plusZbutton.setGeometry(QtCore.QRect(130, 220, 51, 31))
+        self.plusZbutton.setStyleSheet("QToolButton {\n"
+"                color: rgb(255, 255, 255);\n"
+"                background-color: rgb(0, 0, 0);\n"
+"                border-style: outset;\n"
+"                border-width: px;\n"
+"                border-radius: 10px;\n"
+"                border: 2px solid rgb(0, 0, 0);\n"
+"                font: bold 16px;\n"
+"                min-width: 1em;\n"
+"                padding: 1px;\n"
+"            }\n"
+"            QToolButton:hover {\n"
+"                background-color: rgb(100, 100, 100);\n"
+"                color: rgb(255, 255, 255);\n"
+"                border: 2px solid rgb(0, 255, 0);\n"
+"            }\n"
+"            QToolButton:checked {\n"
+"                background-color: rgb(100, 100, 100);\n"
+"                border: 2px solid rgb(255, 0, 0);\n"
+"                border-style: inset;\n"
+"                padding-left: 5px;\n"
+"                padding-top: 5px;\n"
+"            }")
+        self.plusZbutton.setCheckable(True)
+        self.plusZbutton.setAutoRepeat(False)
+        self.plusZbutton.setAutoRepeatInterval(1)
+        self.plusZbutton.setArrowType(QtCore.Qt.NoArrow)
+        self.plusZbutton.setObjectName("plusZbutton")
+        self.minusZbutton = QtWidgets.QToolButton(self.control_tab)
+        self.minusZbutton.setGeometry(QtCore.QRect(10, 220, 51, 31))
+        self.minusZbutton.setStyleSheet("QToolButton {\n"
+"                color: rgb(255, 255, 255);\n"
+"                background-color: rgb(0, 0, 0);\n"
+"                border-style: outset;\n"
+"                border-width: px;\n"
+"                border-radius: 10px;\n"
+"                border: 2px solid rgb(0, 0, 0);\n"
+"                font: bold 16px;\n"
+"                min-width: 1em;\n"
+"                padding: 1px;\n"
+"            }\n"
+"            QToolButton:hover {\n"
+"                background-color: rgb(100, 100, 100);\n"
+"                color: rgb(255, 255, 255);\n"
+"                border: 2px solid rgb(0, 255, 0);\n"
+"            }\n"
+"            QToolButton:checked {\n"
+"                background-color: rgb(100, 100, 100);\n"
+"                border: 2px solid rgb(255, 0, 0);\n"
+"                border-style: inset;\n"
+"                padding-left: 5px;\n"
+"                padding-top: 5px;\n"
+"            }")
+        self.minusZbutton.setCheckable(True)
+        self.minusZbutton.setAutoRepeat(False)
+        self.minusZbutton.setAutoRepeatInterval(1)
+        self.minusZbutton.setArrowType(QtCore.Qt.NoArrow)
+        self.minusZbutton.setObjectName("minusZbutton")
         self.tabWidget.addTab(self.control_tab, "")
         self.verticalLayout.addWidget(self.tabWidget)
         self.dockWidget.setWidget(self.dockWidgetContents)
@@ -931,5 +990,7 @@ class Ui_MainWindow(object):
         self.controlbutton.setText(_translate("MainWindow", "Control"))
         self.orientradio.setText(_translate("MainWindow", "Orient"))
         self.acousticfreqlabel.setText(_translate("MainWindow", "Acoustic Frequency"))
+        self.plusZbutton.setText(_translate("MainWindow", "+Z"))
+        self.minusZbutton.setText(_translate("MainWindow", "-Z"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.control_tab), _translate("MainWindow", "Control"))
         self.actiondock.setText(_translate("MainWindow", "dock"))

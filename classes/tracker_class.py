@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from scipy import ndimage 
 import time
 
-from classes.closedloop_class import algorithm
+from classes.algorithm_class import algorithm
     
 #add unique crop length 
 class VideoThread(QThread):
@@ -254,7 +254,10 @@ class VideoThread(QThread):
                 #step 2 control robot
                 if len(self.robot_list)>0 and len(self.robot_list[-1].trajectory) > 0:
                     frame, actions, stopped = self.control_robot.run(frame, display_mask, self.robot_list, self.RRTtreesize, self.arrivalthresh, self.orientstatus)
-                    self.actions_signal.emit(actions, stopped)
+                else:
+                    actions = [0,0,0,0]
+                    stopped = True    
+                    
         
 
                 cv2.putText(frame,"fps:"+str(int(self.fps.get_fps())),
@@ -268,6 +271,7 @@ class VideoThread(QThread):
                 #step 3: emit croppedframe, frame from this thread to the main thread
                 self.cropped_frame_signal.emit(croppedmask)
                 self.change_pixmap_signal.emit(frame)
+                self.actions_signal.emit(actions, stopped)
                 
 
                 
