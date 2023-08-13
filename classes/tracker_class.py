@@ -214,7 +214,7 @@ class VideoThread(QThread):
                 cv2.drawContours(croppedmask, [max_cnt], -1, (0, 255, 255), 1)
 
         else:
-            croppedmask = np.zeros((300, 300, 3), dtype=np.uint8) 
+            croppedmask = np.zeros((310, 310, 3), dtype=np.uint8) 
         
         return displayframe, croppedmask, displaymask
 

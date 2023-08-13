@@ -120,12 +120,12 @@ except Exception:
             i=0
             while self.run_flag:
                 
-                s1 = i
-                s2 = 2
-                s3 = 3
+                bx = i
+                by = 2
+                bz = 3
 
 
-                self.sensor_signal.emit([s1,s2,s3])
+                self.sensor_signal.emit([bx,by,bz])
                 time.sleep(.1)
                 i+=1
         def stop(self):

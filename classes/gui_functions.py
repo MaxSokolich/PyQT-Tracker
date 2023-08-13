@@ -79,9 +79,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.aspectratio = 4/3
         self.resize_widgets()
 
-     
-         
-
+    
       
         #create folder in homerdiractory of user
         home_dir = expanduser("~")
@@ -101,11 +99,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.acoustic_frequency = 0
         self.magnetic_field_list = []
         
-        self.actions = [0,0,0,0,0,0,0,0,0]
+        self.actions = [0,0,0,0,0,0,0,0,0,0,0,0]
         self.Bx, self.By, self.Bz = 0,0,0
         self.Mx, self.My, self.Mz = 0,0,0
         self.alpha, self.gamma, self.psi, self.freq = 0,0,0,0
         self.acoustic_status = 0
+        self.sensorBx, self.sensorBy, self.sensorBz = 0,0,0
 
         #control tab functions
         self.control_status = False
@@ -134,7 +133,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         
         #define, simulator class, pojection class, and acoustic class
-        self.simulator = HelmholtzSimulator(self.ui.magneticfieldsimlabel, width=300, height=300, dpi=125)
+        self.simulator = HelmholtzSimulator(self.ui.magneticfieldsimlabel, width=310, height=310, dpi=125)
         self.projection = AxisProjection()
         self.acoustic_module = AcousticClass()
         self.halleffect = HallEffect(self)
@@ -160,10 +159,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.pausebutton.hide()
         self.ui.leftbutton.hide()
         self.ui.rightbutton.hide()
-        self.ui.led.hide()
-        self.ui.acousticfreq_spinBox.hide()
-        self.ui.acousticfreqlabel.hide()
-        self.ui.applyacousticbutton.hide()
         
         self.ui.choosevideobutton.clicked.connect(self.selectFile)
         self.ui.trackbutton.clicked.connect(self.track)
@@ -207,14 +202,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
 
 
-    def update_halleffect_sensor(self, vals):
-        sensorBx, sensorBy, sensorBz = vals
-        #self.ui.bxlabel.setText("Bx:   {} mT".format(sensorBx))
-        #self.ui.bylabel.setText("By:   {} mT".format(sensorBy))
-        #self.ui.bzlabel.setText("Bz:   {} mT".format(sensorBz))
-        self.ui.bxlcdnum.display(sensorBx)
-        self.ui.bylcdnum.display(sensorBy)
-        self.ui.bzlcdnum.display(sensorBz)
+    
    
         
     
@@ -249,20 +237,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.control_status = True
             self.ui.controlbutton.setText("Stop")
             self.tbprint("Control On: {} Hz".format(self.acoustic_frequency))
-            self.ui.led.show()
-            self.ui.acousticfreq_spinBox.show()
-            self.ui.acousticfreqlabel.show()
-            self.ui.applyacousticbutton.show()
-        
-        
         else:
             self.control_status = False
             self.ui.controlbutton.setText("Control")
             self.tbprint("Control Off")
-            self.ui.led.hide()
-            self.ui.acousticfreq_spinBox.hide()
-            self.ui.acousticfreqlabel.hide()
-            self.ui.applyacousticbutton.hide()
             self.apply_actions(False)
             
             
@@ -274,23 +252,24 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.joystick_status = True
                 self.ui.joystickbutton.setText("Stop")
                 self.tbprint("Joystick On")
-            
             else:
                 self.joystick_status = False
                 self.ui.joystickbutton.setText("Joystick")
                 self.tbprint("Joystick Off")
                 self.apply_actions(False)
-            
         else:
             self.tbprint("No Joystick Connected...")
 
 
-    def update_closedloop_actions(self, actions, stopped):
+
+    def update_actions(self, actions, stopped):
         #alpha argument is signal from tracker_class: actions_signal
         #output actions if control status is on
+        self.gamma = np.radians(self.ui.gammadial.value())
+        self.psi = np.radians(self.ui.psidial.value())
+        
         if self.control_status == True:
-            self.gamma = np.radians(self.ui.gammadial.value())
-            self.psi = np.radians(self.ui.psidial.value())
+            
             self.Bx, self.By, self.Bz, self.alpha = actions    
             if self.ui.orientradio.isChecked():
                 self.freq = 0
@@ -308,8 +287,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.freq = self.ui.magneticfrequencydial.value()
 
             self.apply_actions(True)
-   
+        
+        #save the current action outputs to a list to be saved 
+        self.actions = [self.tracker.framenum,self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, 
+                        self.acoustic_frequency, self.sensorBx, self.sensorBy, self.sensorBz] 
+        self.magnetic_field_list.append(self.actions)
 
+        
 
 
     def apply_actions(self, status):
@@ -317,31 +301,30 @@ class MainWindow(QtWidgets.QMainWindow):
         # show the actions via the simulator
         # and record the actions by appending the field_list
         
+        #toggle between alpha and orient
         if self.ui.swimradio.isChecked():
             self.simulator.roll = False
         elif self.ui.rollradio.isChecked():
             self.alpha = self.alpha - np.pi/2
             self.simulator.roll = True
 
+        #zero output
         if status == False:
             self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi = 0,0,0,0,0,0,0
 
+        #send arduino commands
         self.arduino.send(self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi)
-        if self.cap is not None:
-            self.actions = [self.tracker.framenum,self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency]
-        else:
-            self.actions = [0,self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency]
-        self.magnetic_field_list.append(self.actions)
+        
+        #output current actions to simulator
         self.simulator.Bx = self.Bx
         self.simulator.By = self.By
         self.simulator.Bz = self.Bz
         self.simulator.alpha = self.alpha
-        self.simulator.freq = self.freq/10
+        self.simulator.gamma = self.gamma
+        self.simulator.psi = self.psi
+        self.simulator.freq = self.freq/15
         self.simulator.omega = 2 * np.pi * self.simulator.freq
     
-            
-
-
 
 
     def get_acoustic_frequency(self):
@@ -370,6 +353,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.applyacousticbutton.setText("Apply")
             self.tbprint("Acoustic Module Off")
             self.acoustic_module.stop()
+            self.acoustic_frequency = 0
             self.ui.led.setStyleSheet("\n"
 "                background-color: rgb(255, 0, 0);\n"
 "                border-style: outset;\n"
@@ -407,8 +391,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.gammalabel.setText("Gamma: {}".format(gamma))
         self.ui.psilabel.setText("Psi: {}".format(psi))
         self.ui.rollingfrequencylabel.setText("Freq: {}".format(magneticfreq))
-        self.simulator.gamma = np.radians(gamma)
-        self.simulator.psi = np.radians(psi)
+        
+  
         
 
 
@@ -497,6 +481,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update_image(self, frame):
         """Updates the image_label with a new opencv image"""
+        #record if checked
         if self.result is not None:
             cv2.putText(frame,"frame: " + str(self.tracker.framenum),
                         (int(self.video_width / 15),
@@ -507,13 +492,11 @@ class MainWindow(QtWidgets.QMainWindow):
                         color = (255, 255, 255))
             self.result.write(frame)
         
-        
-
+        #display projection
         if self.control_status == True or self.joystick_status == True:
-            _, Bx,By,Bz,alpha,gamma,_,_,_ = self.actions
             self.projection.roll = self.ui.rollradio.isChecked()
-            frame, self.projection.draw_sideview(frame,Bx,By,Bz,alpha,gamma,self.video_width,self.video_height)
-            frame, self.projection.draw_topview(frame,Bx,By,Bz,alpha,gamma,self.video_width,self.video_height)
+            frame, self.projection.draw_sideview(frame,self.Bx,self.By,self.Bz,self.alpha,self.gamma,self.video_width,self.video_height)
+            frame, self.projection.draw_topview(frame,self.Bx,self.By,self.Bz,self.alpha,self.gamma,self.video_width,self.video_height)
         
         rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
@@ -524,30 +507,26 @@ class MainWindow(QtWidgets.QMainWindow):
         qt_img = QPixmap.fromImage(p)
         
         #update frame slider too
+        self.ui.framelabel.setText("Frame:"+str(self.tracker.framenum))
         if self.videopath !=0:
-            self.ui.framelabel.setText("Frame:"+str(self.tracker.framenum))
             self.ui.frameslider.setValue(self.tracker.framenum)
 
         #also update robot info
         if len(self.tracker.robot_list) > 0:
             robot_diameter = round(np.sqrt(4*self.tracker.robot_list[-1].avg_area/np.pi),1)
+            self.ui.vellcdnum.display(self.tracker.robot_list[-1].velocity_list[-1][2])
+            self.ui.blurlcdnum.display(self.tracker.robot_list[-1].blur_list[-1])
             if self.videopath == 0:
-                self.ui.robotsizelabel.setText("Size:                                         px")
-                self.ui.robotvelocitylabel.setText("Velocity:                                  px/s")
-                self.ui.robotblurlabel.setText("Blur:                                         units")
+                self.ui.robotsizelabel.setText("Size:                  um")
+                self.ui.robotvelocitylabel.setText("Velocity:                    um/s")
+                self.ui.robotblurlabel.setText("Blur:                      units")
                 self.ui.sizelcdnum.display(robot_diameter)
-                self.ui.vellcdnum.display(self.tracker.robot_list[-1].velocity_list[-1][2])
-                self.ui.blurlcdnum.display(self.tracker.robot_list[-1].blur_list[-1])
-
-        
             else:
-                self.ui.robotsizelabel.setText("Size:                                         um")
-                self.ui.robotvelocitylabel.setText("Velocity:                                  um/s")
-                self.ui.robotblurlabel.setText("Blur:                                         units")
+                self.ui.robotsizelabel.setText("Size:                  px")
+                self.ui.robotvelocitylabel.setText("Velocity:                    px/s")
+                self.ui.robotblurlabel.setText("Blur:                      units")
                 self.ui.sizelcdnum.display(robot_diameter)
-                self.ui.vellcdnum.display(self.tracker.robot_list[-1].velocity_list[-1][2])
-                self.ui.blurlcdnum.display(self.tracker.robot_list[-1].blur_list[-1])
-
+            
         self.ui.VideoFeedLabel.setPixmap(qt_img)
         
 
@@ -561,7 +540,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         bytes_per_line = ch * w
         convert_to_Qt_format = QtGui.QImage(rgb_image.data, w, h, bytes_per_line, QtGui.QImage.Format_RGB888)
-        p = convert_to_Qt_format.scaled(300, 300, Qt.KeepAspectRatio)
+        p = convert_to_Qt_format.scaled(310, 310, Qt.KeepAspectRatio)
         qt_cimg = QPixmap.fromImage(p)
         self.ui.CroppedVideoFeedLabel.setPixmap(qt_cimg)
         
@@ -607,7 +586,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tracker = VideoThread(self)
                 self.tracker.change_pixmap_signal.connect(self.update_image)
                 self.tracker.cropped_frame_signal.connect(self.update_croppedimage)
-                self.tracker.actions_signal.connect(self.update_closedloop_actions)
+                self.tracker.actions_signal.connect(self.update_actions)
                 self.tracker.start()
                 
                 self.ui.trackbutton.setText("Stop")
@@ -682,7 +661,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.result = cv2.VideoWriter(
                     file_path,
                     cv2.VideoWriter_fourcc(*"mp4v"),
-                    10,    
+                    int(self.videofps),    
                     (self.video_width, self.video_height), ) 
             else:
                 self.ui.recordbutton.setText("Record")
@@ -741,68 +720,69 @@ class MainWindow(QtWidgets.QMainWindow):
         
         with pd.ExcelWriter(file_path) as writer:
             
-            if self.cap is not None and len(self.tracker.robot_list)>0:      
+            if self.cap is not None: 
+                if len(self.tracker.robot_list)>0:      
         
-                for idx, mydict in enumerate(robot_dictionary, start=0):
-                    # Create a DataFrame from the dictionary
-                    df = pd.DataFrame()
-                    
-                    for key, value in mydict.items():
-                        if key == "Frame":
-                            df[f"{key}"] = pd.Series(value, dtype='float64')
-                    
-                        elif key == "Times":
-                            df[f"{key}"] = pd.Series(value, dtype='float64')
-                    
-                        elif key == "Position":
-                            if len(value) > 0:
-                                x_coords, y_coords = zip(*value)
-                                df[f"{key}_X"] = pd.Series(x_coords, dtype='float64')
-                                df[f"{key}_Y"] = pd.Series(y_coords, dtype='float64')
-                    
-                        elif key == "Velocity":
-                            if len(value) > 0:
-                                x_coords, y_coords, mag = zip(*value)
-                                df[f"{key}_X"] = pd.Series(x_coords, dtype='float64')
-                                df[f"{key}_Y"] = pd.Series(y_coords, dtype='float64')
-                                df[f"{key}_Mag"] = pd.Series(mag, dtype='float64')
+                    for idx, mydict in enumerate(robot_dictionary, start=0):
+                        # Create a DataFrame from the dictionary
+                        df = pd.DataFrame()
                         
-                        elif key == "Cropped Frame Dim":
-                            if len(value) > 0:
-                                x1, y1, w, h = zip(*value)
-                                df[f"{key}_x1"] = pd.Series(x1, dtype='float64')
-                                df[f"{key}_y1"] = pd.Series(y1, dtype='float64')
-                                df[f"{key}_w"] = pd.Series(w, dtype='float64')
-                                df[f"{key}_h"] = pd.Series(h, dtype='float64')
+                        for key, value in mydict.items():
+                            if key == "Frame":
+                                df[f"{key}"] = pd.Series(value, dtype='float64')
                         
-                        elif key == "Area":
-                            df[f"{key}"] = pd.Series(value, dtype='float64')
-
-                        elif key == "Blur":
-                            df[f"{key}"] = pd.Series(value, dtype='float64')
+                            elif key == "Times":
+                                df[f"{key}"] = pd.Series(value, dtype='float64')
                         
-                        elif key == "Avg Area":
-                            df[f"{key}"] = pd.Series(value, dtype='float64')
-                    
-                        elif key == "Trajectory":
-                            if len(value) > 0:
-                                x_coords, y_coords = zip(*value)
-                                df[f"{key}_X"] = pd.Series(x_coords, dtype='float64')
-                                df[f"{key}_Y"] = pd.Series(y_coords, dtype='float64')
-                    
-                        elif key == "Acoustic Frequency":
-                            if len(value) > 0:
+                            elif key == "Position":
+                                if len(value) > 0:
+                                    x_coords, y_coords = zip(*value)
+                                    df[f"{key}_X"] = pd.Series(x_coords, dtype='float64')
+                                    df[f"{key}_Y"] = pd.Series(y_coords, dtype='float64')
+                        
+                            elif key == "Velocity":
+                                if len(value) > 0:
+                                    x_coords, y_coords, mag = zip(*value)
+                                    df[f"{key}_X"] = pd.Series(x_coords, dtype='float64')
+                                    df[f"{key}_Y"] = pd.Series(y_coords, dtype='float64')
+                                    df[f"{key}_Mag"] = pd.Series(mag, dtype='float64')
+                            
+                            elif key == "Cropped Frame Dim":
+                                if len(value) > 0:
+                                    x1, y1, w, h = zip(*value)
+                                    df[f"{key}_x1"] = pd.Series(x1, dtype='float64')
+                                    df[f"{key}_y1"] = pd.Series(y1, dtype='float64')
+                                    df[f"{key}_w"] = pd.Series(w, dtype='float64')
+                                    df[f"{key}_h"] = pd.Series(h, dtype='float64')
+                            
+                            elif key == "Area":
                                 df[f"{key}"] = pd.Series(value, dtype='float64')
 
+                            elif key == "Blur":
+                                df[f"{key}"] = pd.Series(value, dtype='float64')
+                            
+                            elif key == "Avg Area":
+                                df[f"{key}"] = pd.Series(value, dtype='float64')
+                        
+                            elif key == "Trajectory":
+                                if len(value) > 0:
+                                    x_coords, y_coords = zip(*value)
+                                    df[f"{key}_X"] = pd.Series(x_coords, dtype='float64')
+                                    df[f"{key}_Y"] = pd.Series(y_coords, dtype='float64')
+                        
+                            elif key == "Acoustic Frequency":
+                                if len(value) > 0:
+                                    df[f"{key}"] = pd.Series(value, dtype='float64')
 
-                        # Write the DataFrame to a separate sheet with sheet name "Sheet_<idx>"
-                        df.to_excel(writer, sheet_name=f"Robot_{idx+1}", index=False)
+
+                            # Write the DataFrame to a separate sheet with sheet name "Sheet_<idx>"
+                            df.to_excel(writer, sheet_name=f"Robot_{idx+1}", index=False)
                         
             #also save the magnetic field params 
             if len(self.magnetic_field_list) > 0:     
                 df2 = pd.DataFrame()      
 
-                MFFrame, Bx, By, Bz, alpha, gamma, freq, psi, acoustic_freq = zip(*self.magnetic_field_list)
+                MFFrame, Bx, By, Bz, alpha, gamma, freq, psi, acoustic_freq ,sensorBx, sensorBy, sensorBz = zip(*self.magnetic_field_list)
                 df2[f"Applied on Frame"] = pd.Series(MFFrame, dtype='float64')
                 df2[f"Bx"] = pd.Series(Bx, dtype='float64')
                 df2[f"By"] = pd.Series(By, dtype='float64')
@@ -812,8 +792,24 @@ class MainWindow(QtWidgets.QMainWindow):
                 df2[f"freq"] = pd.Series(freq, dtype='float64')
                 df2[f"psi"] = pd.Series(psi, dtype='float64')
                 df2[f"acoustic_frequency"] = pd.Series(acoustic_freq, dtype='float64')
+                df2[f"sensor Bx"] = pd.Series(sensorBx, dtype='float64')
+                df2[f"sensor By"] = pd.Series(sensorBy, dtype='float64')
+                df2[f"sensor Bz"] = pd.Series(sensorBz, dtype='float64')
                 df2.to_excel(writer, sheet_name=f"Magnetic Field", index=False)
-            
+    
+    def update_halleffect_sensor(self, vals):
+        sensorBx, sensorBy, sensorBz = vals
+        self.ui.bxlabel.setText("Bx:               mT")
+        self.ui.bylabel.setText("Bx:               mT")
+        self.ui.bzlabel.setText("Bx:               mT")
+        self.ui.bxlcdnum.display(sensorBx)
+        self.ui.bylcdnum.display(sensorBy)
+        self.ui.bzlcdnum.display(sensorBz)
+        self.sensorBx = sensorBx
+        self.sensorBy = sensorBy
+        self.sensorBz = sensorBz
+
+
     def quickfieldleft(self):
         if self.ui.leftfieldbutton.isChecked():
             self.ui.upfieldbutton.setChecked(False)
