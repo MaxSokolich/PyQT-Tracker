@@ -60,7 +60,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
         
-        #self.showFullScreen()
+        
         #self.showMaximized()
 
         #resize some widgets to fit the screen better
@@ -195,6 +195,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.downfieldbutton.clicked.connect(self.quickfielddown)
         self.ui.plusZbutton.clicked.connect(self.quickfieldplusZ)
         self.ui.minusZbutton.clicked.connect(self.quickfieldminusZ)
+
+        self.showFullScreen()
 
        
         
