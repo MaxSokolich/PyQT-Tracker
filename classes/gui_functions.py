@@ -209,9 +209,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update_halleffect_sensor(self, vals):
         sensorBx, sensorBy, sensorBz = vals
-        self.ui.bxlabel.setText("Bx:   {} mT".format(sensorBx))
-        self.ui.bylabel.setText("By:   {} mT".format(sensorBy))
-        self.ui.bzlabel.setText("Bz:   {} mT".format(sensorBz))
+        #self.ui.bxlabel.setText("Bx:   {} mT".format(sensorBx))
+        #self.ui.bylabel.setText("By:   {} mT".format(sensorBy))
+        #self.ui.bzlabel.setText("Bz:   {} mT".format(sensorBz))
+        self.ui.bxlcdnum.display(sensorBx)
+        self.ui.bylcdnum.display(sensorBy)
+        self.ui.bzlcdnum.display(sensorBz)
    
         
     
@@ -529,13 +532,21 @@ class MainWindow(QtWidgets.QMainWindow):
         if len(self.tracker.robot_list) > 0:
             robot_diameter = round(np.sqrt(4*self.tracker.robot_list[-1].avg_area/np.pi),1)
             if self.videopath == 0:
-                self.ui.robotsizelabel.setText("Size: {0:.2f} um".format(robot_diameter))
-                self.ui.robotvelocitylabel.setText("Velocity: {0:.2f} um/s".format(self.tracker.robot_list[-1].velocity_list[-1][2]  )  )
-                self.ui.robotblurlabel.setText("Blur: {0:.2f} units".format(self.tracker.robot_list[-1].blur_list[-1]))
+                self.ui.robotsizelabel.setText("Size:                                         px")
+                self.ui.robotvelocitylabel.setText("Velocity:                                  px/s")
+                self.ui.robotblurlabel.setText("Blur:                                         units")
+                self.ui.sizelcdnum.display(robot_diameter)
+                self.ui.vellcdnum.display(self.tracker.robot_list[-1].velocity_list[-1][2])
+                self.ui.blurlcdnum.display(self.tracker.robot_list[-1].blur_list[-1])
+
+        
             else:
-                self.ui.robotsizelabel.setText("Size: {0:.2f} px".format(robot_diameter))
-                self.ui.robotvelocitylabel.setText("Velocity: {0:.2f} px/s".format(self.tracker.robot_list[-1].velocity_list[-1][2]  )  )
-                self.ui.robotblurlabel.setText("Blur: {0:.2f} units".format(self.tracker.robot_list[-1].blur_list[-1]))
+                self.ui.robotsizelabel.setText("Size:                                         um")
+                self.ui.robotvelocitylabel.setText("Velocity:                                  um/s")
+                self.ui.robotblurlabel.setText("Blur:                                         units")
+                self.ui.sizelcdnum.display(robot_diameter)
+                self.ui.vellcdnum.display(self.tracker.robot_list[-1].velocity_list[-1][2])
+                self.ui.blurlcdnum.display(self.tracker.robot_list[-1].blur_list[-1])
 
         self.ui.VideoFeedLabel.setPixmap(qt_img)
         

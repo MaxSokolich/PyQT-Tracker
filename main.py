@@ -10,6 +10,7 @@ from classes.gui_functions import MainWindow
 #add slots for field values
 #remeasure pix2metric conversion
 #add sensorvals to magnetic_field_list and save
+#chagne robot display params to lcd
 
 
 # maybe add robot list
