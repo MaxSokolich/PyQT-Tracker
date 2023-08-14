@@ -37,7 +37,7 @@ from classes.joystick_class import Mac_Controller,Linux_Controller,Windows_Contr
 from classes.simulation_class import HelmholtzSimulator
 from classes.projection_class import AxisProjection
 from classes.acoustic_class import AcousticClass
-from classes.openloop_class import OpenLoop
+from old.openloop_class import OpenLoop
 from classes.halleffect_class import HallEffect
 
 
@@ -196,19 +196,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.plusZbutton.clicked.connect(self.quickfieldplusZ)
         self.ui.minusZbutton.clicked.connect(self.quickfieldminusZ)
 
-        self.showFullScreen()
-
-       
-        
-
-        
-
-
-    
-   
-        
-    
-    
+        #self.showFullScreen()
 
     
 
