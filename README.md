@@ -1,6 +1,10 @@
 # PyQT-Tracker
 New microrobotic tracking and control UI
 
+to install neccesary librarys do: python3 -m pip install -r reqs.txt
+
+then run: python3 main.py
+
 /opt/homebrew/bin/python3.10 -m PyInstaller --onedir --windowed --icon MagScopeBox.icns --name MagScope main.py
 
 --osx-entitlements-file Info.plist
