@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'uis/MagscopeMac.ui'
+# Form implementation generated from reading ui file 'uis/original.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #
@@ -133,7 +133,7 @@ class Ui_MainWindow(object):
         self.trackbutton.setCheckable(True)
         self.trackbutton.setObjectName("trackbutton")
         self.framelabel = QtWidgets.QLabel(self.tracking_tab)
-        self.framelabel.setGeometry(QtCore.QRect(190, 40, 121, 21))
+        self.framelabel.setGeometry(QtCore.QRect(190, 40, 141, 21))
         self.framelabel.setMaximumSize(QtCore.QSize(300, 25))
         self.framelabel.setObjectName("framelabel")
         self.pausebutton = QtWidgets.QPushButton(self.tracking_tab)
@@ -249,7 +249,7 @@ class Ui_MainWindow(object):
         self.maskbutton.setChecked(False)
         self.maskbutton.setObjectName("maskbutton")
         self.maskinvert_checkBox = QtWidgets.QCheckBox(self.tracking_tab)
-        self.maskinvert_checkBox.setGeometry(QtCore.QRect(110, 145, 191, 31))
+        self.maskinvert_checkBox.setGeometry(QtCore.QRect(110, 145, 231, 31))
         self.maskinvert_checkBox.setChecked(True)
         self.maskinvert_checkBox.setObjectName("maskinvert_checkBox")
         self.CroppedVideoFeedLabel = QtWidgets.QLabel(self.tracking_tab)
@@ -333,7 +333,7 @@ class Ui_MainWindow(object):
         self.vellcdnum.setProperty("value", 17.1)
         self.vellcdnum.setObjectName("vellcdnum")
         self.blurlcdnum = QtWidgets.QLCDNumber(self.robotparamsframe)
-        self.blurlcdnum.setGeometry(QtCore.QRect(50, 70, 61, 30))
+        self.blurlcdnum.setGeometry(QtCore.QRect(50, 70, 71, 30))
         self.blurlcdnum.setStyleSheet("background-color: rgb(255,255,255); \n"
 "color: rgb(255,0,255);")
         self.blurlcdnum.setLineWidth(0)
@@ -351,7 +351,7 @@ class Ui_MainWindow(object):
         self.trackerparamsframe.setFrameShadow(QtWidgets.QFrame.Raised)
         self.trackerparamsframe.setObjectName("trackerparamsframe")
         self.maskthreshbox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.maskthreshbox.setGeometry(QtCore.QRect(160, 10, 111, 35))
+        self.maskthreshbox.setGeometry(QtCore.QRect(190, 10, 111, 35))
         font = QtGui.QFont()
         font.setPointSize(18)
         font.setBold(False)
@@ -366,7 +366,7 @@ class Ui_MainWindow(object):
         self.maskthreshlabel.setMaximumSize(QtCore.QSize(150, 25))
         self.maskthreshlabel.setObjectName("maskthreshlabel")
         self.maskdilationbox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.maskdilationbox.setGeometry(QtCore.QRect(160, 50, 111, 35))
+        self.maskdilationbox.setGeometry(QtCore.QRect(190, 50, 111, 35))
         self.maskdilationbox.setMaximum(40)
         self.maskdilationbox.setObjectName("maskdilationbox")
         self.maskdilationlabel = QtWidgets.QLabel(self.trackerparamsframe)
@@ -374,7 +374,7 @@ class Ui_MainWindow(object):
         self.maskdilationlabel.setMaximumSize(QtCore.QSize(150, 25))
         self.maskdilationlabel.setObjectName("maskdilationlabel")
         self.croplengthbox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.croplengthbox.setGeometry(QtCore.QRect(160, 90, 111, 35))
+        self.croplengthbox.setGeometry(QtCore.QRect(190, 90, 111, 35))
         self.croplengthbox.setMinimum(5)
         self.croplengthbox.setMaximum(300)
         self.croplengthbox.setProperty("value", 40)
@@ -385,7 +385,7 @@ class Ui_MainWindow(object):
         self.croplengthlabel.setMaximumSize(QtCore.QSize(150, 25))
         self.croplengthlabel.setObjectName("croplengthlabel")
         self.exposurebox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.exposurebox.setGeometry(QtCore.QRect(160, 130, 111, 35))
+        self.exposurebox.setGeometry(QtCore.QRect(190, 130, 111, 35))
         self.exposurebox.setMinimum(100)
         self.exposurebox.setMaximum(10000)
         self.exposurebox.setProperty("value", 5000)
@@ -396,7 +396,7 @@ class Ui_MainWindow(object):
         self.exposurelabel.setMaximumSize(QtCore.QSize(150, 25))
         self.exposurelabel.setObjectName("exposurelabel")
         self.objectivebox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.objectivebox.setGeometry(QtCore.QRect(160, 170, 111, 35))
+        self.objectivebox.setGeometry(QtCore.QRect(190, 170, 111, 35))
         self.objectivebox.setMinimum(1)
         self.objectivebox.setMaximum(50)
         self.objectivebox.setSingleStep(5)
