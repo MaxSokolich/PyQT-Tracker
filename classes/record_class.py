@@ -31,10 +31,7 @@ class RecordThread(QThread):
                     int(self.videofps),    
                     (self.width, self.height), ) 
 
-
-
     def run(self):
-      
         # capture from web camx
         while self.recordstatus:
 

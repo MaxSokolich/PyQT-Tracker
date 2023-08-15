@@ -57,8 +57,8 @@ class MainWindow(QtWidgets.QMainWindow):
         #resize some widgets to fit the screen better
         screen  = QtWidgets.QDesktopWidget().screenGeometry(-1)
         
-        self.window_width = screen.width()-500
-        self.window_height = screen.height()-500
+        self.window_width = screen.width()
+        self.window_height = screen.height()
         self.resize(self.window_width, self.window_height)
         self.display_width = self.window_width-265# self.ui.frameGeometry().width()
 

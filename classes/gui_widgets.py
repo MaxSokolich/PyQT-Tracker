@@ -14,14 +14,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1796, 1014)
+        MainWindow.resize(1728, 1014)
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(18)
+        font.setPointSize(16)
         font.setBold(False)
         font.setItalic(False)
         MainWindow.setFont(font)
-        MainWindow.setStyleSheet("font-size: 18pt; font: Arial;")
+        MainWindow.setStyleSheet("font-size: 16pt; font: Arial;")
         MainWindow.setDocumentMode(False)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -61,7 +61,7 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
         self.dockWidget = QtWidgets.QDockWidget(MainWindow)
-        self.dockWidget.setMinimumSize(QtCore.QSize(360, 987))
+        self.dockWidget.setMinimumSize(QtCore.QSize(325, 987))
         self.dockWidget.setStyleSheet("")
         self.dockWidget.setFloating(False)
         self.dockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|QtCore.Qt.RightDockWidgetArea)
@@ -69,7 +69,7 @@ class Ui_MainWindow(object):
         self.dockWidgetContents = QtWidgets.QWidget()
         self.dockWidgetContents.setObjectName("dockWidgetContents")
         self.frame_3 = QtWidgets.QFrame(self.dockWidgetContents)
-        self.frame_3.setGeometry(QtCore.QRect(10, 10, 341, 251))
+        self.frame_3.setGeometry(QtCore.QRect(5, 10, 311, 251))
         self.frame_3.setStyleSheet(" color: rgb(0, 0, 0);\n"
 " background-color: rgb(255, 255, 255);\n"
 "")
@@ -77,7 +77,7 @@ class Ui_MainWindow(object):
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_3.setObjectName("frame_3")
         self.choosevideobutton = QtWidgets.QPushButton(self.frame_3)
-        self.choosevideobutton.setGeometry(QtCore.QRect(30, 10, 271, 31))
+        self.choosevideobutton.setGeometry(QtCore.QRect(20, 10, 271, 31))
         self.choosevideobutton.setStyleSheet("     QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -97,11 +97,11 @@ class Ui_MainWindow(object):
 "            }")
         self.choosevideobutton.setObjectName("choosevideobutton")
         self.maskinvert_checkBox = QtWidgets.QCheckBox(self.frame_3)
-        self.maskinvert_checkBox.setGeometry(QtCore.QRect(110, 155, 231, 31))
+        self.maskinvert_checkBox.setGeometry(QtCore.QRect(100, 155, 231, 31))
         self.maskinvert_checkBox.setChecked(True)
         self.maskinvert_checkBox.setObjectName("maskinvert_checkBox")
         self.pausebutton = QtWidgets.QPushButton(self.frame_3)
-        self.pausebutton.setGeometry(QtCore.QRect(190, 80, 141, 30))
+        self.pausebutton.setGeometry(QtCore.QRect(175, 80, 121, 30))
         self.pausebutton.setMaximumSize(QtCore.QSize(300, 30))
         self.pausebutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
@@ -134,7 +134,7 @@ class Ui_MainWindow(object):
         self.pausebutton.setCheckable(True)
         self.pausebutton.setObjectName("pausebutton")
         self.savedatabutton = QtWidgets.QPushButton(self.frame_3)
-        self.savedatabutton.setGeometry(QtCore.QRect(30, 195, 131, 41))
+        self.savedatabutton.setGeometry(QtCore.QRect(20, 195, 131, 41))
         self.savedatabutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(0, 0, 0);\n"
 "                background-color: rgb(255, 255, 0);\n"
@@ -159,7 +159,7 @@ class Ui_MainWindow(object):
         self.savedatabutton.setCheckable(True)
         self.savedatabutton.setObjectName("savedatabutton")
         self.recordbutton = QtWidgets.QPushButton(self.frame_3)
-        self.recordbutton.setGeometry(QtCore.QRect(180, 195, 131, 41))
+        self.recordbutton.setGeometry(QtCore.QRect(170, 195, 131, 41))
         self.recordbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -192,11 +192,11 @@ class Ui_MainWindow(object):
         self.recordbutton.setCheckable(True)
         self.recordbutton.setObjectName("recordbutton")
         self.framelabel = QtWidgets.QLabel(self.frame_3)
-        self.framelabel.setGeometry(QtCore.QRect(190, 50, 141, 21))
+        self.framelabel.setGeometry(QtCore.QRect(180, 50, 141, 21))
         self.framelabel.setMaximumSize(QtCore.QSize(300, 25))
         self.framelabel.setObjectName("framelabel")
         self.leftbutton = QtWidgets.QToolButton(self.frame_3)
-        self.leftbutton.setGeometry(QtCore.QRect(200, 120, 51, 31))
+        self.leftbutton.setGeometry(QtCore.QRect(180, 120, 51, 31))
         self.leftbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -225,7 +225,7 @@ class Ui_MainWindow(object):
         self.leftbutton.setArrowType(QtCore.Qt.LeftArrow)
         self.leftbutton.setObjectName("leftbutton")
         self.maskbutton = QtWidgets.QPushButton(self.frame_3)
-        self.maskbutton.setGeometry(QtCore.QRect(20, 150, 81, 41))
+        self.maskbutton.setGeometry(QtCore.QRect(10, 150, 81, 41))
         self.maskbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -246,9 +246,10 @@ class Ui_MainWindow(object):
         self.maskbutton.setChecked(False)
         self.maskbutton.setObjectName("maskbutton")
         self.trackbutton = QtWidgets.QPushButton(self.frame_3)
-        self.trackbutton.setGeometry(QtCore.QRect(20, 50, 151, 91))
+        self.trackbutton.setGeometry(QtCore.QRect(10, 50, 151, 91))
         self.trackbutton.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
-        self.trackbutton.setStyleSheet("QPushButton {\n"
+        self.trackbutton.setStyleSheet("\n"
+"QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 255);\n"
 "                border-style: outset;\n"
@@ -257,6 +258,7 @@ class Ui_MainWindow(object):
 "                border-color: rgb(0, 0, 255);\n"
 "                min-width: 1em;\n"
 "                padding: 6px;\n"
+"              font: bold 25px;\n"
 "            }\n"
 "      \n"
 "            QPushButton:checked {\n"
@@ -266,7 +268,7 @@ class Ui_MainWindow(object):
 "                border-width: 3px;\n"
 "                border-radius: 10px;\n"
 "                border-color: rgb(255, 0, 0);\n"
-"                font: bold 16px;\n"
+"                font: bold 25px;\n"
 "                min-width: 1em;\n"
 "               \n"
 "            }\n"
@@ -280,7 +282,7 @@ class Ui_MainWindow(object):
         self.trackbutton.setCheckable(True)
         self.trackbutton.setObjectName("trackbutton")
         self.rightbutton = QtWidgets.QToolButton(self.frame_3)
-        self.rightbutton.setGeometry(QtCore.QRect(270, 120, 50, 31))
+        self.rightbutton.setGeometry(QtCore.QRect(240, 120, 50, 31))
         self.rightbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -309,7 +311,7 @@ class Ui_MainWindow(object):
         self.rightbutton.setArrowType(QtCore.Qt.RightArrow)
         self.rightbutton.setObjectName("rightbutton")
         self.trackerparamsframe = QtWidgets.QFrame(self.dockWidgetContents)
-        self.trackerparamsframe.setGeometry(QtCore.QRect(15, 280, 331, 211))
+        self.trackerparamsframe.setGeometry(QtCore.QRect(10, 270, 311, 211))
         self.trackerparamsframe.setStyleSheet(" color: rgb(0, 0, 0);\n"
 " background-color: rgb(255, 255, 255);\n"
 "")
@@ -317,14 +319,15 @@ class Ui_MainWindow(object):
         self.trackerparamsframe.setFrameShadow(QtWidgets.QFrame.Raised)
         self.trackerparamsframe.setObjectName("trackerparamsframe")
         self.maskthreshbox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.maskthreshbox.setGeometry(QtCore.QRect(190, 10, 111, 35))
+        self.maskthreshbox.setGeometry(QtCore.QRect(170, 10, 111, 35))
         font = QtGui.QFont()
-        font.setPointSize(18)
+        font.setPointSize(16)
         font.setBold(False)
         font.setItalic(False)
         self.maskthreshbox.setFont(font)
         self.maskthreshbox.setStyleSheet("")
         self.maskthreshbox.setMaximum(255)
+        self.maskthreshbox.setSingleStep(10)
         self.maskthreshbox.setProperty("value", 128)
         self.maskthreshbox.setObjectName("maskthreshbox")
         self.maskthreshlabel = QtWidgets.QLabel(self.trackerparamsframe)
@@ -332,7 +335,7 @@ class Ui_MainWindow(object):
         self.maskthreshlabel.setMaximumSize(QtCore.QSize(150, 25))
         self.maskthreshlabel.setObjectName("maskthreshlabel")
         self.maskdilationbox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.maskdilationbox.setGeometry(QtCore.QRect(190, 50, 111, 35))
+        self.maskdilationbox.setGeometry(QtCore.QRect(170, 50, 111, 35))
         self.maskdilationbox.setMaximum(40)
         self.maskdilationbox.setObjectName("maskdilationbox")
         self.maskdilationlabel = QtWidgets.QLabel(self.trackerparamsframe)
@@ -340,9 +343,10 @@ class Ui_MainWindow(object):
         self.maskdilationlabel.setMaximumSize(QtCore.QSize(150, 25))
         self.maskdilationlabel.setObjectName("maskdilationlabel")
         self.croplengthbox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.croplengthbox.setGeometry(QtCore.QRect(190, 90, 111, 35))
+        self.croplengthbox.setGeometry(QtCore.QRect(170, 90, 111, 35))
         self.croplengthbox.setMinimum(5)
         self.croplengthbox.setMaximum(300)
+        self.croplengthbox.setSingleStep(5)
         self.croplengthbox.setProperty("value", 40)
         self.croplengthbox.setDisplayIntegerBase(10)
         self.croplengthbox.setObjectName("croplengthbox")
@@ -351,9 +355,10 @@ class Ui_MainWindow(object):
         self.croplengthlabel.setMaximumSize(QtCore.QSize(150, 25))
         self.croplengthlabel.setObjectName("croplengthlabel")
         self.exposurebox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.exposurebox.setGeometry(QtCore.QRect(190, 130, 111, 35))
+        self.exposurebox.setGeometry(QtCore.QRect(170, 130, 111, 35))
         self.exposurebox.setMinimum(100)
         self.exposurebox.setMaximum(10000)
+        self.exposurebox.setSingleStep(100)
         self.exposurebox.setProperty("value", 5000)
         self.exposurebox.setDisplayIntegerBase(10)
         self.exposurebox.setObjectName("exposurebox")
@@ -362,7 +367,7 @@ class Ui_MainWindow(object):
         self.exposurelabel.setMaximumSize(QtCore.QSize(150, 25))
         self.exposurelabel.setObjectName("exposurelabel")
         self.objectivebox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.objectivebox.setGeometry(QtCore.QRect(190, 170, 111, 35))
+        self.objectivebox.setGeometry(QtCore.QRect(170, 170, 111, 35))
         self.objectivebox.setMinimum(1)
         self.objectivebox.setMaximum(50)
         self.objectivebox.setSingleStep(5)
@@ -374,29 +379,30 @@ class Ui_MainWindow(object):
         self.objectivelabel.setMaximumSize(QtCore.QSize(150, 25))
         self.objectivelabel.setObjectName("objectivelabel")
         self.robotparamsframe = QtWidgets.QFrame(self.dockWidgetContents)
-        self.robotparamsframe.setGeometry(QtCore.QRect(60, 500, 211, 101))
+        self.robotparamsframe.setGeometry(QtCore.QRect(50, 490, 221, 111))
         self.robotparamsframe.setStyleSheet(" color: rgb(0, 0, 0);\n"
 " background-color: rgb(255, 255, 255);\n"
-"")
+"font-size: 20pt; font: Arial;")
         self.robotparamsframe.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.robotparamsframe.setFrameShadow(QtWidgets.QFrame.Raised)
         self.robotparamsframe.setObjectName("robotparamsframe")
         self.robotsizelabel = QtWidgets.QLabel(self.robotparamsframe)
-        self.robotsizelabel.setGeometry(QtCore.QRect(0, 0, 201, 20))
+        self.robotsizelabel.setGeometry(QtCore.QRect(10, 5, 191, 20))
         self.robotsizelabel.setMaximumSize(QtCore.QSize(300, 50))
         self.robotsizelabel.setObjectName("robotsizelabel")
         self.robotvelocitylabel = QtWidgets.QLabel(self.robotparamsframe)
-        self.robotvelocitylabel.setGeometry(QtCore.QRect(0, 35, 191, 21))
+        self.robotvelocitylabel.setGeometry(QtCore.QRect(10, 45, 201, 21))
         self.robotvelocitylabel.setMaximumSize(QtCore.QSize(300, 50))
         self.robotvelocitylabel.setObjectName("robotvelocitylabel")
         self.robotblurlabel = QtWidgets.QLabel(self.robotparamsframe)
-        self.robotblurlabel.setGeometry(QtCore.QRect(0, 70, 201, 17))
+        self.robotblurlabel.setGeometry(QtCore.QRect(10, 85, 201, 20))
         self.robotblurlabel.setMaximumSize(QtCore.QSize(16777215, 50))
+        self.robotblurlabel.setStyleSheet("")
         self.robotblurlabel.setObjectName("robotblurlabel")
         self.sizelcdnum = QtWidgets.QLCDNumber(self.robotparamsframe)
-        self.sizelcdnum.setGeometry(QtCore.QRect(40, 0, 61, 30))
+        self.sizelcdnum.setGeometry(QtCore.QRect(60, 5, 71, 30))
         self.sizelcdnum.setStyleSheet("background-color: rgb(255,255,255); \n"
-"color: rgb(255,0,255);")
+"color: rgb(0,255,0);")
         self.sizelcdnum.setLineWidth(0)
         self.sizelcdnum.setMidLineWidth(0)
         self.sizelcdnum.setSmallDecimalPoint(False)
@@ -406,9 +412,9 @@ class Ui_MainWindow(object):
         self.sizelcdnum.setProperty("value", 20.0)
         self.sizelcdnum.setObjectName("sizelcdnum")
         self.vellcdnum = QtWidgets.QLCDNumber(self.robotparamsframe)
-        self.vellcdnum.setGeometry(QtCore.QRect(70, 35, 71, 30))
+        self.vellcdnum.setGeometry(QtCore.QRect(80, 45, 81, 30))
         self.vellcdnum.setStyleSheet("background-color: rgb(255,255,255); \n"
-"color: rgb(255,0,255);")
+"color: rgb(0,255,0);")
         self.vellcdnum.setLineWidth(0)
         self.vellcdnum.setMidLineWidth(0)
         self.vellcdnum.setSmallDecimalPoint(True)
@@ -418,9 +424,9 @@ class Ui_MainWindow(object):
         self.vellcdnum.setProperty("value", 17.1)
         self.vellcdnum.setObjectName("vellcdnum")
         self.blurlcdnum = QtWidgets.QLCDNumber(self.robotparamsframe)
-        self.blurlcdnum.setGeometry(QtCore.QRect(50, 70, 71, 30))
+        self.blurlcdnum.setGeometry(QtCore.QRect(50, 80, 71, 30))
         self.blurlcdnum.setStyleSheet("background-color: rgb(255,255,255); \n"
-"color: rgb(255,0,255);")
+"color: rgb(0,255,0);")
         self.blurlcdnum.setLineWidth(0)
         self.blurlcdnum.setMidLineWidth(0)
         self.blurlcdnum.setSmallDecimalPoint(True)
@@ -430,7 +436,7 @@ class Ui_MainWindow(object):
         self.blurlcdnum.setProperty("value", 137.0)
         self.blurlcdnum.setObjectName("blurlcdnum")
         self.CroppedVideoFeedLabel = QtWidgets.QLabel(self.dockWidgetContents)
-        self.CroppedVideoFeedLabel.setGeometry(QtCore.QRect(20, 615, 310, 310))
+        self.CroppedVideoFeedLabel.setGeometry(QtCore.QRect(5, 615, 310, 310))
         self.CroppedVideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
         self.CroppedVideoFeedLabel.setText("")
         self.CroppedVideoFeedLabel.setObjectName("CroppedVideoFeedLabel")
@@ -439,7 +445,7 @@ class Ui_MainWindow(object):
         self.resetdefaultbutton.setMaximumSize(QtCore.QSize(300, 25))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(18)
+        font.setPointSize(16)
         font.setBold(False)
         font.setItalic(False)
         self.resetdefaultbutton.setFont(font)
@@ -468,12 +474,13 @@ class Ui_MainWindow(object):
         self.dockWidget.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dockWidget)
         self.dockWidget_2 = QtWidgets.QDockWidget(MainWindow)
-        self.dockWidget_2.setMinimumSize(QtCore.QSize(370, 987))
+        self.dockWidget_2.setMinimumSize(QtCore.QSize(340, 987))
+        self.dockWidget_2.setStyleSheet("")
         self.dockWidget_2.setObjectName("dockWidget_2")
         self.dockWidgetContents_4 = QtWidgets.QWidget()
         self.dockWidgetContents_4.setObjectName("dockWidgetContents_4")
         self.frame = QtWidgets.QFrame(self.dockWidgetContents_4)
-        self.frame.setGeometry(QtCore.QRect(20, 5, 331, 191))
+        self.frame.setGeometry(QtCore.QRect(10, 5, 321, 217))
         self.frame.setStyleSheet(" color: rgb(0, 0, 0);\n"
 " background-color: rgb(255, 255, 255);\n"
 "")
@@ -481,7 +488,7 @@ class Ui_MainWindow(object):
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.led = QtWidgets.QLabel(self.frame)
-        self.led.setGeometry(QtCore.QRect(270, 140, 30, 30))
+        self.led.setGeometry(QtCore.QRect(270, 170, 30, 30))
         self.led.setStyleSheet("\n"
 "                background-color: rgb(255, 0, 0);\n"
 "                border-style: outset;\n"
@@ -493,10 +500,10 @@ class Ui_MainWindow(object):
         self.led.setText("")
         self.led.setObjectName("led")
         self.swimradio = QtWidgets.QRadioButton(self.frame)
-        self.swimradio.setGeometry(QtCore.QRect(120, 70, 71, 20))
+        self.swimradio.setGeometry(QtCore.QRect(120, 110, 91, 20))
         self.swimradio.setObjectName("swimradio")
         self.applyacousticbutton = QtWidgets.QPushButton(self.frame)
-        self.applyacousticbutton.setGeometry(QtCore.QRect(185, 135, 81, 41))
+        self.applyacousticbutton.setGeometry(QtCore.QRect(185, 165, 81, 41))
         self.applyacousticbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -526,16 +533,16 @@ class Ui_MainWindow(object):
         self.applyacousticbutton.setCheckable(True)
         self.applyacousticbutton.setObjectName("applyacousticbutton")
         self.rollradio = QtWidgets.QRadioButton(self.frame)
-        self.rollradio.setGeometry(QtCore.QRect(20, 70, 75, 21))
+        self.rollradio.setGeometry(QtCore.QRect(20, 110, 81, 21))
         font = QtGui.QFont()
-        font.setPointSize(18)
+        font.setPointSize(16)
         font.setBold(False)
         font.setItalic(False)
         self.rollradio.setFont(font)
         self.rollradio.setChecked(True)
         self.rollradio.setObjectName("rollradio")
         self.joystickbutton = QtWidgets.QPushButton(self.frame)
-        self.joystickbutton.setGeometry(QtCore.QRect(150, 10, 131, 51))
+        self.joystickbutton.setGeometry(QtCore.QRect(170, 10, 141, 91))
         self.joystickbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(0, 0, 0);\n"
 "                background-color: rgb(0, 255, 255);\n"
@@ -545,16 +552,17 @@ class Ui_MainWindow(object):
 "                border-color: rgb(0, 255, 255);\n"
 "                min-width: 1em;\n"
 "                padding: 6px;\n"
+"                font: bold 25px;\n"
 "            }\n"
 "      \n"
 "            QPushButton:checked {\n"
 "                color: rgb(0, 0, 0);\n"
-"                background-color: rgb(0, 200, 200);\n"
+"                background-color: rgb(255, 0, 0);\n"
 "                border-style: inset;\n"
 "                border-width: 3px;\n"
 "                border-radius: 10px;\n"
-"                border-color: rgb(0, 200, 200);\n"
-"                font: bold 16px;\n"
+"                border-color: rgb(255, 0, 0);\n"
+"                font: bold 25px;\n"
 "                min-width: 1em;\n"
 "              padding-left: 5px;\n"
 "                padding-top: 5px;\n"
@@ -570,7 +578,7 @@ class Ui_MainWindow(object):
         self.joystickbutton.setCheckable(True)
         self.joystickbutton.setObjectName("joystickbutton")
         self.controlbutton = QtWidgets.QPushButton(self.frame)
-        self.controlbutton.setGeometry(QtCore.QRect(20, 10, 121, 51))
+        self.controlbutton.setGeometry(QtCore.QRect(15, 10, 141, 91))
         self.controlbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 255);\n"
@@ -580,6 +588,7 @@ class Ui_MainWindow(object):
 "                border-color: rgb(0, 0, 255);\n"
 "                min-width: 1em;\n"
 "                padding: 6px;\n"
+"                font: bold 25px;\n"
 "            }\n"
 "      \n"
 "            QPushButton:checked {\n"
@@ -589,7 +598,7 @@ class Ui_MainWindow(object):
 "                border-width: 3px;\n"
 "                border-radius: 10px;\n"
 "                border-color: rgb(255, 0, 0);\n"
-"                font: bold 16px;\n"
+"                font: bold 25px;\n"
 "                min-width: 1em;\n"
 "               \n"
 "            }\n"
@@ -603,17 +612,18 @@ class Ui_MainWindow(object):
         self.controlbutton.setCheckable(True)
         self.controlbutton.setObjectName("controlbutton")
         self.orientradio = QtWidgets.QRadioButton(self.frame)
-        self.orientradio.setGeometry(QtCore.QRect(220, 70, 71, 20))
+        self.orientradio.setGeometry(QtCore.QRect(220, 110, 91, 20))
         self.orientradio.setObjectName("orientradio")
         self.acousticfreq_spinBox = QtWidgets.QSpinBox(self.frame)
-        self.acousticfreq_spinBox.setGeometry(QtCore.QRect(5, 135, 171, 41))
+        self.acousticfreq_spinBox.setGeometry(QtCore.QRect(5, 165, 161, 41))
         self.acousticfreq_spinBox.setMaximum(3000000)
+        self.acousticfreq_spinBox.setProperty("value", 10000)
         self.acousticfreq_spinBox.setObjectName("acousticfreq_spinBox")
         self.acousticfreqlabel = QtWidgets.QLabel(self.frame)
-        self.acousticfreqlabel.setGeometry(QtCore.QRect(55, 105, 181, 21))
+        self.acousticfreqlabel.setGeometry(QtCore.QRect(65, 135, 221, 21))
         self.acousticfreqlabel.setObjectName("acousticfreqlabel")
         self.controlparamsframe = QtWidgets.QFrame(self.dockWidgetContents_4)
-        self.controlparamsframe.setGeometry(QtCore.QRect(20, 385, 331, 221))
+        self.controlparamsframe.setGeometry(QtCore.QRect(10, 400, 321, 211))
         self.controlparamsframe.setStyleSheet(" color: rgb(0, 0, 0);\n"
 " background-color: rgb(255, 255, 255);\n"
 "")
@@ -621,7 +631,7 @@ class Ui_MainWindow(object):
         self.controlparamsframe.setFrameShadow(QtWidgets.QFrame.Raised)
         self.controlparamsframe.setObjectName("controlparamsframe")
         self.rollingfrequencylabel = QtWidgets.QLabel(self.controlparamsframe)
-        self.rollingfrequencylabel.setGeometry(QtCore.QRect(230, 200, 81, 21))
+        self.rollingfrequencylabel.setGeometry(QtCore.QRect(230, 185, 81, 21))
         self.rollingfrequencylabel.setObjectName("rollingfrequencylabel")
         self.RRTtreesizebox = QtWidgets.QSpinBox(self.controlparamsframe)
         self.RRTtreesizebox.setGeometry(QtCore.QRect(120, 40, 71, 35))
@@ -630,7 +640,7 @@ class Ui_MainWindow(object):
         self.RRTtreesizebox.setProperty("value", 25)
         self.RRTtreesizebox.setObjectName("RRTtreesizebox")
         self.psidial = QtWidgets.QDial(self.controlparamsframe)
-        self.psidial.setGeometry(QtCore.QRect(0, 90, 91, 101))
+        self.psidial.setGeometry(QtCore.QRect(0, 80, 91, 101))
         self.psidial.setStyleSheet("QDial\n"
 "    {\n"
 "        background-color:QLinearGradient( \n"
@@ -653,25 +663,25 @@ class Ui_MainWindow(object):
         self.psidial.setNotchesVisible(True)
         self.psidial.setObjectName("psidial")
         self.memorylabel = QtWidgets.QLabel(self.controlparamsframe)
-        self.memorylabel.setGeometry(QtCore.QRect(5, 10, 71, 21))
+        self.memorylabel.setGeometry(QtCore.QRect(5, 10, 101, 21))
         self.memorylabel.setObjectName("memorylabel")
         self.RRTtreesizelabel = QtWidgets.QLabel(self.controlparamsframe)
-        self.RRTtreesizelabel.setGeometry(QtCore.QRect(115, 10, 81, 21))
+        self.RRTtreesizelabel.setGeometry(QtCore.QRect(115, 10, 91, 21))
         self.RRTtreesizelabel.setObjectName("RRTtreesizelabel")
         self.arrivalthreshlabel = QtWidgets.QLabel(self.controlparamsframe)
         self.arrivalthreshlabel.setGeometry(QtCore.QRect(210, 10, 111, 21))
         self.arrivalthreshlabel.setObjectName("arrivalthreshlabel")
         self.gammalabel = QtWidgets.QLabel(self.controlparamsframe)
-        self.gammalabel.setGeometry(QtCore.QRect(100, 200, 101, 20))
+        self.gammalabel.setGeometry(QtCore.QRect(100, 185, 101, 20))
         self.gammalabel.setObjectName("gammalabel")
         self.psilabel = QtWidgets.QLabel(self.controlparamsframe)
-        self.psilabel.setGeometry(QtCore.QRect(10, 200, 71, 21))
+        self.psilabel.setGeometry(QtCore.QRect(10, 185, 71, 21))
         self.psilabel.setObjectName("psilabel")
         self.magneticfrequencydial = QtWidgets.QDial(self.controlparamsframe)
-        self.magneticfrequencydial.setGeometry(QtCore.QRect(220, 90, 91, 101))
+        self.magneticfrequencydial.setGeometry(QtCore.QRect(220, 80, 91, 101))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(18)
+        font.setPointSize(16)
         font.setBold(False)
         font.setItalic(False)
         self.magneticfrequencydial.setFont(font)
@@ -700,10 +710,10 @@ class Ui_MainWindow(object):
         self.magneticfrequencydial.setNotchesVisible(True)
         self.magneticfrequencydial.setObjectName("magneticfrequencydial")
         self.gammadial = QtWidgets.QDial(self.controlparamsframe)
-        self.gammadial.setGeometry(QtCore.QRect(110, 90, 91, 101))
+        self.gammadial.setGeometry(QtCore.QRect(110, 80, 91, 101))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(18)
+        font.setPointSize(16)
         font.setBold(False)
         font.setItalic(False)
         self.gammadial.setFont(font)
@@ -735,7 +745,7 @@ class Ui_MainWindow(object):
         self.arrivalthreshbox.setGeometry(QtCore.QRect(230, 40, 71, 35))
         self.arrivalthreshbox.setMinimum(1)
         self.arrivalthreshbox.setMaximum(100)
-        self.arrivalthreshbox.setProperty("value", 20)
+        self.arrivalthreshbox.setProperty("value", 10)
         self.arrivalthreshbox.setObjectName("arrivalthreshbox")
         self.memorybox = QtWidgets.QSpinBox(self.controlparamsframe)
         self.memorybox.setGeometry(QtCore.QRect(5, 40, 71, 35))
@@ -744,7 +754,7 @@ class Ui_MainWindow(object):
         self.memorybox.setProperty("value", 15)
         self.memorybox.setObjectName("memorybox")
         self.magneticfieldsimlabel = QtWidgets.QLabel(self.dockWidgetContents_4)
-        self.magneticfieldsimlabel.setGeometry(QtCore.QRect(30, 615, 310, 310))
+        self.magneticfieldsimlabel.setGeometry(QtCore.QRect(10, 615, 310, 310))
         self.magneticfieldsimlabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
         self.magneticfieldsimlabel.setText("")
         self.magneticfieldsimlabel.setObjectName("magneticfieldsimlabel")
@@ -783,12 +793,12 @@ class Ui_MainWindow(object):
         self.simulationbutton.setCheckable(True)
         self.simulationbutton.setObjectName("simulationbutton")
         self.frame_2 = QtWidgets.QFrame(self.dockWidgetContents_4)
-        self.frame_2.setGeometry(QtCore.QRect(10, 205, 351, 171))
+        self.frame_2.setGeometry(QtCore.QRect(10, 230, 321, 161))
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_2.setObjectName("frame_2")
         self.plusZbutton = QtWidgets.QToolButton(self.frame_2)
-        self.plusZbutton.setGeometry(QtCore.QRect(130, 50, 51, 31))
+        self.plusZbutton.setGeometry(QtCore.QRect(110, 40, 41, 31))
         self.plusZbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -818,7 +828,7 @@ class Ui_MainWindow(object):
         self.plusZbutton.setArrowType(QtCore.Qt.NoArrow)
         self.plusZbutton.setObjectName("plusZbutton")
         self.upfieldbutton = QtWidgets.QToolButton(self.frame_2)
-        self.upfieldbutton.setGeometry(QtCore.QRect(70, 80, 51, 31))
+        self.upfieldbutton.setGeometry(QtCore.QRect(60, 70, 41, 31))
         self.upfieldbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -851,7 +861,7 @@ class Ui_MainWindow(object):
         self.upfieldbutton.setArrowType(QtCore.Qt.UpArrow)
         self.upfieldbutton.setObjectName("upfieldbutton")
         self.rightfieldbutton = QtWidgets.QToolButton(self.frame_2)
-        self.rightfieldbutton.setGeometry(QtCore.QRect(130, 100, 51, 31))
+        self.rightfieldbutton.setGeometry(QtCore.QRect(110, 90, 41, 31))
         self.rightfieldbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -881,7 +891,7 @@ class Ui_MainWindow(object):
         self.rightfieldbutton.setArrowType(QtCore.Qt.RightArrow)
         self.rightfieldbutton.setObjectName("rightfieldbutton")
         self.leftfieldbutton = QtWidgets.QToolButton(self.frame_2)
-        self.leftfieldbutton.setGeometry(QtCore.QRect(10, 100, 51, 31))
+        self.leftfieldbutton.setGeometry(QtCore.QRect(10, 90, 41, 31))
         self.leftfieldbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -911,7 +921,7 @@ class Ui_MainWindow(object):
         self.leftfieldbutton.setArrowType(QtCore.Qt.LeftArrow)
         self.leftfieldbutton.setObjectName("leftfieldbutton")
         self.minusZbutton = QtWidgets.QToolButton(self.frame_2)
-        self.minusZbutton.setGeometry(QtCore.QRect(10, 50, 51, 31))
+        self.minusZbutton.setGeometry(QtCore.QRect(10, 40, 41, 31))
         self.minusZbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -941,7 +951,7 @@ class Ui_MainWindow(object):
         self.minusZbutton.setArrowType(QtCore.Qt.NoArrow)
         self.minusZbutton.setObjectName("minusZbutton")
         self.downfieldbutton = QtWidgets.QToolButton(self.frame_2)
-        self.downfieldbutton.setGeometry(QtCore.QRect(70, 120, 51, 31))
+        self.downfieldbutton.setGeometry(QtCore.QRect(60, 120, 41, 31))
         self.downfieldbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -971,12 +981,12 @@ class Ui_MainWindow(object):
         self.downfieldbutton.setArrowType(QtCore.Qt.DownArrow)
         self.downfieldbutton.setObjectName("downfieldbutton")
         self.quickfieldlabel = QtWidgets.QLabel(self.frame_2)
-        self.quickfieldlabel.setGeometry(QtCore.QRect(50, 20, 101, 21))
+        self.quickfieldlabel.setGeometry(QtCore.QRect(40, 10, 101, 21))
         self.quickfieldlabel.setObjectName("quickfieldlabel")
         self.bxlcdnum = QtWidgets.QLCDNumber(self.frame_2)
-        self.bxlcdnum.setGeometry(QtCore.QRect(250, 25, 61, 31))
+        self.bxlcdnum.setGeometry(QtCore.QRect(210, 15, 61, 31))
         font = QtGui.QFont()
-        font.setPointSize(18)
+        font.setPointSize(16)
         font.setBold(False)
         font.setItalic(False)
         self.bxlcdnum.setFont(font)
@@ -994,7 +1004,7 @@ class Ui_MainWindow(object):
         self.bxlcdnum.setProperty("value", 5.4)
         self.bxlcdnum.setObjectName("bxlcdnum")
         self.bzlcdnum = QtWidgets.QLCDNumber(self.frame_2)
-        self.bzlcdnum.setGeometry(QtCore.QRect(250, 115, 61, 31))
+        self.bzlcdnum.setGeometry(QtCore.QRect(210, 105, 61, 31))
         self.bzlcdnum.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.bzlcdnum.setAutoFillBackground(False)
         self.bzlcdnum.setStyleSheet("background-color: rgb(255,255,255); \n"
@@ -1007,16 +1017,16 @@ class Ui_MainWindow(object):
         self.bzlcdnum.setProperty("value", 5.4)
         self.bzlcdnum.setObjectName("bzlcdnum")
         self.bxlabel = QtWidgets.QLabel(self.frame_2)
-        self.bxlabel.setGeometry(QtCore.QRect(220, 20, 121, 41))
+        self.bxlabel.setGeometry(QtCore.QRect(180, 10, 131, 41))
         self.bxlabel.setObjectName("bxlabel")
         self.bzlabel = QtWidgets.QLabel(self.frame_2)
-        self.bzlabel.setGeometry(QtCore.QRect(220, 110, 121, 41))
+        self.bzlabel.setGeometry(QtCore.QRect(180, 100, 131, 41))
         self.bzlabel.setObjectName("bzlabel")
         self.bylabel = QtWidgets.QLabel(self.frame_2)
-        self.bylabel.setGeometry(QtCore.QRect(220, 65, 121, 41))
+        self.bylabel.setGeometry(QtCore.QRect(180, 55, 131, 41))
         self.bylabel.setObjectName("bylabel")
         self.bylcdnum = QtWidgets.QLCDNumber(self.frame_2)
-        self.bylcdnum.setGeometry(QtCore.QRect(250, 70, 61, 31))
+        self.bylcdnum.setGeometry(QtCore.QRect(210, 60, 61, 31))
         self.bylcdnum.setStyleSheet("background-color: rgb(255,255,255); \n"
 "color: rgb(0,255,0);")
         self.bylcdnum.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -1054,8 +1064,8 @@ class Ui_MainWindow(object):
         self.croplengthlabel.setText(_translate("MainWindow", "Crop Length"))
         self.exposurelabel.setText(_translate("MainWindow", "Exposure"))
         self.objectivelabel.setText(_translate("MainWindow", "Objective"))
-        self.robotsizelabel.setText(_translate("MainWindow", "Size:                  px"))
-        self.robotvelocitylabel.setText(_translate("MainWindow", "Velocity:                    px/s"))
+        self.robotsizelabel.setText(_translate("MainWindow", "Size:                     um"))
+        self.robotvelocitylabel.setText(_translate("MainWindow", "Velocity:                    um/s"))
         self.robotblurlabel.setText(_translate("MainWindow", "Blur:                      units"))
         self.resetdefaultbutton.setText(_translate("MainWindow", "Defaults"))
         self.swimradio.setText(_translate("MainWindow", "Swim"))
