@@ -7,8 +7,7 @@ from classes.gui_functions import MainWindow
 
 #Convert blur into z position
 #remeasure pix2metric conversion
-#impliment hall effect stuff
-#maybe add robot list
+#video record not working great
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

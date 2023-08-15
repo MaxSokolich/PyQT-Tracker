@@ -56,8 +56,8 @@ class MainWindow(QtWidgets.QMainWindow):
         #resize some widgets to fit the screen better
         screen  = QtWidgets.QDesktopWidget().screenGeometry(-1)
         
-        self.window_width = screen.width()
-        self.window_height = screen.height()
+        self.window_width = screen.width()-500
+        self.window_height = screen.height()-500
         self.resize(self.window_width, self.window_height)
         self.display_width = self.window_width-265# self.ui.frameGeometry().width()
 
@@ -466,15 +466,17 @@ class MainWindow(QtWidgets.QMainWindow):
     def update_image(self, frame):
         """Updates the image_label with a new opencv image"""
         #record if checked
+     
         if self.result is not None:
-            cv2.putText(frame,"frame: " + str(self.tracker.framenum),
-                        (int(self.video_width / 15),
-                         int(self.video_height / 30)),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        fontScale=1, 
-                        thickness=4,
-                        color = (255, 255, 255))
-            self.result.write(frame)
+            if self.tracker.framenum %20 == 0:
+                cv2.putText(frame,"frame: " + str(self.tracker.framenum),
+                            (int(self.video_width / 15),
+                            int(self.video_height / 30)),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            fontScale=1, 
+                            thickness=4,
+                            color = (255, 255, 255))
+                self.result.write(frame)
         
         #display projection
         if self.control_status == True or self.joystick_status == True:
@@ -484,17 +486,17 @@ class MainWindow(QtWidgets.QMainWindow):
         
         rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
-        
+      
         bytes_per_line = ch * w
         convert_to_Qt_format = QtGui.QImage(rgb_image.data, w, h, bytes_per_line, QtGui.QImage.Format_RGB888)
         p = convert_to_Qt_format.scaled(self.display_width, self.display_height, Qt.KeepAspectRatio)
         qt_img = QPixmap.fromImage(p)
-        
+       
         #update frame slider too
         self.ui.framelabel.setText("Frame:"+str(self.tracker.framenum))
         if self.videopath !=0:
             self.ui.frameslider.setValue(self.tracker.framenum)
-
+        
         #also update robot info
         if len(self.tracker.robot_list) > 0:
             robot_diameter = round(np.sqrt(4*self.tracker.robot_list[-1].avg_area/np.pi),1)
@@ -510,7 +512,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.robotvelocitylabel.setText("Velocity:                    px/s")
                 self.ui.robotblurlabel.setText("Blur:                      units")
                 self.ui.sizelcdnum.display(robot_diameter)
-            
+       
         self.ui.VideoFeedLabel.setPixmap(qt_img)
         
 
@@ -926,6 +928,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         called when x button is pressed
         """
+        
         if self.cap is not None:
             self.tracker.stop()
         self.simulator.stop()

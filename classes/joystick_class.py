@@ -247,7 +247,8 @@ class Windows_Controller:
                 self.By,
                 self.Bz,
                 self.alpha,
-                self.freq]
+                self.freq,
+                self.acoustic_status]
 
         return self.actions
 
@@ -379,7 +380,8 @@ class Linux_Controller:
                 self.By,
                 self.Bz,
                 self.alpha,
-                self.freq]
+                self.freq,
+                self.acoustic_status]
 
         return self.actions
             

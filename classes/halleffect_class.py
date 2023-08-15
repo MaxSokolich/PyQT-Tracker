@@ -89,9 +89,10 @@ try:
             
             while self.run_flag:
                 
-                bx = self.readFIELD(self.senseBx, Bx_bounds)
-                by = self.readFIELD(self.senseBy, By_bounds)
-                bz = self.readFIELD(self.senseBz, Bz_bounds)
+                bx = self.senseBx.value/10000#self.readFIELD(self.senseBx, Bx_bounds)
+                by = self.senseBy.value/10000#self.readFIELD(self.senseBy, By_bounds)
+                bz = self.senseBz.value/10000#self.readFIELD(self.senseBz, Bz_bounds)
+               
              
 
                 self.sensor_signal.emit([bx,by,bz])
