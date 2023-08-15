@@ -38,6 +38,7 @@ from classes.simulation_class import HelmholtzSimulator
 from classes.projection_class import AxisProjection
 from classes.acoustic_class import AcousticClass
 from classes.halleffect_class import HallEffect
+from classes.record_class import RecordThread
 
 
 
@@ -81,8 +82,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
         
-        self.result = None
-        self.rec_start_time = time.time()
+   
+        self.currentframe = None
         self.videopath = 0
         self.cap = None
         self.drawing = False
@@ -123,7 +124,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         
         #define, simulator class, pojection class, and acoustic class
-        self.simulator = HelmholtzSimulator(self.ui.magneticfieldsimlabel, width=310, height=310, dpi=125)
+        self.simulator = HelmholtzSimulator(self.ui.magneticfieldsimlabel, width=310, height=310, dpi=200)
         self.projection = AxisProjection()
         self.acoustic_module = AcousticClass()
         self.halleffect = HallEffect(self)
@@ -465,25 +466,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update_image(self, frame):
         """Updates the image_label with a new opencv image"""
-        #record if checked
-     
-        if self.result is not None:
-            if self.tracker.framenum %20 == 0:
-                cv2.putText(frame,"frame: " + str(self.tracker.framenum),
-                            (int(self.video_width / 15),
-                            int(self.video_height / 30)),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            fontScale=1, 
-                            thickness=4,
-                            color = (255, 255, 255))
-                self.result.write(frame)
-        
         #display projection
         if self.control_status == True or self.joystick_status == True:
             self.projection.roll = self.ui.rollradio.isChecked()
             frame, self.projection.draw_sideview(frame,self.Bx,self.By,self.Bz,self.alpha,self.gamma,self.video_width,self.video_height)
             frame, self.projection.draw_topview(frame,self.Bx,self.By,self.Bz,self.alpha,self.gamma,self.video_width,self.video_height)
         
+       
+
+
+        self.currentframe = frame
         rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
       
@@ -529,7 +521,31 @@ class MainWindow(QtWidgets.QMainWindow):
         p = convert_to_Qt_format.scaled(310, 310, Qt.KeepAspectRatio)
         qt_cimg = QPixmap.fromImage(p)
         self.ui.CroppedVideoFeedLabel.setPixmap(qt_cimg)
-        
+    
+
+
+         
+
+
+
+    def recordfunction(self):
+        if self.cap is not None:
+            if self.ui.recordbutton.isChecked():
+                
+                self.recorder = RecordThread(self)
+                self.recorder.recordstatus = True
+                self.recorder.start()
+                
+
+                self.ui.recordbutton.setText("Stop")
+                self.tbprint("Start Record")
+                
+            else:
+                self.recorder.stop()
+                self.ui.recordbutton.setText("Record")
+                self.tbprint("End Record, Data Saved")
+                self.savedata()
+                    
 
     def track(self):
         if self.videopath is not None:
@@ -636,27 +652,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tracker.mask_flag = False
 
 
-    def recordfunction(self):
-        if self.cap is not None:
-            if self.ui.recordbutton.isChecked():
-                self.ui.recordbutton.setText("Stop")
-                self.tbprint("Start Record")
-                date = datetime.now().strftime('%Y.%m.%d-%H.%M.%S')
-                file_path  = os.path.join(self.new_dir_path, date+".mp4")
-                self.rec_start_time = time.time()
-                self.result = cv2.VideoWriter(
-                    file_path,
-                    cv2.VideoWriter_fourcc(*"mp4v"),
-                    int(self.videofps),    
-                    (self.video_width, self.video_height), ) 
-            else:
-                self.ui.recordbutton.setText("Record")
-                if self.result is not None:
-                    self.result.release()
-                    self.result = None
-                    self.tbprint("End Record, Data Saved")
-                    self.savedata()
-                    
+    
          
     def get_objective(self):
         if self.cap is not None:

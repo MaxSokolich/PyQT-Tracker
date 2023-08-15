@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
 from PyQt5.QtCore import Qt, QTimer
 
 class HelmholtzSimulator(FigureCanvas):
-    def __init__(self, parent=None, width=310, height=310, dpi=100):
+    def __init__(self, parent=None, width=310, height=310, dpi=200):
         fig = plt.figure(figsize=(width/dpi, height/dpi), dpi=dpi)
         fig.tight_layout()
         fig.subplots_adjust(top=1, bottom=0, left=-0.1, right=1)
@@ -175,7 +175,7 @@ class HelmholtzSimulator(FigureCanvas):
 
 
     def start(self):
-       self.timer.start(75)# Update plot every 10 ms
+       self.timer.start(150)# Update plot every 10 ms
 
     def zero(self):
         self.ax.clear()

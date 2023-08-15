@@ -221,7 +221,7 @@ class VideoThread(QThread):
 
 
     def run(self):
-        print(self.totalnumframes)
+    
         # capture from web camx
         while self._run_flag:
             self.fps.update()
@@ -274,11 +274,12 @@ class VideoThread(QThread):
                 self.actions_signal.emit(actions, stopped)
                 
 
-                
                 #step 4: delay based on fps
                 if self.totalnumframes !=0:
-                    interval = int(1000/self.videofps)  #use original fps used to record the video if not live
-                    cv2.waitKey(interval)
+                    interval = 1/self.videofps  #use original fps used to record the video if not live
+                    time.sleep(interval)
+
+    
             
            
 

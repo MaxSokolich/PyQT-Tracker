@@ -7,7 +7,10 @@ from classes.gui_functions import MainWindow
 
 #Convert blur into z position
 #remeasure pix2metric conversion
-#video record not working great
+#video record not working great made it a seperate thread
+#simulation also bottlenecking maybe sperate thread too
+#seperate tabs. tracker on left, contrl on right
+#
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
