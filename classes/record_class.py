@@ -39,7 +39,7 @@ class RecordThread(QThread):
         while self.recordstatus:
 
             cv2.putText(self.parent.currentframe,"frame: "+ str(self.parent.tracker.framenum),
-                        (int(self.width / 15),
+                        (int(self.width / 8),
                         int(self.height / 30)),
                         cv2.FONT_HERSHEY_SIMPLEX,
                         fontScale=1, 
