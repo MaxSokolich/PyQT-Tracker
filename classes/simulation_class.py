@@ -18,8 +18,6 @@ class HelmholtzSimulator(FigureCanvas):
         super().__init__(fig)
         self.setParent(parent)
         
-
-       
         #rolling parameters
         self.Bx = 0
         self.By = 0
@@ -64,9 +62,9 @@ class HelmholtzSimulator(FigureCanvas):
 
     #helmholtz X field equation
     def xb_field(self,x, Ix):
-        a = 54 #radius
-        c = (84/2) #distance between /2
-        N = 260 #number of turns
+        a = 60 #radius
+        c = (155/2) #distance between /2
+        N = 1200 #number of turns
         #the field at x away from the coil
         term1 = 1/ (a**2 + (c-x)**2)**(3/2)
         term2 = 1/ (a**2 + (c+x)**2)**(3/2)
@@ -75,9 +73,9 @@ class HelmholtzSimulator(FigureCanvas):
 
     #helmholtz Y field equation
     def yb_field(self,y, Iy):
-        a = 35 #radius
-        c = (66/2) #distance between /2
-        N = 368 #number of turns
+        a = 60 #radius
+        c = (155/2) #distance between /2
+        N = 1200 #number of turns
         #the field at x away from the coil
         term1 = 1/ ((a**2 + (c-y)**2)**(3/2))
         term2 = 1/ ((a**2 + (c+y)**2)**(3/2))
@@ -86,9 +84,9 @@ class HelmholtzSimulator(FigureCanvas):
 
     #helmholtz Z field equation
     def zb_field(self, z, Iz):
-        a = 26 #radius
-        c = (26/2) #distance between /2
-        N = 368 #number of turns
+        a = 60 #radius
+        c = (155/2) #distance between /2
+        N = 1200 #number of turns
         #the field at x away from the coil
         term1 = 1/ (a**2 + (c-z)**2)**(3/2)
         term2 = 1/ (a**2 + (c+z)**2)**(3/2)
@@ -98,17 +96,23 @@ class HelmholtzSimulator(FigureCanvas):
 
     def animate(self):
         tp = time.time() - self.start_time
-        
+       
+      
         if [self.Bx, self.By, self.Bz, self.freq] == [0,0,0,0]:
             self.zero()
  
         else:
-            Brollx =  ((-np.sin(self.alpha) * np.sin(self.omega*tp)) + (-np.cos(self.alpha) * np.cos(self.gamma)  * np.cos(self.omega*tp))) 
-            Brolly =  ((np.cos(self.alpha) * np.sin(self.omega*tp)) + (-np.sin(self.alpha) * np.cos(self.gamma) *  np.cos(self.omega*tp))) 
+            
+            
             if self.freq == 0:
+                Brollx = 0
+                Brolly = 0
                 Brollz = 0
             else:
+                Brollx =  ((-np.sin(self.alpha) * np.sin(self.omega*tp)) + (-np.cos(self.alpha) * np.cos(self.gamma)  * np.cos(self.omega*tp))) 
+                Brolly =  ((np.cos(self.alpha) * np.sin(self.omega*tp)) + (-np.sin(self.alpha) * np.cos(self.gamma) *  np.cos(self.omega*tp))) 
                 Brollz =  np.sin(self.gamma) * np.cos(self.omega*tp)
+        
 
             if self.psi < np.pi/2 and self.psi !=0:
                 c = 1/np.tan(self.psi)
@@ -131,7 +135,7 @@ class HelmholtzSimulator(FigureCanvas):
             Iy = self.By + Brolly
             Iz = self.Bz + Brollz
       
-
+            
             Ix = Ix / np.sqrt(Ix**2 + Iy**2 + Iz**2)
             Iy = Iy / np.sqrt(Ix**2 + Iy**2 + Iz**2)
             Iz = Iz / np.sqrt(Ix**2 + Iy**2 + Iz**2)
@@ -139,7 +143,7 @@ class HelmholtzSimulator(FigureCanvas):
             BX = self.zb_field(self.x, Ix)  
             BY = self.zb_field(self.y, Iy)
             BZ = self.zb_field(self.z, Iz)
-            
+
             
             # Draw Bx,By,Bz field
             self.ax.clear()
@@ -152,7 +156,7 @@ class HelmholtzSimulator(FigureCanvas):
             self.ax.set_yticks([])
             self.ax.set_zticks([])
             speed = np.sqrt((BX)**2+(BY)**2+(BZ)**2).flatten()
-            self.ax.quiver(self.x,self.y,self.z,BX,BY,BZ, color='black',length=1) #norm = colors.LogNorm(vmin=speed.min(), vmax=speed.max() ))#,density = 2)#norm = colors.LogNorm(vmin=speed.min(), vmax=speed.max() ))
+            self.ax.quiver(self.x,self.y,self.z,BX,BY,BZ, color='black',length=1.5) #norm = colors.LogNorm(vmin=speed.min(), vmax=speed.max() ))#,density = 2)#norm = colors.LogNorm(vmin=speed.min(), vmax=speed.max() ))
             self.ax.scatter(self.x,self.y,self.z, s = 2, c= "b")
             self.draw()
 

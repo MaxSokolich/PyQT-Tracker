@@ -39,10 +39,10 @@ try:
             self.i2c = busio.I2C(board.SCL, board.SDA)
             self.ads = ADS.ADS1115(self.i2c)
             
-            self.chanPosY = AnalogIn(self.ads, ADS.P2)
-            self.chanPosX = AnalogIn(self.ads, ADS.P1)  #big external EM
-            self.chanNegY = AnalogIn(self.ads, ADS.P0)  # one of the 4 coil config Em
-            self.chanNegX = AnalogIn(self.ads, ADS.P3)
+            self.senseBx = AnalogIn(self.ads, ADS.P0)
+            self.senseBy = AnalogIn(self.ads, ADS.P1)  
+            self.senseBz = AnalogIn(self.ads, ADS.P2)  
+
 
             self.run_flag = True
 
@@ -83,18 +83,18 @@ try:
         
         def run(self):
               
-            posY = self.createBounds() #create bounds for positive Y EM sensor
-            posX = self.createBounds() #create bounds for positive X EM sensor
-            negY = self.createBounds() #create bounds for negative Y EM sensor
-            negX = self.createBounds() #create bounds for negative X EM sensor
+            Bx_bounds = self.createBounds() #create bounds for positive Y EM sensor
+            By_bounds = self.createBounds() #create bounds for positive X EM sensor
+            Bz_bounds = self.createBounds() #create bounds for negative Y EM sensor
+            
             while self.run_flag:
                 
-                s1 = self.readFIELD(self.chanPosY, posY)
-                s2 = self.readFIELD(self.chanPosX, posX)
-                s3 = self.readFIELD(self.chanNegY, negY)
-                s4 = self.readFIELD(self.chanNegX, negX)
+                bx = self.readFIELD(self.senseBx, Bx_bounds)
+                by = self.readFIELD(self.senseBy, By_bounds)
+                bz = self.readFIELD(self.senseBz, Bz_bounds)
+             
 
-                self.sensor_signal.emit([s1,s2,s3])
+                self.sensor_signal.emit([bx,by,bz])
                 time.sleep(.1)
             print(" -- Sensor Process Terminated -- ")
 
@@ -117,17 +117,14 @@ except Exception:
         def showFIELD(self):
             pass
         def run(self):
-            i=0
             while self.run_flag:
                 
-                bx = i
-                by = 2
-                bz = 3
+                bx = 0
+                by = 0
+                bz = 0
 
 
                 self.sensor_signal.emit([bx,by,bz])
-                time.sleep(.1)
-                i+=1
         def stop(self):
             self.run_flag = False
         

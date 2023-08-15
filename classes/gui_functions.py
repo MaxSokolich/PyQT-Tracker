@@ -271,10 +271,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.apply_actions(True)
         
         elif self.joystick_status == True:
-            self.Bx, self.By, self.Bz, self.alpha, self.freq = self.controller_actions.run(self.joystick)
+            self.Bx, self.By, self.Bz, self.alpha, self.freq,self.acoustic_status = self.controller_actions.run(self.joystick)
             
             if self.freq !=0:
                 self.freq = self.ui.magneticfrequencydial.value()
+            
+          
+
 
             self.apply_actions(True)
         
@@ -292,11 +295,12 @@ class MainWindow(QtWidgets.QMainWindow):
         # and record the actions by appending the field_list
         
         #toggle between alpha and orient
-        if self.ui.swimradio.isChecked():
-            self.simulator.roll = False
-        elif self.ui.rollradio.isChecked():
-            self.alpha = self.alpha - np.pi/2
-            self.simulator.roll = True
+        if self.freq > 0:
+            if self.ui.swimradio.isChecked():
+                self.simulator.roll = False
+            elif self.ui.rollradio.isChecked():
+                self.alpha = self.alpha - np.pi/2
+                self.simulator.roll = True
 
         #zero output
         if status == False:
@@ -810,7 +814,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.Bx = -1
             self.By = 0
             self.Bz = 0
-            self.alpha = 0
             self.apply_actions(True)
         else:
             self.apply_actions(False)
@@ -825,7 +828,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.Bx = 1
             self.By = 0
             self.Bz = 0
-            self.alpha = 0
             self.apply_actions(True)
         else:
             self.apply_actions(False)
@@ -840,7 +842,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.By = 1
             self.Bx = 0
             self.Bz = 0
-            self.alpha = 0
             self.apply_actions(True)
         else:
             self.apply_actions(False)
@@ -855,7 +856,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.By = -1
             self.Bx = 0
             self.Bz = 0
-            self.alpha = 0
             self.apply_actions(True)
         else:
             self.apply_actions(False)
@@ -870,7 +870,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.Bz = 1
             self.By = 0
             self.Bx = 0
-            self.alpha = 0
             self.apply_actions(True)
         else:
             self.apply_actions(False)
@@ -885,7 +884,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.Bz = -1
             self.By = 0
             self.Bx = 0
-            self.alpha = 0
             self.apply_actions(True)
         else:
             self.apply_actions(False)

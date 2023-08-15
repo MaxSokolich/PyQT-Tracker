@@ -8,16 +8,7 @@ import math
 class algorithm:
    
     def __init__(self):
-        self.node = 0
-        self.count = 0
-        self.stopped = False
-        self.actions = [0,0,0,0]
-
-        self.B_vec = np.array([1,0])
-        self.T_R = 1
-        self.theta_maps = np.array([])#added this so that we store the mapped angles
-        self.theta = 0
-
+        self.reset()
 
     def reset(self):
         self.node = 0
@@ -31,47 +22,6 @@ class algorithm:
         self.theta = 0
 
     
- 
-
-    def orient(self, bot, direction_vec):
-        if len(bot.velocity_list) >= 0:
-            
-            #find the velocity avearge over the last memory number of frames to mitigate noise: 
-            vx = bot.velocity_list[-1][0]
-            vy = bot.velocity_list[-1][1]
-            
-            vel_bot = np.array([vx, vy])  # current velocity of self propelled robot
-            vd = np.linalg.norm(vel_bot)
-            bd = np.linalg.norm(self.B_vec)
-            
-            if vd != 0 and bd != 0:
-                costheta = np.dot(vel_bot, self.B_vec) / (vd * bd)
-                sintheta = (vel_bot[0] * self.B_vec[1] - vel_bot[1] * self.B_vec[0]) / (vd * bd)
-                self.theta =  np.arctan2(sintheta, costheta)   
-                if len(self.theta_maps) > 0:
-                    previous = self.theta_maps[-1]
-                    self.theta = self.theta + np.sign(previous-self.theta)*(2*np.pi)*(np.abs((previous-self.theta))//(2*np.pi*0.8))
-                    
-                
-                self.theta_maps = np.append(self.theta_maps,self.theta)
-        
-                if len(self.theta_maps) > 150:
-                    self.theta_maps = self.theta_maps[-150:len(self.theta_maps)]#this makes sure that we only look at the latest 150 frames of data to keep it adaptable. It should be bigger if there's a lot of noise (slow bot) and smaller if its traj is well defined (fast bot) 
-                thetaNew = np.median(self.theta_maps)#take the average, or median, so that the mapped angle is robust to noise                        
-                self.T_R = np.array([[np.cos(thetaNew), -np.sin(thetaNew)], [np.sin(thetaNew), np.cos(thetaNew)]])
-                
-                #self.T_R = np.array([[costhetaNew, -sinthetaNew], [sinthetaNew, costhetaNew]])
-            
-        self.B_vec = np.dot(self.T_R, direction_vec)
-
-        #OUTPUT SIGNAL      
-        
-        Bx = self.B_vec[0] / np.sqrt(self.B_vec[0] ** 2 + self.B_vec[1] ** 2)
-        By = self.B_vec[1] / np.sqrt(self.B_vec[0] ** 2 + self.B_vec[1] ** 2)
-        Bz = 0
-        alpha = np.arctan2(By, Bx)
-
-        return [Bx,By,Bz,alpha]
 
 
     def run(self, frame, mask, robot_list, stepsize, arrivialthresh, orientstatus):
@@ -148,7 +98,45 @@ class algorithm:
 
 
 
+    def orient(self, bot, direction_vec):
+        if len(bot.velocity_list) >= 0:
+            
+            #find the velocity avearge over the last memory number of frames to mitigate noise: 
+            vx = bot.velocity_list[-1][0]
+            vy = bot.velocity_list[-1][1]
+            
+            vel_bot = np.array([vx, vy])  # current velocity of self propelled robot
+            vd = np.linalg.norm(vel_bot)
+            bd = np.linalg.norm(self.B_vec)
+            
+            if vd != 0 and bd != 0:
+                costheta = np.dot(vel_bot, self.B_vec) / (vd * bd)
+                sintheta = (vel_bot[0] * self.B_vec[1] - vel_bot[1] * self.B_vec[0]) / (vd * bd)
+                self.theta =  np.arctan2(sintheta, costheta)   
+                if len(self.theta_maps) > 0:
+                    previous = self.theta_maps[-1]
+                    self.theta = self.theta + np.sign(previous-self.theta)*(2*np.pi)*(np.abs((previous-self.theta))//(2*np.pi*0.8))
+                    
+                
+                self.theta_maps = np.append(self.theta_maps,self.theta)
+        
+                if len(self.theta_maps) > 150:
+                    self.theta_maps = self.theta_maps[-150:len(self.theta_maps)]#this makes sure that we only look at the latest 150 frames of data to keep it adaptable. It should be bigger if there's a lot of noise (slow bot) and smaller if its traj is well defined (fast bot) 
+                thetaNew = np.median(self.theta_maps)#take the average, or median, so that the mapped angle is robust to noise                        
+                self.T_R = np.array([[np.cos(thetaNew), -np.sin(thetaNew)], [np.sin(thetaNew), np.cos(thetaNew)]])
+                
+                #self.T_R = np.array([[costhetaNew, -sinthetaNew], [sinthetaNew, costhetaNew]])
+            
+        self.B_vec = np.dot(self.T_R, direction_vec)
 
+        #OUTPUT SIGNAL      
+        
+        Bx = self.B_vec[0] / np.sqrt(self.B_vec[0] ** 2 + self.B_vec[1] ** 2)
+        By = self.B_vec[1] / np.sqrt(self.B_vec[0] ** 2 + self.B_vec[1] ** 2)
+        Bz = 0
+        alpha = np.arctan2(By, Bx)
+
+        return [Bx,By,Bz,alpha]
 
 
 
