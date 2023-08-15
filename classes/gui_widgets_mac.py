@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'original.ui'
+# Form implementation generated from reading ui file 'uis/MagscopeMac.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #

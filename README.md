@@ -18,8 +18,9 @@ then run: python3 main.py
 
 --osx-entitlements-file Info.plist
 
- pyuic5 MagscopeWindows.ui -o gui_widgets_windows.py
-  pyuic5 MagscopeMac.ui -o gui_widgets_mac.py 
+ pyuic5 uis/MagscopeWindows.ui -o gui_widgets_windows.py
+  pyuic5 uis/MagscopeMac.ui -o gui_widgets_mac.py 
+  pyuic5 uis/MagscopeLinux.ui -o gui_widgets_linux.py 
 
 mk-icns MagScopeBox.png 
 
