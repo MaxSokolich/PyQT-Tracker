@@ -126,6 +126,7 @@ except Exception:
 
 
                 self.sensor_signal.emit([bx,by,bz])
+                time.sleep(.1)
         def stop(self):
             self.run_flag = False
             self.wait()
