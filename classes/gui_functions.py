@@ -62,12 +62,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.resize(self.window_width, self.window_height)
         self.display_width = self.window_width-265# self.ui.frameGeometry().width()
 
-        self.displayheightratio = 0.805
-        self.framesliderheightratio = 0.0311
-        self.textheightratio = .1112
+        self.displayheightratio = 0.79
+        self.framesliderheightratio = 0.031
+        self.textheightratio = .129
         #self.tabheightratio = 0.925
         
-        self.aspectratio = 4/3
+        self.aspectratio = 1041/801
         self.resize_widgets()
 
     
@@ -175,7 +175,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.acousticfreq_spinBox.valueChanged.connect(self.get_acoustic_frequency)
         self.ui.resetdefaultbutton.clicked.connect(self.resetparams)
         self.ui.simulationbutton.clicked.connect(self.toggle_simulation)
-        #self.ui.dockWidget.dockLocationChanged.connect(self.dockstatus)
         self.ui.orientradio.toggled.connect(self.checkorient)
         self.ui.objectivebox.valueChanged.connect(self.get_objective)
         self.ui.exposurebox.valueChanged.connect(self.get_exposure)
@@ -191,15 +190,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     
 
-        """    def dockstatus(self):
-        if self.ui.dockWidget.isFloating():
-            self.window_width -= 240#screen.width()
-            self.resize(self.window_width, self.window_height)
-            
-        else:
-            self.window_width += 240#screen.width()
-            self.resize(self.window_width, self.window_height)"""
-
+       
 
     def toggle_simulation(self):
         if self.ui.simulationbutton.isChecked():
@@ -494,16 +485,8 @@ class MainWindow(QtWidgets.QMainWindow):
             robot_diameter = round(np.sqrt(4*self.tracker.robot_list[-1].avg_area/np.pi),1)
             self.ui.vellcdnum.display(self.tracker.robot_list[-1].velocity_list[-1][2])
             self.ui.blurlcdnum.display(self.tracker.robot_list[-1].blur_list[-1])
-            if self.videopath == 0:
-                self.ui.robotsizelabel.setText("Size:                  um")
-                self.ui.robotvelocitylabel.setText("Velocity:                    um/s")
-                self.ui.robotblurlabel.setText("Blur:                      units")
-                self.ui.sizelcdnum.display(robot_diameter)
-            else:
-                self.ui.robotsizelabel.setText("Size:                  px")
-                self.ui.robotvelocitylabel.setText("Velocity:                    px/s")
-                self.ui.robotblurlabel.setText("Blur:                      units")
-                self.ui.sizelcdnum.display(robot_diameter)
+            self.ui.sizelcdnum.display(robot_diameter)
+                
        
         self.ui.VideoFeedLabel.setPixmap(qt_img)
         
@@ -592,7 +575,16 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tracker.start()
                 
                 self.ui.trackbutton.setText("Stop")
-                
+
+                if self.videopath == 0:
+                    self.ui.robotsizeunitslabel.setText("um")
+                    self.ui.robotvelocityunitslabel.setText("um/s")
+                    
+                else:
+                    self.ui.robotsizeunitslabel.setText("px")
+                    self.ui.robotvelocityunitslabel.setText("px/s")
+                    
+                    
                 if self.videopath == 0:
                     self.ui.pausebutton.hide()
                     self.ui.leftbutton.hide()
@@ -907,7 +899,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.ui.VideoFeedLabel.setGeometry(QtCore.QRect(10,  5,                       self.display_width,     self.display_height))
         self.ui.frameslider.setGeometry(QtCore.QRect(10,    self.display_height+12,   self.display_width,     self.framesliderheight))
-        self.ui.plainTextEdit.setGeometry(QtCore.QRect(10,  self.display_height+20+self.framesliderheight,   self.display_width-400,     self.textheight))
+        self.ui.plainTextEdit.setGeometry(QtCore.QRect(10,  self.display_height+20+self.framesliderheight,   self.display_width,     self.textheight))
 
         #self.ui.tabWidget.setGeometry(QtCore.QRect(12,  6,  260 ,     self.tabheight))
 
