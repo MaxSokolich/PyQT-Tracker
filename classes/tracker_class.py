@@ -170,6 +170,9 @@ class VideoThread(QThread):
 
         displayframe = frame.copy()
         displaymask = self.find_mask(displayframe)  
+        if len(self.robot_list) > 0 and croppedmask is not None:
+            x,y,w,h = self.robot_list[-1].cropped_frame[-1]
+            cv2.rectangle(displaymask, (x, y), (x + w, y + h), (0, 0, 0), -1)
         displaymask = cv2.dilate(displaymask, None, iterations=self.mask_dilation) 
 
         
