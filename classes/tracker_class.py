@@ -68,6 +68,7 @@ class VideoThread(QThread):
         mask_thresh= int(self.mask_thresh)
 
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        frame = cv2.blur(frame, (10,10))
         _, mask = cv2.threshold(frame, mask_thresh, 255, cv2.THRESH_BINARY)
 
         if invert:
