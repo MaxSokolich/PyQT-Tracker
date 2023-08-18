@@ -54,7 +54,7 @@ class VideoThread(QThread):
             self.pix2metric = 1
         else:
             self.totalnumframes = 0
-            self.pix2metric =  0.28985 * self.objective  
+            self.pix2metric =  0.28985 * self.objective #.29853 * self.objective#0.28985 * self.objective  
             
             #at 10x objective
             #width_in_pixels = 2448 #pixels
@@ -257,8 +257,11 @@ class VideoThread(QThread):
             ret, frame = self.cap.read()
         
             #control_mask = None
-            if ret:               
-                self.cap.set(cv2.CAP_PROP_EXPOSURE, self.exposure)
+            if ret:       
+                if self.totalnumframes ==0:         
+                    self.cap.set(cv2.CAP_PROP_EXPOSURE, self.exposure)
+                    self.pix2metric =  0.28985 * self.objective
+                    
           
 
                 #step 1 detect robot
