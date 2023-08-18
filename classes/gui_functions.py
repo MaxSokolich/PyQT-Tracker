@@ -160,6 +160,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.maskinvert_checkBox.toggled.connect(self.invertmaskcommand)
         self.ui.maskthreshbox.valueChanged.connect(self.get_slider_vals)
         self.ui.maskdilationbox.valueChanged.connect(self.get_slider_vals)
+        self.ui.maskblurbox.valueChanged.connect(self.get_slider_vals)
         self.ui.croplengthbox.valueChanged.connect(self.get_slider_vals)
         self.ui.savedatabutton.clicked.connect(self.savedata)
         self.ui.VideoFeedLabel.installEventFilter(self)
@@ -354,6 +355,7 @@ class MainWindow(QtWidgets.QMainWindow):
         psi = self.ui.psidial.value()
         thresh = self.ui.maskthreshbox.value() 
         dilation = self.ui.maskdilationbox.value() 
+        maskblur = self.ui.maskblurbox.value()
         crop_length = self.ui.croplengthbox.value()
 
         if self.cap is not None: 
@@ -362,6 +364,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.tracker.arrivalthresh = arrivalthresh
             self.tracker.mask_thresh = thresh
             self.tracker.mask_dilation = dilation
+            self.tracker.mask_blur = maskblur
             self.tracker.crop_length = crop_length
 
         self.ui.gammalabel.setText("Gamma: {}".format(gamma))

@@ -37,6 +37,7 @@ class VideoThread(QThread):
         self.orientstatus = False
         self.mask_thresh = 128
         self.mask_dilation = 0  #this is not used as of now
+        self.mask_blur = 5
         self.maskinvert = True
         self.crop_length = 40
         self.exposure = 5000
@@ -68,7 +69,9 @@ class VideoThread(QThread):
         mask_thresh= int(self.mask_thresh)
 
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        frame = cv2.blur(frame, (10,10))
+        if self.mask_blur > 0:
+            frame = cv2.blur(frame, (self.mask_blur,self.mask_blur))
+
         _, mask = cv2.threshold(frame, mask_thresh, 255, cv2.THRESH_BINARY)
 
         if invert:

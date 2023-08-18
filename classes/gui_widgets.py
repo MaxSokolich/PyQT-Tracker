@@ -61,7 +61,7 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
         self.dockWidget = QtWidgets.QDockWidget(MainWindow)
-        self.dockWidget.setMinimumSize(QtCore.QSize(325, 987))
+        self.dockWidget.setMinimumSize(QtCore.QSize(329, 987))
         self.dockWidget.setStyleSheet("")
         self.dockWidget.setFloating(False)
         self.dockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|QtCore.Qt.RightDockWidgetArea)
@@ -69,7 +69,7 @@ class Ui_MainWindow(object):
         self.dockWidgetContents = QtWidgets.QWidget()
         self.dockWidgetContents.setObjectName("dockWidgetContents")
         self.frame_3 = QtWidgets.QFrame(self.dockWidgetContents)
-        self.frame_3.setGeometry(QtCore.QRect(5, 10, 311, 281))
+        self.frame_3.setGeometry(QtCore.QRect(10, 10, 311, 255))
         self.frame_3.setStyleSheet(" color: rgb(0, 0, 0);\n"
 " background-color: rgb(255, 255, 255);\n"
 "")
@@ -97,11 +97,11 @@ class Ui_MainWindow(object):
 "            }")
         self.choosevideobutton.setObjectName("choosevideobutton")
         self.maskinvert_checkBox = QtWidgets.QCheckBox(self.frame_3)
-        self.maskinvert_checkBox.setGeometry(QtCore.QRect(110, 180, 181, 31))
+        self.maskinvert_checkBox.setGeometry(QtCore.QRect(110, 155, 181, 31))
         self.maskinvert_checkBox.setChecked(True)
         self.maskinvert_checkBox.setObjectName("maskinvert_checkBox")
         self.pausebutton = QtWidgets.QPushButton(self.frame_3)
-        self.pausebutton.setGeometry(QtCore.QRect(175, 80, 121, 30))
+        self.pausebutton.setGeometry(QtCore.QRect(175, 75, 121, 30))
         self.pausebutton.setMaximumSize(QtCore.QSize(300, 30))
         self.pausebutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
@@ -134,7 +134,7 @@ class Ui_MainWindow(object):
         self.pausebutton.setCheckable(True)
         self.pausebutton.setObjectName("pausebutton")
         self.savedatabutton = QtWidgets.QPushButton(self.frame_3)
-        self.savedatabutton.setGeometry(QtCore.QRect(10, 230, 131, 41))
+        self.savedatabutton.setGeometry(QtCore.QRect(10, 205, 131, 41))
         self.savedatabutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(0, 0, 0);\n"
 "                background-color: rgb(255, 255, 0);\n"
@@ -159,7 +159,7 @@ class Ui_MainWindow(object):
         self.savedatabutton.setCheckable(True)
         self.savedatabutton.setObjectName("savedatabutton")
         self.recordbutton = QtWidgets.QPushButton(self.frame_3)
-        self.recordbutton.setGeometry(QtCore.QRect(160, 230, 131, 41))
+        self.recordbutton.setGeometry(QtCore.QRect(160, 205, 131, 41))
         self.recordbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -192,11 +192,11 @@ class Ui_MainWindow(object):
         self.recordbutton.setCheckable(True)
         self.recordbutton.setObjectName("recordbutton")
         self.framelabel = QtWidgets.QLabel(self.frame_3)
-        self.framelabel.setGeometry(QtCore.QRect(180, 50, 121, 21))
+        self.framelabel.setGeometry(QtCore.QRect(180, 45, 121, 21))
         self.framelabel.setMaximumSize(QtCore.QSize(300, 25))
         self.framelabel.setObjectName("framelabel")
         self.leftbutton = QtWidgets.QToolButton(self.frame_3)
-        self.leftbutton.setGeometry(QtCore.QRect(180, 120, 51, 31))
+        self.leftbutton.setGeometry(QtCore.QRect(180, 115, 51, 31))
         self.leftbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -225,7 +225,7 @@ class Ui_MainWindow(object):
         self.leftbutton.setArrowType(QtCore.Qt.LeftArrow)
         self.leftbutton.setObjectName("leftbutton")
         self.maskbutton = QtWidgets.QPushButton(self.frame_3)
-        self.maskbutton.setGeometry(QtCore.QRect(10, 170, 81, 41))
+        self.maskbutton.setGeometry(QtCore.QRect(10, 155, 81, 41))
         self.maskbutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -246,7 +246,7 @@ class Ui_MainWindow(object):
         self.maskbutton.setChecked(False)
         self.maskbutton.setObjectName("maskbutton")
         self.trackbutton = QtWidgets.QPushButton(self.frame_3)
-        self.trackbutton.setGeometry(QtCore.QRect(10, 60, 151, 91))
+        self.trackbutton.setGeometry(QtCore.QRect(10, 50, 151, 91))
         self.trackbutton.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.trackbutton.setStyleSheet("\n"
 "QPushButton {\n"
@@ -282,7 +282,7 @@ class Ui_MainWindow(object):
         self.trackbutton.setCheckable(True)
         self.trackbutton.setObjectName("trackbutton")
         self.rightbutton = QtWidgets.QToolButton(self.frame_3)
-        self.rightbutton.setGeometry(QtCore.QRect(240, 120, 50, 31))
+        self.rightbutton.setGeometry(QtCore.QRect(240, 115, 50, 31))
         self.rightbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -311,7 +311,7 @@ class Ui_MainWindow(object):
         self.rightbutton.setArrowType(QtCore.Qt.RightArrow)
         self.rightbutton.setObjectName("rightbutton")
         self.trackerparamsframe = QtWidgets.QFrame(self.dockWidgetContents)
-        self.trackerparamsframe.setGeometry(QtCore.QRect(10, 300, 311, 211))
+        self.trackerparamsframe.setGeometry(QtCore.QRect(10, 270, 311, 251))
         self.trackerparamsframe.setStyleSheet(" color: rgb(0, 0, 0);\n"
 " background-color: rgb(255, 255, 255);\n"
 "")
@@ -319,7 +319,7 @@ class Ui_MainWindow(object):
         self.trackerparamsframe.setFrameShadow(QtWidgets.QFrame.Raised)
         self.trackerparamsframe.setObjectName("trackerparamsframe")
         self.maskthreshbox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.maskthreshbox.setGeometry(QtCore.QRect(170, 10, 111, 35))
+        self.maskthreshbox.setGeometry(QtCore.QRect(170, 50, 111, 35))
         font = QtGui.QFont()
         font.setPointSize(16)
         font.setBold(False)
@@ -331,19 +331,19 @@ class Ui_MainWindow(object):
         self.maskthreshbox.setProperty("value", 128)
         self.maskthreshbox.setObjectName("maskthreshbox")
         self.maskthreshlabel = QtWidgets.QLabel(self.trackerparamsframe)
-        self.maskthreshlabel.setGeometry(QtCore.QRect(40, 10, 121, 25))
+        self.maskthreshlabel.setGeometry(QtCore.QRect(40, 50, 121, 25))
         self.maskthreshlabel.setMaximumSize(QtCore.QSize(150, 25))
         self.maskthreshlabel.setObjectName("maskthreshlabel")
         self.maskdilationbox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.maskdilationbox.setGeometry(QtCore.QRect(170, 50, 111, 35))
+        self.maskdilationbox.setGeometry(QtCore.QRect(170, 90, 111, 35))
         self.maskdilationbox.setMaximum(40)
         self.maskdilationbox.setObjectName("maskdilationbox")
         self.maskdilationlabel = QtWidgets.QLabel(self.trackerparamsframe)
-        self.maskdilationlabel.setGeometry(QtCore.QRect(40, 50, 121, 25))
+        self.maskdilationlabel.setGeometry(QtCore.QRect(40, 90, 121, 25))
         self.maskdilationlabel.setMaximumSize(QtCore.QSize(150, 25))
         self.maskdilationlabel.setObjectName("maskdilationlabel")
         self.croplengthbox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.croplengthbox.setGeometry(QtCore.QRect(170, 90, 111, 35))
+        self.croplengthbox.setGeometry(QtCore.QRect(170, 130, 111, 35))
         self.croplengthbox.setMinimum(5)
         self.croplengthbox.setMaximum(300)
         self.croplengthbox.setSingleStep(5)
@@ -351,23 +351,23 @@ class Ui_MainWindow(object):
         self.croplengthbox.setDisplayIntegerBase(10)
         self.croplengthbox.setObjectName("croplengthbox")
         self.croplengthlabel = QtWidgets.QLabel(self.trackerparamsframe)
-        self.croplengthlabel.setGeometry(QtCore.QRect(40, 90, 121, 25))
+        self.croplengthlabel.setGeometry(QtCore.QRect(40, 130, 121, 25))
         self.croplengthlabel.setMaximumSize(QtCore.QSize(150, 25))
         self.croplengthlabel.setObjectName("croplengthlabel")
         self.exposurebox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.exposurebox.setGeometry(QtCore.QRect(170, 130, 111, 35))
+        self.exposurebox.setGeometry(QtCore.QRect(170, 170, 111, 35))
         self.exposurebox.setMinimum(100)
-        self.exposurebox.setMaximum(10000)
+        self.exposurebox.setMaximum(30000)
         self.exposurebox.setSingleStep(100)
         self.exposurebox.setProperty("value", 5000)
         self.exposurebox.setDisplayIntegerBase(10)
         self.exposurebox.setObjectName("exposurebox")
         self.exposurelabel = QtWidgets.QLabel(self.trackerparamsframe)
-        self.exposurelabel.setGeometry(QtCore.QRect(40, 130, 83, 25))
+        self.exposurelabel.setGeometry(QtCore.QRect(40, 170, 83, 25))
         self.exposurelabel.setMaximumSize(QtCore.QSize(150, 25))
         self.exposurelabel.setObjectName("exposurelabel")
         self.objectivebox = QtWidgets.QSpinBox(self.trackerparamsframe)
-        self.objectivebox.setGeometry(QtCore.QRect(170, 170, 111, 35))
+        self.objectivebox.setGeometry(QtCore.QRect(170, 210, 111, 35))
         self.objectivebox.setMinimum(1)
         self.objectivebox.setMaximum(50)
         self.objectivebox.setSingleStep(5)
@@ -375,11 +375,27 @@ class Ui_MainWindow(object):
         self.objectivebox.setDisplayIntegerBase(10)
         self.objectivebox.setObjectName("objectivebox")
         self.objectivelabel = QtWidgets.QLabel(self.trackerparamsframe)
-        self.objectivelabel.setGeometry(QtCore.QRect(40, 170, 83, 25))
+        self.objectivelabel.setGeometry(QtCore.QRect(40, 210, 83, 25))
         self.objectivelabel.setMaximumSize(QtCore.QSize(150, 25))
         self.objectivelabel.setObjectName("objectivelabel")
+        self.maskblurbox = QtWidgets.QSpinBox(self.trackerparamsframe)
+        self.maskblurbox.setGeometry(QtCore.QRect(170, 10, 111, 35))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        font.setBold(False)
+        font.setItalic(False)
+        self.maskblurbox.setFont(font)
+        self.maskblurbox.setStyleSheet("")
+        self.maskblurbox.setMaximum(40)
+        self.maskblurbox.setSingleStep(1)
+        self.maskblurbox.setProperty("value", 0)
+        self.maskblurbox.setObjectName("maskblurbox")
+        self.maskblurlabel = QtWidgets.QLabel(self.trackerparamsframe)
+        self.maskblurlabel.setGeometry(QtCore.QRect(40, 10, 121, 25))
+        self.maskblurlabel.setMaximumSize(QtCore.QSize(150, 25))
+        self.maskblurlabel.setObjectName("maskblurlabel")
         self.robotparamsframe = QtWidgets.QFrame(self.dockWidgetContents)
-        self.robotparamsframe.setGeometry(QtCore.QRect(10, 520, 311, 91))
+        self.robotparamsframe.setGeometry(QtCore.QRect(10, 525, 311, 85))
         self.robotparamsframe.setStyleSheet(" color: rgb(255, 255, 255);\n"
 " background-color: rgb(0, 0, 0);\n"
 "font-size: 18pt; font: Arial;")
@@ -1092,6 +1108,7 @@ class Ui_MainWindow(object):
         self.croplengthlabel.setText(_translate("MainWindow", "Crop Length"))
         self.exposurelabel.setText(_translate("MainWindow", "Exposure"))
         self.objectivelabel.setText(_translate("MainWindow", "Objective"))
+        self.maskblurlabel.setText(_translate("MainWindow", "Mask Blur"))
         self.robotsizelabel.setText(_translate("MainWindow", "Size:   "))
         self.robotvelocitylabel.setText(_translate("MainWindow", "Velocity: "))
         self.robotblurlabel.setText(_translate("MainWindow", "Blur:"))
