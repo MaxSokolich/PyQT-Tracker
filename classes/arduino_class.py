@@ -57,14 +57,17 @@ class ArduinoHandler:
 
         data = [float(Bx), float(By), float(Bz), float(alpha), float(gamma), float(freq),float(psi)]
         if self.conn is None:
-            self.printer("Connection not initialized..."+ str(data))    
+            #self.printer("Connection not initialized..."+ str(data))  
+            #self.printer("No Connection:  "+ "Bx: {},    By: {},    Bz: {},    alpha: {},    gamma: {},    freq: {},    psi: {}".format(Bx,By,Bz,alpha,gamma,freq,psi)) 
+            self.printer("No Connection:  "+ "[Bx, By, Bz, alpha, gamma, freq, psi] = "+str(data)) 
             #pass
         else:
             #Bx = round(Bx,3)
             message = self.conn.tx_obj(data)
             self.conn.send(message)
-            self.printer("Data sent:"+ str(data))
-
+            #self.printer("Data sent:"+ str(data))
+            #self.printer("Data sent:  "+ "Bx: {},    By: {},    Bz: {},    alpha: {},    gamma: {},    freq: {},    psi: {}".format(Bx,By,Bz,alpha,gamma,freq,psi))
+            self.printer("Data Sent:  "+ "[Bx, By, Bz, alpha, gamma, freq, psi] = "+str(data)) 
     def close(self) -> None:
         """
         Closes the current connection, if applicable
