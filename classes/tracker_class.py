@@ -54,9 +54,18 @@ class VideoThread(QThread):
             self.pix2metric = 1
         else:
             self.totalnumframes = 0
-            self.pix2metric = ((2048/212.4) / 100) * self.objective  
+            self.pix2metric =  0.28985 * self.objective  
+            
+            #at 10x objective
+            #width_in_pixels = 2448 #pixels
+            #divs = 82
+            #singledivlength = 10 #um
+            #width_in_um = divs * singledivlength # 82 * 10 = 820
+            #scale = 2448/820
 
-
+            #according to website pixel size is Pixel Size, H x V (μm): 3.45 x 3.45
+            #1/(pixelSize/magnification)
+            #1/(3.45/10) = 2.89
 
  
     
