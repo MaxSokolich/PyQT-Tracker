@@ -6,7 +6,6 @@ from classes.gui_functions import MainWindow
 
 
 #Convert blur into z position
-#remeasure pix2metric conversion
 #fix roll swim issue (might just be camera orientation)
 
 
