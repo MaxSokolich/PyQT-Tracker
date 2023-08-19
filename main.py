@@ -6,7 +6,7 @@ from classes.gui_functions import MainWindow
 
 
 #Convert blur into z position
-#fix roll swim issue (might just be camera orientation)
+#decide auto acoustic functionality
 
 
 
