@@ -186,10 +186,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.downfieldbutton.clicked.connect(self.quickfielddown)
         self.ui.plusZbutton.clicked.connect(self.quickfieldplusZ)
         self.ui.minusZbutton.clicked.connect(self.quickfieldminusZ)
+        self.ui.autoacousticbutton.clicked.connect(self.toggle_autoacoustic)
 
         #self.showFullScreen()
 
-    
 
        
 
@@ -309,6 +309,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.acoustic_frequency = self.ui.acousticfreq_spinBox.value()
             self.tbprint("Control On: {} Hz".format(self.acoustic_frequency))
             self.apply_acoustic()
+    
+    def toggle_autoacoustic(self):
+        if self.cap is not None:
+            if self.ui.autoacousticbutton.isChecked():
+                self.tracker.autoacousticstatus = True
+            else:
+                self.tracker.autoacousticstatus = False
         
     
     def apply_acoustic(self):

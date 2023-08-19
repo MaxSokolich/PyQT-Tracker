@@ -35,6 +35,7 @@ class VideoThread(QThread):
         self.framenum = 0
 
         self.orientstatus = False
+        self.autoacousticstatus = False
         self.mask_thresh = 128
         self.mask_dilation = 0  #this is not used as of now
         self.mask_blur = 5

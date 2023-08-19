@@ -1169,10 +1169,10 @@ color: rgb(0,255,0);</string>
      <widget class="QLabel" name="led">
       <property name="geometry">
        <rect>
-        <x>270</x>
+        <x>290</x>
         <y>170</y>
-        <width>30</width>
-        <height>30</height>
+        <width>21</width>
+        <height>21</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -1192,8 +1192,8 @@ color: rgb(0,255,0);</string>
      <widget class="QRadioButton" name="swimradio">
       <property name="geometry">
        <rect>
-        <x>120</x>
-        <y>110</y>
+        <x>110</x>
+        <y>90</y>
         <width>91</width>
         <height>20</height>
        </rect>
@@ -1205,9 +1205,9 @@ color: rgb(0,255,0);</string>
      <widget class="QPushButton" name="applyacousticbutton">
       <property name="geometry">
        <rect>
-        <x>185</x>
-        <y>165</y>
-        <width>81</width>
+        <x>130</x>
+        <y>160</y>
+        <width>71</width>
         <height>41</height>
        </rect>
       </property>
@@ -1249,8 +1249,8 @@ color: rgb(0,255,0);</string>
      <widget class="QRadioButton" name="rollradio">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>110</y>
+        <x>10</x>
+        <y>90</y>
         <width>81</width>
         <height>21</height>
        </rect>
@@ -1275,7 +1275,7 @@ color: rgb(0,255,0);</string>
         <x>170</x>
         <y>10</y>
         <width>141</width>
-        <height>91</height>
+        <height>71</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -1325,7 +1325,7 @@ color: rgb(0,255,0);</string>
         <x>15</x>
         <y>10</y>
         <width>141</width>
-        <height>91</height>
+        <height>71</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -1370,8 +1370,8 @@ color: rgb(0,255,0);</string>
      <widget class="QRadioButton" name="orientradio">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>110</y>
+        <x>210</x>
+        <y>90</y>
         <width>91</width>
         <height>20</height>
        </rect>
@@ -1383,9 +1383,9 @@ color: rgb(0,255,0);</string>
      <widget class="QSpinBox" name="acousticfreq_spinBox">
       <property name="geometry">
        <rect>
-        <x>5</x>
-        <y>165</y>
-        <width>161</width>
+        <x>10</x>
+        <y>160</y>
+        <width>111</width>
         <height>41</height>
        </rect>
       </property>
@@ -1399,14 +1399,58 @@ color: rgb(0,255,0);</string>
      <widget class="QLabel" name="acousticfreqlabel">
       <property name="geometry">
        <rect>
-        <x>65</x>
-        <y>135</y>
-        <width>221</width>
+        <x>80</x>
+        <y>130</y>
+        <width>151</width>
         <height>21</height>
        </rect>
       </property>
       <property name="text">
        <string>Acoustic Frequency</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="autoacousticbutton">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>160</y>
+        <width>51</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+                color: rgb(255, 255, 255);
+                background-color: rgb(0, 0, 0);
+                border-style: outset;
+                border-width: 2px;
+                border-radius: 10px;
+                border-color: rgb(0, 0, 0);
+                min-width: 1em;
+                padding: 1px;
+            }
+            QPushButton:hover {
+                background-color: rgb(100, 100, 100);
+                color: rgb(0, 0, 0);
+                border-style: inset;
+            }
+
+ 		QPushButton:checked {
+                color: rgb(255, 255, 255);
+                background-color: rgb(255, 0, 0);
+                border-style: outset;
+                border-width: 2px;
+                border-radius: 10px;
+                border-color: rgb(200, 0, 0);
+                min-width: 1em;
+                padding: 1px;
+}</string>
+      </property>
+      <property name="text">
+       <string>Auto</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
