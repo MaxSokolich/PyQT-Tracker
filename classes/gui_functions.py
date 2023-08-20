@@ -892,6 +892,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.acousticfreq_spinBox.setValue(1000000)
         self.ui.objectivebox.setValue(10)
         self.ui.exposurebox.setValue(5000)
+        self.ui.maskblurbox.setValue(0)
 
     def resizeEvent(self, event):
         windowsize = event.size()
