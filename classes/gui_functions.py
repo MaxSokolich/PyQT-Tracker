@@ -496,6 +496,15 @@ class MainWindow(QtWidgets.QMainWindow):
             frame, self.projection.draw_sideview(frame,self.Bx,self.By,self.Bz,self.alpha,self.gamma,self.video_width,self.video_height)
             frame, self.projection.draw_topview(frame,self.Bx,self.By,self.Bz,self.alpha,self.gamma,self.video_width,self.video_height)
         
+        freq = f'{self.acoustic_frequency:,} Hz'
+        cv2.putText(frame,freq,
+            (int(self.video_width / 10),int(self.video_height / 30)),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            fontScale=1, 
+            thickness=4,
+            color = (255, 255, 255),
+        
+        )
     
         self.currentframe = frame
         if self.result is not None:

@@ -104,6 +104,7 @@ class algorithm:
 
         if autoacoustic_status == True:
             self.acoustic_frequency = self.find_optimal_acoustic_freq(robot_list)
+        
   
         self.actions = [self.Bx,self.By,self.Bz,self.alpha,self.gamma,self.freq, self.psi,self.acoustic_frequency]
         self.count += 1
