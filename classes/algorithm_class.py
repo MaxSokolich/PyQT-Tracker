@@ -106,7 +106,7 @@ class algorithm:
             self.acoustic_frequency = self.find_optimal_acoustic_freq(robot_list)
         
   
-        self.actions = [self.Bx,self.By,self.Bz,self.alpha,self.gamma,self.freq, self.psi,self.acoustic_frequency]
+        self.actions = [self.Bx,self.By,self.Bz,self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency]
         self.count += 1
     
         return frame, self.actions, self.stopped

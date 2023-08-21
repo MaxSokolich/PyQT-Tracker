@@ -272,8 +272,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.magnetic_field_list.append(self.actions)
         self.apply_actions(True)
 
-        
-
 
     def apply_actions(self, status):
         #the purpose of this function is to output the actions via arduino, 
@@ -498,7 +496,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         freq = f'{self.acoustic_frequency:,} Hz'
         cv2.putText(frame,freq,
-            (int(self.video_width / 10),int(self.video_height / 30)),
+            (int(self.video_width / 8),int(self.video_height / 14)),
             cv2.FONT_HERSHEY_SIMPLEX,
             fontScale=1, 
             thickness=4,
@@ -509,8 +507,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.currentframe = frame
         if self.result is not None:
             cv2.putText(frame,"frame: " + str(self.tracker.framenum),
-                        (int(self.video_width / 15),
-                         int(self.video_height / 30)),
+                        (int(self.video_width / 80),
+                         int(self.video_height / 9)),
                         cv2.FONT_HERSHEY_SIMPLEX,
                         fontScale=1, 
                         thickness=4,
@@ -660,6 +658,12 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.ui.leftbutton.hide()
                     self.ui.rightbutton.hide()
                     self.ui.frameslider.hide()
+                
+
+                #uncomment for immediate record
+                #self.ui.recordbutton.setChecked(True)
+                #self.recordfunction()
+                
         
                 
             else:
