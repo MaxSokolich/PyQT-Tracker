@@ -272,10 +272,10 @@ class VideoThread(QThread):
                 frame, croppedmask, display_mask = self.display_hud(frame, croppedmask, max_cnt)
 
                 #step 2 control robot
-                if len(self.robot_list)>0 and len(self.robot_list[-1].trajectory) > 0:
-                    frame, actions, stopped = self.control_robot.run(frame, display_mask, self.robot_list, self.RRTtreesize, self.arrivalthresh, self.orientstatus)
+                if len(self.robot_list)>0:
+                    frame, actions, stopped = self.control_robot.run(frame, display_mask, self.robot_list, self.RRTtreesize, self.arrivalthresh, self.orientstatus, self.autoacousticstatus)
                 else:
-                    actions = [0,0,0,0]
+                    actions = [0,0,0,0,0,0,0,0]
                     stopped = True    
                     
         

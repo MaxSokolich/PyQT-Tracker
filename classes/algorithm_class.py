@@ -14,89 +14,145 @@ class algorithm:
         self.node = 0
         self.count = 0
         self.stopped = False
-        self.actions = [0,0,0,0]
+        self.actions = [0,0,0,0,0,0,0,0]
 
         self.B_vec = np.array([1,0])
         self.T_R = 1
         self.theta_maps = np.array([])#added this so that we store the mapped angles
         self.theta = 0
 
+        #acoustic stuff
+        self.min_freq = 800000   #current minimum freq to start at
+        self.max_freq = 1600000  #current maximum freq to stop at
+        self.current_freq = self.min_freq   #current freq we are applying (start at 0)
+        self.increment = 10000   #increment to step frequency by
+        self.optimal_freq = None
+        self.resistance = 0
+        self.vmag_min = 2
+        self.vmag_max = 5
+
+
+        self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency = 0,0,0,0,0,0,0,0
+
     
 
 
-    def run(self, frame, mask, robot_list, stepsize, arrivialthresh, orientstatus):
-        
-        if self.count == 0: #% 10
-        
-            #define start end
-            startpos = robot_list[-1].position_list[-1] #the most recent position at the time of clicking run algo
-            endpos = robot_list[-1].trajectory[-1]
+    def run(self, frame, mask, robot_list, stepsize, arrivialthresh, orientstatus, autoacoustic_status):
+        if len(robot_list[-1].trajectory) > 0:
+            if self.count == 0: #% 10
             
+                #define start end
+                startpos = robot_list[-1].position_list[-1] #the most recent position at the time of clicking run algo
+                endpos = robot_list[-1].trajectory[-1]
+                
 
-            #remove robot so that itself is not mistaken for an obstacle
-            x,y,w,h = robot_list[-1].cropped_frame[-1]
-            cv2.rectangle(mask, (x, y), (x + w, y + h), (0, 0, 0), -1)
-          
-            pathplanner = RRT(mask, startpos, endpos, stepsize)
-            trajectory = pathplanner.run()
+                #remove robot so that itself is not mistaken for an obstacle
+                x,y,w,h = robot_list[-1].cropped_frame[-1]
+                cv2.rectangle(mask, (x, y), (x + w, y + h), (0, 0, 0), -1)
+            
+                pathplanner = RRT(mask, startpos, endpos, stepsize)
+                trajectory = pathplanner.run()
 
-            trajectory.append(endpos)    
+                trajectory.append(endpos)    
+            
         
-    
-            #record robot list trajectory
-            robot_list[-1].trajectory= trajectory
+                #record robot list trajectory
+                robot_list[-1].trajectory= trajectory
 
 
-        #logic for arrival condition
-        if self.node == len(robot_list[-1].trajectory):
-            #weve arrived
-            self.stopped = True
-            self.actions = [0,0,0,0]
+            #logic for arrival condition
+            if self.node == len(robot_list[-1].trajectory):
+                #weve arrived
+                self.stopped = True
+                self.actions = [0,0,0,0,0,0,0,0]
 
 
-        #closed loop algorithm 
-        else:
-            #define target coordinate
-            targetx = robot_list[-1].trajectory[self.node][0]
-            targety = robot_list[-1].trajectory[self.node][1]
+            #closed loop algorithm 
+            else:
+                #define target coordinate
+                targetx = robot_list[-1].trajectory[self.node][0]
+                targety = robot_list[-1].trajectory[self.node][1]
 
-            #define robots current position
-            robotx = robot_list[-1].position_list[-1][0]
-            roboty = robot_list[-1].position_list[-1][1]
-            
-            #calculate error between node and robot
-            direction_vec = [targetx - robotx, targety - roboty]
-            error = np.sqrt(direction_vec[0] ** 2 + direction_vec[1] ** 2)
-            alpha = np.arctan2(-direction_vec[1], direction_vec[0])
+                #define robots current position
+                robotx = robot_list[-1].position_list[-1][0]
+                roboty = robot_list[-1].position_list[-1][1]
+                
+                #calculate error between node and robot
+                direction_vec = [targetx - robotx, targety - roboty]
+                error = np.sqrt(direction_vec[0] ** 2 + direction_vec[1] ** 2)
+                self.alpha = np.arctan2(-direction_vec[1], direction_vec[0])
+                
+                if orientstatus == True:
+                    self.Bx, self.By, self.Bz, self.alpha = self.orient(robot_list[-1], direction_vec)
+                else:
+                    self.Bx, self.By, self.Bz = 0,0,0
 
-
-
-            #draw error arrow
-            cv2.arrowedLine(
-                frame,
-                (int(robotx), int(roboty)),
-                (int(targetx), int(targety)),
-                [0, 0, 0],
-                3,
-            )
-    
-            if error < arrivialthresh:
-                self.node += 1
-            
-
-            self.actions = [0,0,0,alpha]
-            
-            if orientstatus == True:
-                self.actions = self.orient(robot_list[-1], direction_vec)
-         
+                #draw error arrow
+                cv2.arrowedLine(
+                    frame,
+                    (int(robotx), int(roboty)),
+                    (int(targetx), int(targety)),
+                    [0, 0, 0],
+                    3,
+                )
         
+                if error < arrivialthresh:
+                    self.node += 1
+                
+               
+        
+
+        if autoacoustic_status == True:
+            self.acoustic_frequency = self.find_optimal_acoustic_freq(robot_list)
+  
+        self.actions = [self.Bx,self.By,self.Bz,self.alpha,self.gamma,self.freq, self.psi,self.acoustic_frequency]
         self.count += 1
     
         return frame, self.actions, self.stopped
 
 
+    def find_optimal_acoustic_freq(self, robot_list):
+        #take a rolling average of the velocity from past 10 frames and average
+        if len(robot_list[-1].velocity_list) > 0:
+            vmag_avg = robot_list[-1].velocity_list[-1][2]
+            
+            ## CASE #1
+            if vmag_avg < self.vmag_min: 
+                
+                if self.optimal_freq is not None:
+                    self.optimal_freq = None
+
+                if self.current_freq < self.max_freq: #if we increment and get to max
+                    if self.count % 10 == 0:  #every 10 frames adjust frequency by the increment value may need to change this
+                        self.current_freq += self.increment  #increment. once a frequency is found that puts vmag > vmin, the current_freq will be the optmial
+                        #self.AcousticMod.start(self.current_freq, self.resistance) #apply the crrent freq at 0 resistance
+
+                
+                ## SUBCASE #2
+                elif self.current_freq >= self.max_freq: 
+                    if self.increment <= 50:
+                        pass
+                    else:
+                        self.increment = int(self.increment/2)    #reduce the incriment to increase resolution of frequency sweep
+                    self.current_freq = self.min_freq  #reset current freq to new minimum
+
+            
+            ## CASE #2
+            elif vmag_avg > self.vmag_min and vmag_avg < self.vmag_max:
+                self.optimal_freq = self.current_freq  #set the optimal frequency to be used later if vmag dips < vmin
+                #self.AcousticMod.start(self.optimal_freq, self.resistance)
+        
+            ## CASE #3
+            elif vmag_avg > self.vmag_max:
+                if self.count % 20 == 0 and self.current_freq > self.min_freq:
+                    self.current_freq -= 75000
+                    #self.increment =  int(self.increment/3)
+                    
+        
+        return self.current_freq
 
 
+    
 
     def orient(self, bot, direction_vec):
         if len(bot.velocity_list) >= 0:
@@ -136,7 +192,7 @@ class algorithm:
         Bz = 0
         alpha = np.arctan2(By, Bx)
 
-        return [Bx,By,Bz,alpha]
+        return Bx,By,Bz,alpha
 
 
 

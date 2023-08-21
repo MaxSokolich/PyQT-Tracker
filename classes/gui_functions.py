@@ -94,7 +94,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.Bx, self.By, self.Bz = 0,0,0
         self.Mx, self.My, self.Mz = 0,0,0
         self.alpha, self.gamma, self.psi, self.freq = 0,0,0,0
-        self.acoustic_status = 0
         self.sensorBx, self.sensorBy, self.sensorBz = 0,0,0
 
         #control tab functions
@@ -238,34 +237,40 @@ class MainWindow(QtWidgets.QMainWindow):
     def update_actions(self, actions, stopped):
         #alpha argument is signal from tracker_class: actions_signal
         #output actions if control status is on
-        self.gamma = np.radians(self.ui.gammadial.value())
-        self.psi = np.radians(self.ui.psidial.value())
+        if self.ui.autoacousticbutton.isChecked():
+            self.acoustic_frequency  = actions[-1]   
         
         if self.control_status == True:
-            
-            self.Bx, self.By, self.Bz, self.alpha = actions    
+            self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, _  = actions    
+           
+             
+
+
             if self.ui.orientradio.isChecked():
                 self.freq = 0
             else:
                 self.freq = self.ui.magneticfrequencydial.value()
-            if stopped == True:
-                self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi = 0,0,0,0,0,0,0
 
-            self.apply_actions(True)
+            if stopped == True:
+                self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency = 0,0,0,0,0,0,0,0
+
+            
         
         elif self.joystick_status == True:
-            self.Bx, self.By, self.Bz, self.alpha, self.freq,self.acoustic_status = self.controller_actions.run(self.joystick)
+            self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, _ = self.controller_actions.run(self.joystick)
             
             if self.freq !=0:
                 self.freq = self.ui.magneticfrequencydial.value()
             
         
-            self.apply_actions(True)
-        
         #save the current action outputs to a list to be saved 
+        self.gamma = np.radians(self.ui.gammadial.value())
+        self.psi = np.radians(self.ui.psidial.value())
+
         self.actions = [self.tracker.framenum,self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, 
                         self.acoustic_frequency, self.sensorBx, self.sensorBy, self.sensorBz] 
         self.magnetic_field_list.append(self.actions)
+        self.apply_actions(True)
 
         
 
@@ -288,7 +293,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi = 0,0,0,0,0,0,0
 
         #send arduino commands
-        self.arduino.send(self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi)
+        self.arduino.send(self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency)
         
         #output current actions to simulator
         self.simulator.Bx = self.Bx
@@ -302,26 +307,45 @@ class MainWindow(QtWidgets.QMainWindow):
     
 
 
-    def get_acoustic_frequency(self):
-        if self.ui.applyacousticbutton.isChecked():
-            self.acoustic_frequency = self.ui.acousticfreq_spinBox.value()
-            self.tbprint("Control On: {} Hz".format(self.acoustic_frequency))
-            self.apply_acoustic()
+    
     
     def toggle_autoacoustic(self):
         if self.cap is not None:
             if self.ui.autoacousticbutton.isChecked():
                 self.tracker.autoacousticstatus = True
+                self.ui.led.setStyleSheet("\n"
+"                background-color: rgb(0, 255, 0);\n"
+"                border-style: outset;\n"
+"                border-width: 3px;\n"
+"                border-radius: 12px;\n"
+"                border-color: rgb(0, 255, 0);\n"
+"         \n"
+"                padding: 6px;")
             else:
                 self.tracker.autoacousticstatus = False
+                self.acoustic_frequency = 0
+                self.ui.led.setStyleSheet("\n"
+"                background-color: rgb(255, 0, 0);\n"
+"                border-style: outset;\n"
+"                border-width: 3px;\n"
+"                border-radius: 12px;\n"
+"                border-color: rgb(255, 0, 0);\n"
+"         \n"
+"                padding: 6px;")
+
+    def get_acoustic_frequency(self):
+        if self.ui.applyacousticbutton.isChecked():
+            self.acoustic_frequency = self.ui.acousticfreq_spinBox.value()
+            #self.tbprint("Control On: {} Hz".format(self.acoustic_frequency))
+            self.apply_acoustic()
         
     
     def apply_acoustic(self):
         if self.ui.applyacousticbutton.isChecked():
             self.ui.applyacousticbutton.setText("Stop")
-            self.tbprint("Control On: {} Hz".format(self.acoustic_frequency))
+            #self.tbprint("Control On: {} Hz".format(self.acoustic_frequency))
             self.acoustic_frequency = self.ui.acousticfreq_spinBox.value()
-            self.acoustic_module.start(self.acoustic_frequency, 0)
+            #self.acoustic_module.start(self.acoustic_frequency, 0)
             self.ui.led.setStyleSheet("\n"
 "                background-color: rgb(0, 255, 0);\n"
 "                border-style: outset;\n"
@@ -333,8 +357,8 @@ class MainWindow(QtWidgets.QMainWindow):
         
         else:
             self.ui.applyacousticbutton.setText("Apply")
-            self.tbprint("Acoustic Module Off")
-            self.acoustic_module.stop()
+            #self.tbprint("Acoustic Module Off")
+            #self.acoustic_module.stop()
             self.acoustic_frequency = 0
             self.ui.led.setStyleSheet("\n"
 "                background-color: rgb(255, 0, 0);\n"
@@ -444,7 +468,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     if event.buttons() == QtCore.Qt.MiddleButton: 
                         del self.tracker.robot_list[:]
                         del self.magnetic_field_list[:]
-                        self.arduino.send(0, 0, 0, 0, 0, 0, 0)  
+                        self.apply_actions(False)
+                       
                     
                             
                 elif event.type() == QtCore.QEvent.MouseMove:
@@ -665,7 +690,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 
 
                     #zero arduino commands
-                    self.arduino.send(0,0,0,0,0,0,0)
+                    self.apply_actions(False)
 
                     self.ui.applyacousticbutton.setChecked(False)
                     self.ui.led.setStyleSheet("\n"
@@ -958,7 +983,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if scroll_amount > 1:
                 del self.tracker.robot_list[:]
                 del self.magnetic_field_list[:]
-                self.arduino.send(0, 0, 0, 0, 0, 0, 0)
+                self.apply_actions(False)
 
     def closeEvent(self, event):
         """

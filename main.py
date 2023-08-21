@@ -6,8 +6,8 @@ from classes.gui_functions import MainWindow
 
 
 # Convert blur into z position
-# decide auto acoustic functionality
 # put RRT trajectory in seperate thead
+# need to update joystic class based on new action output
 
 
 

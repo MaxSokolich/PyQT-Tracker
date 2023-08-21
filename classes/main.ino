@@ -7,10 +7,10 @@
 // - if  (myTransfer.available()) may cuz bugs because actions maybe empty or something
 // - may need a better way to toggle the enable pin on all 6 drivers
 // - there is no hard zero option as I got rid of typ
-
+#include <AD9850.h>
 #include "SerialTransfer.h"
 SerialTransfer myTransfer;
-float action[7]; //an array to store incoming data from python
+float action[8]; //an array to store incoming data from python
 
 #define PI 3.1415926535897932384626433832795
 
@@ -18,19 +18,23 @@ float action[7]; //an array to store incoming data from python
 float Bx;
 float By;
 float Bz;
+float alpha;
+float gamma;
+float rolling_frequency;
+float psi;
+double acoustic_frequency;
+
+int phase = 0; 
+
 float Bx_roll;
 float By_roll;
 float Bz_roll;
-float alpha;
-float gamma;
 
-float psi;
 float BxPer;
 float ByPer;
 float BzPer;
 float c; 
 
-float rolling_frequency;
 
 //other
 float tim;
@@ -38,6 +42,7 @@ float t;
 float omega;
 float amplitude;
 float direct;
+
 
 
 
@@ -77,6 +82,12 @@ const int Coil6_PWML = 13;
 const int Coil6_ENR = 28;
 const int Coil6_ENL = 29;
 
+
+//AD9850 Acoustic Module
+const int W_CLK_PIN = 18;
+const int FQ_UD_PIN = 19;
+const int DATA_PIN = 20;
+const int RESET_PIN = 21;
 
 
   
@@ -137,7 +148,8 @@ void setup()
   pinMode(Coil6_ENR, OUTPUT);  
   pinMode(Coil6_ENL, OUTPUT);
   
-
+  DDS.begin(W_CLK_PIN, FQ_UD_PIN, DATA_PIN, RESET_PIN);
+  DDS.calibrate(124999000);
 
 }
 
@@ -288,6 +300,7 @@ void set6(float DC6){
 
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -371,11 +384,17 @@ void loop()
    set4(-Bx);
    set5(Bz);
    set6(-Bz);
-     
-        
-      
+
+
+   if (acoustic_frequency != 0){
+      DDS.setfreq(acoustic_frequency, phase);
+      DDS.up();
+   }
    
-      
-    
+   else{
+      DDS.down();
+   }
+   //while(1);
+     
     }
   
