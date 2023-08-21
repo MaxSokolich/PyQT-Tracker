@@ -259,9 +259,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.freq !=0:
                 self.freq = self.ui.magneticfrequencydial.value()
             
-          
-
-
+        
             self.apply_actions(True)
         
         #save the current action outputs to a list to be saved 
@@ -545,6 +543,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.tbprint("End Record, Data Saved")
                 self.savedata()"""
 
+
     def recordfunction(self):
         if self.cap is not None:
             if self.ui.recordbutton.isChecked():
@@ -667,7 +666,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
                     #zero arduino commands
                     self.arduino.send(0,0,0,0,0,0,0)
-     
+
+                    self.ui.applyacousticbutton.setChecked(False)
+                    self.ui.led.setStyleSheet("\n"
+                    "                background-color: rgb(255, 0, 0);\n"
+                    "                border-style: outset;\n"
+                    "                border-width: 3px;\n"
+                    "                border-radius: 12px;\n"
+                    "                border-color: rgb(255, 0, 0);\n"
+                    "         \n"
+                    "                padding: 6px;")
+                    
+            
         
             
 
