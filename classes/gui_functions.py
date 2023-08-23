@@ -81,7 +81,7 @@ class MainWindow(QtWidgets.QMainWindow):
             os.makedirs(self.new_dir_path)
 
 
-        
+        self.zoom_x, self.zoom_y, self.zoomscale, self.scrollamount = 1,0,0,0
         self.result = None
         self.currentframe = None
 
@@ -423,7 +423,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         y_1 = int(newy - crop_length  / 2)
                         w = crop_length
                         h = crop_length
-
+                        print(newx, newy)
                         #reset algorithm nodes
                         self.tracker.control_robot.reset()
 
@@ -466,9 +466,49 @@ class MainWindow(QtWidgets.QMainWindow):
                     if event.buttons() == QtCore.Qt.RightButton: 
                         self.drawing = False
                         
-                    
-        return super().eventFilter(object, event)
+                elif event.type() ==  QtCore.QEvent.Wheel:
+                    self.zoom_x, self.zoom_y = self.convert_coords(event.pos())
+                    print(self.zoom_x, self.zoom_y)
+
+                    steps = event.angleDelta().y() 
+            
+                    self.scrollamount += (steps and steps // abs(steps))
+                    self.scrollamount = max(min(self.scrollamount,20),1)
+                    self.zoomscale = self.scrollamount
+
         
+        return super().eventFilter(object, event)
+    
+    def handle_zoom(self, frame):
+        try:
+            if self.zoomscale > 1:
+                x = self.zoom_x
+                y = self.zoom_y
+                w = 300
+                h = 300
+                coord = (w, h)
+                angle = 0
+
+                cv2.rectangle(frame, (x-w, y-h), (x + w, y + h), (0, 0, 0), 1)
+
+                # step 1: cropped a frame around the coord you wont to zoom into
+                zoomedframe = frame[y-w:y+w , x-h:x+h] 
+
+                # step 2: zoom into the zoomed frame a certain zoom amount
+                
+                rot_mat = cv2.getRotationMatrix2D((w,h), angle, self.zoomscale)
+                zoomedframe = cv2.warpAffine(zoomedframe, rot_mat, zoomedframe.shape[1::-1], flags=cv2.INTER_LINEAR)
+
+                #step 3: replace the original cropped frame with the new zoomed in cropped frame
+                frame[y-w:y+w , x-h:x+h] = zoomedframe
+        except Exception:
+            pass
+
+        
+        return frame
+            
+                
+          
 
     def update_image(self, frame):
         """Updates the image_label with a new opencv image"""
@@ -500,6 +540,8 @@ class MainWindow(QtWidgets.QMainWindow):
                         color = (255, 255, 255))
             self.result.write(frame)
         
+
+        frame = self.handle_zoom(frame)
 
         rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
@@ -719,13 +761,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     "         \n"
                     "                padding: 6px;")
 
-
-
-                    
-
-                    
-            
-        
             
 
     def showmask(self):
@@ -737,8 +772,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.ui.maskbutton.setText("Mask")
                 self.tracker.mask_flag = False
 
-
-    
          
     def get_objective(self):
         if self.tracker is not None:
@@ -998,14 +1031,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         #self.ui.tabWidget.setGeometry(QtCore.QRect(12,  6,  260 ,     self.tabheight))
 
-    def wheelEvent(self, event: QWheelEvent):
-        # Get the scroll amount (event.angleDelta().y()) and the scroll orientation (event.angleDelta().x())
-        if self.tracker is not None:
-            scroll_amount = event.angleDelta().y()
-            if scroll_amount > 1:
-                del self.tracker.robot_list[:]
-                del self.magnetic_field_list[:]
-                self.apply_actions(False)
+    
 
     def closeEvent(self, event):
         """
