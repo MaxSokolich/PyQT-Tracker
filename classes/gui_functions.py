@@ -480,30 +480,55 @@ class MainWindow(QtWidgets.QMainWindow):
         
         return super().eventFilter(object, event)
     
+
+
     def handle_zoom(self, frame):
-        try:
-            if self.zoomscale > 1:
-                x = self.zoom_x
-                y = self.zoom_y
-                w = 300
-                h = 300
-                coord = (w, h)
-                angle = 0
+        
+        if self.zoomscale > 1:
+            x = self.zoom_x
+            y = self.zoom_y
+            w = 300
+            h = 300
+            angle = 0
+            
 
-                cv2.rectangle(frame, (x-w, y-h), (x + w, y + h), (0, 0, 0), 1)
+            # step 1: cropped a frame around the coord you wont to zoom into
+            if y-w < 0 and x-h < 0:
+                zoomedframe = frame[0:y+h , 0:x+w]
+                cv2.rectangle(frame, (0, 0), (x + w, y + h), (0, 255, 0), 2)
+                warpx = x
+                warpy = y
+            elif x-w < 0:
+                zoomedframe = frame[y-h:y+h , 0:x+w] 
+                cv2.rectangle(frame, (0, y-h), (x + w, y + h), (0, 255, 0), 2)
+                warpx = x
+                warpy = h
+            elif y-h < 0:
+                zoomedframe = frame[0:y+h , x-w:x+w]
+                cv2.rectangle(frame, (x-w, 0), (x + w, y + h), (0, 255, 0), 2)
+                warpx = w
+                warpy = y
+            else:
+                zoomedframe = frame[y-h:y+h , x-w:x+w] 
+                cv2.rectangle(frame, (x-w, y-h), (x + w, y + h), (0, 255, 0), 2)
+                warpx = w
+                warpy = h   
+            
 
-                # step 1: cropped a frame around the coord you wont to zoom into
-                zoomedframe = frame[y-w:y+w , x-h:x+h] 
+            # step 2: zoom into the zoomed frame a certain zoom amount
+            rot_mat = cv2.getRotationMatrix2D((warpx,warpy), angle, self.zoomscale)
+            zoomedframe = cv2.warpAffine(zoomedframe, rot_mat, zoomedframe.shape[1::-1], flags=cv2.INTER_LINEAR)
 
-                # step 2: zoom into the zoomed frame a certain zoom amount
-                
-                rot_mat = cv2.getRotationMatrix2D((w,h), angle, self.zoomscale)
-                zoomedframe = cv2.warpAffine(zoomedframe, rot_mat, zoomedframe.shape[1::-1], flags=cv2.INTER_LINEAR)
+            #step 3: replace the original cropped frame with the new zoomed in cropped frame
+            if y-h < 0 and x-w < 0:
+                frame[0:y+h , 0:x+w] =  zoomedframe
+            elif x-w < 0:
+                frame[y-h:y+h , 0:x+w] =  zoomedframe
+            elif y-h < 0:
+                frame[0:y+h , x-w:x+w] =  zoomedframe
+            else:
+                frame[y-h:y+h , x-w:x+w] =  zoomedframe
 
-                #step 3: replace the original cropped frame with the new zoomed in cropped frame
-                frame[y-w:y+w , x-h:x+h] = zoomedframe
-        except Exception:
-            pass
 
         
         return frame
@@ -526,11 +551,10 @@ class MainWindow(QtWidgets.QMainWindow):
             fontScale=1, 
             thickness=4,
             color = (255, 255, 255),
-        
         )
+        frame = self.handle_zoom(frame)
     
         self.currentframe = frame
-
         if self.result is not None:
             cv2.putText(frame,"frame: " + str(self.tracker.framenum),
                         (int(self.video_width / 80),
@@ -542,7 +566,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.result.write(frame)
         
 
-        frame = self.handle_zoom(frame)
+        
 
         rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
