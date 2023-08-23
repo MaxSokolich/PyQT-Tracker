@@ -8,7 +8,7 @@ from classes.gui_functions import MainWindow
 # Convert blur into z position
 # put RRT trajectory in seperate thead
 # need to update joystic class based on new action output
-# add scale bar
+
 
 
 

@@ -248,7 +248,8 @@ class MainWindow(QtWidgets.QMainWindow):
            
              
 
-
+            self.gamma = np.radians(self.ui.gammadial.value())
+            self.psi = np.radians(self.ui.psidial.value())
             if self.ui.orientradio.isChecked():
                 self.freq = 0
             else:
@@ -264,12 +265,11 @@ class MainWindow(QtWidgets.QMainWindow):
             
             if self.freq !=0:
                 self.freq = self.ui.magneticfrequencydial.value()
+            self.gamma = np.radians(self.ui.gammadial.value())
+            self.psi = np.radians(self.ui.psidial.value())
             
         
         #save the current action outputs to a list to be saved 
-        self.gamma = np.radians(self.ui.gammadial.value())
-        self.psi = np.radians(self.ui.psidial.value())
-
         self.actions = [self.tracker.framenum,self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, 
                         self.acoustic_frequency, self.sensorBx, self.sensorBy, self.sensorBz] 
         
