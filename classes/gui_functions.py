@@ -455,25 +455,26 @@ class MainWindow(QtWidgets.QMainWindow):
                     
                             
                 elif event.type() == QtCore.QEvent.MouseMove:
+                    self.zoom_x, self.zoom_y = self.convert_coords(event.pos())
+
                     if event.buttons() == QtCore.Qt.RightButton:
                         if self.drawing == True:
                             if len(self.tracker.robot_list)>0:
                                 newx, newy = self.convert_coords(event.pos())
                                 
                                 self.tracker.robot_list[-1].add_trajectory([newx, newy])
+                                
                 
                 elif event.type() == QtCore.QEvent.MouseButtonRelease:
                     if event.buttons() == QtCore.Qt.RightButton: 
                         self.drawing = False
                         
-                elif event.type() ==  QtCore.QEvent.Wheel:
-                    self.zoom_x, self.zoom_y = self.convert_coords(event.pos())
-                    print(self.zoom_x, self.zoom_y)
-
+                if event.type() ==  QtCore.QEvent.Wheel:
                     steps = event.angleDelta().y() 
-            
-                    self.scrollamount += (steps and steps // abs(steps))
-                    self.scrollamount = max(min(self.scrollamount,20),1)
+                    
+                    self.scrollamount += (steps and steps / abs(steps/0.1))
+                    self.scrollamount = max(min(self.scrollamount,20.0),1.0)
+          
                     self.zoomscale = self.scrollamount
 
         

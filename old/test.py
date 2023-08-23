@@ -29,7 +29,7 @@ w = 300
 h = 300
 coord = (w, h)
 angle=0
-zoom = 3
+zoom = 1.5
 
 
 cv2.rectangle(frame, (x-w, y-h), (x + w, y + h), (0, 0, 0), 1)
