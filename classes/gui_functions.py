@@ -84,8 +84,11 @@ class MainWindow(QtWidgets.QMainWindow):
         
         self.result = None
         self.currentframe = None
+
         self.videopath = 0
-        self.cap = None
+        self.setFile()
+        self.tracker = None
+        
         self.drawing = False
         self.acoustic_frequency = 0
         self.magnetic_field_list = []
@@ -269,6 +272,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.actions = [self.tracker.framenum,self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, 
                         self.acoustic_frequency, self.sensorBx, self.sensorBy, self.sensorBz] 
+        
         self.magnetic_field_list.append(self.actions)
         self.apply_actions(True)
 
@@ -288,7 +292,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         #zero output
         if status == False:
-            self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi = 0,0,0,0,0,0,0
+            self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency = 0,0,0,0,0,0,0,0
 
         #send arduino commands
         self.arduino.send(self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency)
@@ -308,7 +312,7 @@ class MainWindow(QtWidgets.QMainWindow):
     
     
     def toggle_autoacoustic(self):
-        if self.cap is not None:
+        if self.tracker is not None:
             if self.ui.autoacousticbutton.isChecked():
                 self.tracker.autoacousticstatus = True
                 self.ui.led.setStyleSheet("\n"
@@ -385,7 +389,7 @@ class MainWindow(QtWidgets.QMainWindow):
         maskblur = self.ui.maskblurbox.value()
         crop_length = self.ui.croplengthbox.value()
 
-        if self.cap is not None: 
+        if self.tracker is not None: 
             self.tracker.memory = memory
             self.tracker.RRTtreesize = RRTtreesize
             self.tracker.arrivalthresh = arrivalthresh
@@ -399,26 +403,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.rollingfrequencylabel.setText("Freq: {}".format(magneticfreq))
         
   
-        
-
-
-    def selectFile(self):
-        options = QtWidgets.QFileDialog.Options()
-        options |= QtWidgets.QFileDialog.ReadOnly
-        file_path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*);;Text Files (*.txt);;Python Files (*.py)", options=options)
-
-        if file_path:
-            self.videopath = file_path
-            file_info = QtCore.QFileInfo(file_path)
-            file_name = file_info.fileName()
-            print(file_path, file_name)
-            self.ui.choosevideobutton.setText(file_name)
-            self.tbprint(file_name)
-        else:
-            self.videopath = 0
-            self.ui.choosevideobutton.setText("Live")
-            self.tbprint("Using Video Camera")
-
 
     def convert_coords(self,pos):
         #need a way to convert the video position of mouse to the actually coordinate in the window
@@ -428,7 +412,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def eventFilter(self, object, event):
         if object is self.ui.VideoFeedLabel: 
-            if self.cap is not None:
+            if self.tracker is not None:
                 if event.type() == QtCore.QEvent.MouseButtonPress:   
                     if event.buttons() == QtCore.Qt.LeftButton:
                         newx, newy = self.convert_coords(event.pos())
@@ -505,6 +489,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
     
         self.currentframe = frame
+
         if self.result is not None:
             cv2.putText(frame,"frame: " + str(self.tracker.framenum),
                         (int(self.video_width / 80),
@@ -538,6 +523,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 
        
         self.ui.VideoFeedLabel.setPixmap(qt_img)
+        
         
 
     
@@ -596,82 +582,99 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.result = None
                     self.tbprint("End Record, Data Saved")
                     self.savedata()
-                    
+    
+
+    def setFile(self):
+        if self.videopath == 0:
+            try:
+                self.cap  = EasyPySpin.VideoCapture(0)
+            except Exception:
+                self.cap  = cv2.VideoCapture(0) 
+                self.tbprint("No EasyPySpin Camera Available")
+            self.ui.pausebutton.hide()
+            self.ui.leftbutton.hide()
+            self.ui.rightbutton.hide()
+            self.ui.frameslider.hide()
+        else:
+            self.cap  = cv2.VideoCapture(self.videopath)
+            self.ui.pausebutton.show()
+            self.ui.leftbutton.show()
+            self.ui.rightbutton.show()
+        
+        self.video_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.video_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
+        self.tbprint("Width: {}  --  Height: {}  --  Fps: {}".format(self.video_width,self.video_height,self.videofps))
+
+        self.aspectratio = (self.video_width / self.video_height)
+
+        self.resize_widgets()        
+
+        if self.videopath == 0:
+            self.ui.robotsizeunitslabel.setText("um")
+            self.ui.robotvelocityunitslabel.setText("um/s")
+        else:
+            self.ui.robotsizeunitslabel.setText("px")
+            self.ui.robotvelocityunitslabel.setText("px/s")
+            self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            self.ui.frameslider.setGeometry(QtCore.QRect(10, self.display_height+12, self.display_width, 20))
+            self.ui.frameslider.setMaximum(self.totalnumframes)
+            self.ui.frameslider.show()
+        
+        if self.ui.recordbutton.isChecked():
+            self.recordfunction()
+
+        #if not self.ui.trackbutton.isChecked(): #clear the pixmap
+        self.ui.VideoFeedLabel.setPixmap(QtGui.QPixmap())
+        
+
+
+    def selectFile(self):
+        options = QtWidgets.QFileDialog.Options()
+        options |= QtWidgets.QFileDialog.ReadOnly
+        file_path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*);;Text Files (*.txt);;Python Files (*.py)", options=options)
+
+        if file_path:
+            self.videopath = file_path
+            file_info = QtCore.QFileInfo(file_path)
+            file_name = file_info.fileName()
+            print(file_path, file_name)
+            self.ui.choosevideobutton.setText(file_name)
+            self.tbprint(file_name)
+        else:
+            self.videopath = 0
+            self.ui.choosevideobutton.setText("Live")
+            self.tbprint("Using Video Camera")
+        
+        self.setFile()
+        
+    
+
+        
+
 
     def track(self):
         if self.videopath is not None:
-                        
             if self.ui.trackbutton.isChecked():
-
-                if self.videopath == 0:
-                    try:
-                        self.cap  = EasyPySpin.VideoCapture(0)
-                    except Exception:
-                        self.cap  = cv2.VideoCapture(0) 
-                        self.tbprint("No EasyPySpin Camera Available")
-        
-                else:
-                    self.cap  = cv2.VideoCapture(self.videopath)
-                    self.ui.pausebutton.show()
-                    self.ui.leftbutton.show()
-                    self.ui.rightbutton.show()
+                    
+                self.setFile()
                 
-    
-                self.video_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-                self.video_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-                self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
-                self.tbprint("Width: {}  --  Height: {}  --  Fps: {}".format(self.video_width,self.video_height,self.videofps))
-
-                self.aspectratio = (self.video_width / self.video_height)
-
-                self.resize_widgets()        
-                
-                self.ui.VideoFeedLabel.setStyleSheet("border:2px solid rgb(0, 255, 0); ")
-                self.ui.CroppedVideoFeedLabel.setStyleSheet("border:2px solid rgb(0, 255, 0); ")
-        
-                
-                if self.videopath != 0:
-                    self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
-                    self.ui.frameslider.setGeometry(QtCore.QRect(10, self.display_height+12, self.display_width, 20))
-                    self.ui.frameslider.setMaximum(self.totalnumframes)
-                    self.ui.frameslider.show()
-            
                 self.tracker = VideoThread(self)
                 self.tracker.change_pixmap_signal.connect(self.update_image)
                 self.tracker.cropped_frame_signal.connect(self.update_croppedimage)
                 self.tracker.actions_signal.connect(self.update_actions)
                 self.tracker.start()
-                
+
                 self.ui.trackbutton.setText("Stop")
-
-                if self.videopath == 0:
-                    self.ui.robotsizeunitslabel.setText("um")
-                    self.ui.robotvelocityunitslabel.setText("um/s")
-                    
-                else:
-                    self.ui.robotsizeunitslabel.setText("px")
-                    self.ui.robotvelocityunitslabel.setText("px/s")
-                    
-                    
-                if self.videopath == 0:
-                    self.ui.pausebutton.hide()
-                    self.ui.leftbutton.hide()
-                    self.ui.rightbutton.hide()
-                    self.ui.frameslider.hide()
-                
-
-                #uncomment for immediate record
-                #self.ui.recordbutton.setChecked(True)
-                #self.recordfunction()
-                
+                self.ui.VideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(0, 255, 0); ")
+                self.ui.CroppedVideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(0, 255, 0); ")
         
                 
             else:
                 self.ui.VideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
                 self.ui.CroppedVideoFeedLabel.setStyleSheet("background-color: rgb(0,0,0); border:2px solid rgb(255, 0, 0); ")
         
-                
-                if self.cap is not None:
+                if self.tracker is not None:
                     self.ui.trackbutton.setText("Track")
                     self.tracker.stop()
                     
@@ -692,7 +695,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.ui.maskbutton.setText("Mask")
                     self.ui.maskbutton.setChecked(False)
 
-                    
                     #also reset pause button
                     self.ui.pausebutton.setChecked(False)
                     self.ui.pausebutton.setText("Pause")
@@ -704,6 +706,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
                     #zero arduino commands
                     self.apply_actions(False)
+                    del self.tracker.robot_list[:]
+                    del self.magnetic_field_list[:]
 
                     self.ui.applyacousticbutton.setChecked(False)
                     self.ui.led.setStyleSheet("\n"
@@ -714,13 +718,18 @@ class MainWindow(QtWidgets.QMainWindow):
                     "                border-color: rgb(255, 0, 0);\n"
                     "         \n"
                     "                padding: 6px;")
+
+
+
+                    
+
                     
             
         
             
 
     def showmask(self):
-        if self.cap is not None:
+        if self.tracker is not None:
             if self.ui.maskbutton.isChecked():
                 self.ui.maskbutton.setText("Original")
                 self.tracker.mask_flag = True
@@ -732,19 +741,19 @@ class MainWindow(QtWidgets.QMainWindow):
     
          
     def get_objective(self):
-        if self.cap is not None:
+        if self.tracker is not None:
             self.tracker.objective = self.ui.objectivebox.value()
 
     def get_exposure(self):
-        if self.cap is not None:
+        if self.tracker is not None:
             self.tracker.exposure = self.ui.exposurebox.value()
             
     def checkorient(self):
-        if self.cap is not None:
+        if self.tracker is not None:
             self.tracker.orientstatus = self.ui.orientradio.isChecked()
 
     def invertmaskcommand(self):
-        if self.cap is not None:
+        if self.tracker is not None:
             self.ui.maskinvert_checkBox.setText("Invert Mask: " + str(self.ui.maskinvert_checkBox.isChecked()))
             self.tracker.maskinvert = self.ui.maskinvert_checkBox.isChecked()
 
@@ -779,7 +788,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         with pd.ExcelWriter(file_path) as writer:
             
-            if self.cap is not None: 
+            if self.tracker is not None: 
                 if len(self.tracker.robot_list)>0:      
         
                     for idx, mydict in enumerate(robot_dictionary, start=0):
@@ -991,7 +1000,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def wheelEvent(self, event: QWheelEvent):
         # Get the scroll amount (event.angleDelta().y()) and the scroll orientation (event.angleDelta().x())
-        if self.cap is not None:
+        if self.tracker is not None:
             scroll_amount = event.angleDelta().y()
             if scroll_amount > 1:
                 del self.tracker.robot_list[:]
@@ -1003,7 +1012,7 @@ class MainWindow(QtWidgets.QMainWindow):
         called when x button is pressed
         """
         
-        if self.cap is not None:
+        if self.tracker is not None:
             self.tracker.stop()
         self.simulator.stop()
         self.apply_actions(False)

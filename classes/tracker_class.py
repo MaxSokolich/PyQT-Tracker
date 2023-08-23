@@ -204,8 +204,8 @@ class VideoThread(QThread):
         if len(self.robot_list) > 0 and croppedmask is not None:
 
             color = plt.cm.rainbow(np.linspace(1, 0, len(self.robot_list))) * 255
-            for (bot, botcolor) in zip(self.robot_list, color):
-
+            for (botnum, botcolor) in zip(range(len(self.robot_list)), color):
+                    bot  = self.robot_list[botnum]
                     posx = bot.position_list[-1][0]
                     posy = bot.position_list[-1][1]
                     x1, y1, w, h = bot.cropped_frame[-1]
@@ -213,6 +213,7 @@ class VideoThread(QThread):
 
                     cv2.circle(displayframe,(int(posx), int(posy)),6,(botcolor),-1,)
                     cv2.rectangle(displayframe, (x1, y1), (x1 + w, y1 + h), (botcolor), 4)
+                    cv2.putText(displayframe,str(botnum+1),(x1 + w,y1 + h),cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, thickness=4,color = (255, 255, 255))
                     
                     pts = np.array(bot.position_list, np.int32)
                     cv2.polylines(displayframe, [pts], False, botcolor, 4)
