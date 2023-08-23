@@ -7,7 +7,7 @@ from classes.gui_functions import MainWindow
 
 # Convert blur into z position
 # put RRT trajectory in seperate thead
-# fix zoom feature 
+
 
 
 if __name__ == "__main__":

@@ -211,7 +211,7 @@ class VideoThread(QThread):
                     x1, y1, w, h = bot.cropped_frame[-1]
 
 
-                    cv2.circle(displayframe,(int(posx), int(posy)),6,(botcolor),-1,)
+                    #cv2.circle(displayframe,(int(posx), int(posy)),6,(botcolor),-1,)
                     cv2.rectangle(displayframe, (x1, y1), (x1 + w, y1 + h), (botcolor), 4)
                     cv2.putText(displayframe,str(botnum+1),(x1 + w,y1 + h),cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, thickness=4,color = (255, 255, 255))
                     
