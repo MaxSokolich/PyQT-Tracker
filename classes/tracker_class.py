@@ -304,7 +304,7 @@ class VideoThread(QThread):
                     actions = [0,0,0,0,0,0,0,0]
                     stopped = True    
                     
-        
+              
                 #step 3: emit croppedframe, frame from this thread to the main thread
                 self.cropped_frame_signal.emit(croppedmask)
                 self.change_pixmap_signal.emit(frame)

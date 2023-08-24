@@ -64,7 +64,7 @@ class algorithm:
             if self.node == len(robot_list[-1].trajectory):
                 #weve arrived
                 self.stopped = True
-                self.actions = [0,0,0,0,0,0,0,0]
+                self.Bx,self.By,self.Bz,self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency = 0,0,0,0,0,0,0,0
 
 
             #closed loop algorithm 
@@ -108,6 +108,7 @@ class algorithm:
   
         self.actions = [self.Bx,self.By,self.Bz,self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency]
         self.count += 1
+
     
         return frame, self.actions, self.stopped
 

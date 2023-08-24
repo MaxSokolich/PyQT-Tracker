@@ -238,7 +238,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
     def update_actions(self, actions, stopped):
-        #alpha argument is signal from tracker_class: actions_signal
         #output actions if control status is on
         if self.ui.autoacousticbutton.isChecked():
             self.acoustic_frequency  = actions[-1]   
@@ -259,7 +258,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency = 0,0,0,0,0,0,0,0
 
             
-        
+        #if joystick is on use the joystick though
         elif self.joystick_status == True:
             self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, _ = self.controller_actions.run(self.joystick)
             
