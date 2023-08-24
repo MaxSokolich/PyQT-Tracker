@@ -58,4 +58,4 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 # To save the image:
-cv2.imwrite("final_image.jpg", final_result)
+
