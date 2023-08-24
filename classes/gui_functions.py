@@ -60,7 +60,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.window_width = screen.width()
         self.window_height = screen.height()
         self.resize(self.window_width, self.window_height)
-        self.display_width = self.window_width-265# self.ui.frameGeometry().width()
+        self.display_width = self.window_width# self.ui.frameGeometry().width()
 
         self.displayheightratio = 0.79
         self.framesliderheightratio = 0.031
@@ -423,7 +423,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         y_1 = int(newy - crop_length  / 2)
                         w = crop_length
                         h = crop_length
-                        print(newx, newy)
+                     
                         #reset algorithm nodes
                         self.tracker.control_robot.reset()
 
@@ -472,64 +472,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 if event.type() ==  QtCore.QEvent.Wheel:
                     steps = event.angleDelta().y() 
                     
-                    self.scrollamounty += (steps and steps / abs(steps/0.1))
-                    self.scrollamounty = max(min(self.scrollamount,20.0),1.0)
-                    self.zoomscale = self.scrollamounty
+                    self.scrollamount += (steps and steps / abs(steps/0.1))
+                    self.scrollamount = max(min(self.scrollamount,20.0),1.0)
+                    self.zoomscale = self.scrollamount
 
         
         return super().eventFilter(object, event)
-    
-
-
-    def handle_zoom(self, frame):
-        
-        if self.zoomscale > 1:
-            x = self.zoom_x
-            y = self.zoom_y
-            w = 200
-            h = 200
-            angle = 0
-            
-            # step 1: cropped a frame around the coord you wont to zoom into
-            if y-w < 0 and x-h < 0:
-                zoomedframe = frame[0:y+h , 0:x+w]
-                cv2.rectangle(frame, (0, 0), (x + w, y + h), (0, 255, 0), 2)
-                warpx = x
-                warpy = y
-            elif x-w < 0:
-                zoomedframe = frame[y-h:y+h , 0:x+w] 
-                cv2.rectangle(frame, (0, y-h), (x + w, y + h), (0, 255, 0), 2)
-                warpx = x
-                warpy = h
-            elif y-h < 0:
-                zoomedframe = frame[0:y+h , x-w:x+w]
-                cv2.rectangle(frame, (x-w, 0), (x + w, y + h), (0, 255, 0), 2)
-                warpx = w
-                warpy = y
-            else:
-                zoomedframe = frame[y-h:y+h , x-w:x+w] 
-                cv2.rectangle(frame, (x-w, y-h), (x + w, y + h), (0, 255, 0), 2)
-                warpx = w
-                warpy = h   
-            
-
-            # step 2: zoom into the zoomed frame a certain zoom amount
-            rot_mat = cv2.getRotationMatrix2D((warpx,warpy), angle, self.zoomscale)
-            zoomedframe = cv2.warpAffine(zoomedframe, rot_mat, zoomedframe.shape[1::-1], flags=cv2.INTER_LINEAR)
-
-            #step 3: replace the original cropped frame with the new zoomed in cropped frame
-            if y-h < 0 and x-w < 0:
-                frame[0:y+h , 0:x+w] =  zoomedframe
-            elif x-w < 0:
-                frame[y-h:y+h , 0:x+w] =  zoomedframe
-            elif y-h < 0:
-                frame[0:y+h , x-w:x+w] =  zoomedframe
-            else:
-                frame[y-h:y+h , x-w:x+w] =  zoomedframe
-
-
-        
-        return frame
             
                 
           
@@ -703,7 +651,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.videopath = file_path
             file_info = QtCore.QFileInfo(file_path)
             file_name = file_info.fileName()
-            print(file_path, file_name)
             self.ui.choosevideobutton.setText(file_name)
             self.tbprint(file_name)
         else:
@@ -1054,7 +1001,55 @@ class MainWindow(QtWidgets.QMainWindow):
 
         #self.ui.tabWidget.setGeometry(QtCore.QRect(12,  6,  260 ,     self.tabheight))
 
-    
+    def handle_zoom(self, frame):
+        
+        if self.zoomscale > 1:
+            x = self.zoom_x
+            y = self.zoom_y
+            w = 200
+            h = 200
+            angle = 0
+            
+            # step 1: cropped a frame around the coord you wont to zoom into
+            if y-w < 0 and x-h < 0:
+                zoomedframe = frame[0:y+h , 0:x+w]
+                cv2.rectangle(frame, (0, 0), (x + w, y + h), (0, 255, 0), 2)
+                warpx = x
+                warpy = y
+            elif x-w < 0:
+                zoomedframe = frame[y-h:y+h , 0:x+w] 
+                cv2.rectangle(frame, (0, y-h), (x + w, y + h), (0, 255, 0), 2)
+                warpx = x
+                warpy = h
+            elif y-h < 0:
+                zoomedframe = frame[0:y+h , x-w:x+w]
+                cv2.rectangle(frame, (x-w, 0), (x + w, y + h), (0, 255, 0), 2)
+                warpx = w
+                warpy = y
+            else:
+                zoomedframe = frame[y-h:y+h , x-w:x+w] 
+                cv2.rectangle(frame, (x-w, y-h), (x + w, y + h), (0, 255, 0), 2)
+                warpx = w
+                warpy = h   
+            
+
+            # step 2: zoom into the zoomed frame a certain zoom amount
+            rot_mat = cv2.getRotationMatrix2D((warpx,warpy), angle, self.zoomscale)
+            zoomedframe = cv2.warpAffine(zoomedframe, rot_mat, zoomedframe.shape[1::-1], flags=cv2.INTER_LINEAR)
+
+            #step 3: replace the original cropped frame with the new zoomed in cropped frame
+            if y-h < 0 and x-w < 0:
+                frame[0:y+h , 0:x+w] =  zoomedframe
+            elif x-w < 0:
+                frame[y-h:y+h , 0:x+w] =  zoomedframe
+            elif y-h < 0:
+                frame[0:y+h , x-w:x+w] =  zoomedframe
+            else:
+                frame[y-h:y+h , x-w:x+w] =  zoomedframe
+
+
+        
+        return frame
 
     def closeEvent(self, event):
         """
