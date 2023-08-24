@@ -204,15 +204,16 @@ class VideoThread(QThread):
         if len(self.robot_list) > 0 and croppedmask is not None:
 
             color = plt.cm.rainbow(np.linspace(1, 0, len(self.robot_list))) * 255
-            for (bot, botcolor) in zip(self.robot_list, color):
-
+            for (botnum, botcolor) in zip(range(len(self.robot_list)), color):
+                    bot  = self.robot_list[botnum]
                     posx = bot.position_list[-1][0]
                     posy = bot.position_list[-1][1]
                     x1, y1, w, h = bot.cropped_frame[-1]
 
 
-                    cv2.circle(displayframe,(int(posx), int(posy)),6,(botcolor),-1,)
+                    #cv2.circle(displayframe,(int(posx), int(posy)),6,(botcolor),-1,)
                     cv2.rectangle(displayframe, (x1, y1), (x1 + w, y1 + h), (botcolor), 4)
+                    cv2.putText(displayframe,str(botnum+1),(x1 + w,y1 + h),cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, thickness=4,color = (255, 255, 255))
                     
                     pts = np.array(bot.position_list, np.int32)
                     cv2.polylines(displayframe, [pts], False, botcolor, 4)
@@ -233,6 +234,31 @@ class VideoThread(QThread):
         else:
             croppedmask = np.zeros((310, 310, 3), dtype=np.uint8) 
         
+
+        cv2.putText(displayframe,"fps:"+str(int(self.fps.get_fps())),
+                    (int(self.width  / 80),int(self.height / 14)),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    fontScale=1, 
+                    thickness=4,
+                    color = (255, 255, 255))
+        
+        cv2.putText(displayframe,"100 um",
+            (int(self.width / 80),int(self.height / 30)),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            fontScale=1, 
+            thickness=4,
+            color = (255, 255, 255),
+          
+        )
+        cv2.line(
+            displayframe, 
+            (int(self.width / 8),int(self.height /40)),
+            (int(self.width / 8) + int(100 * (self.pix2metric)),int(self.height / 40)), 
+            (255, 255, 255), 
+            thickness=4
+        )
+        
+
         return displayframe, croppedmask, displaymask
 
 
@@ -272,22 +298,13 @@ class VideoThread(QThread):
                 frame, croppedmask, display_mask = self.display_hud(frame, croppedmask, max_cnt)
 
                 #step 2 control robot
-                if len(self.robot_list)>0 and len(self.robot_list[-1].trajectory) > 0:
-                    frame, actions, stopped = self.control_robot.run(frame, display_mask, self.robot_list, self.RRTtreesize, self.arrivalthresh, self.orientstatus)
+                if len(self.robot_list)>0:
+                    frame, actions, stopped = self.control_robot.run(frame, display_mask, self.robot_list, self.RRTtreesize, self.arrivalthresh, self.orientstatus, self.autoacousticstatus)
                 else:
-                    actions = [0,0,0,0]
+                    actions = [0,0,0,0,0,0,0,0]
                     stopped = True    
                     
         
-
-                cv2.putText(frame,"fps:"+str(int(self.fps.get_fps())),
-                    (int(self.width  / 80),int(self.height / 30)),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=1, 
-                    thickness=4,
-                    color = (255, 255, 255))
-                
-
                 #step 3: emit croppedframe, frame from this thread to the main thread
                 self.cropped_frame_signal.emit(croppedmask)
                 self.change_pixmap_signal.emit(frame)

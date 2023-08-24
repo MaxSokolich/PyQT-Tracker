@@ -175,7 +175,7 @@ class HelmholtzSimulator(FigureCanvas):
 
 
     def start(self):
-       self.timer.start(150)# Update plot every 10 ms
+       self.timer.start(75)# Update plot every 10 ms
 
     def zero(self):
         self.ax.clear()

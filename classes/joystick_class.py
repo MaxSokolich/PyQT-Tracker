@@ -13,8 +13,8 @@ class Mac_Controller:
         #initlize actions actions
         self.Bx, self.By, self.Bz = 0,0,0
         self.Mx, self.My, self.Mz = 0,0,0
-        self.alpha, self.gamma, self.freq = 0,0,0
-        self.acoustic_status = 0
+        self.alpha, self.gamma, self.freq, self.psi = 0,0,0,0
+        self.acoustic_frequency = 0
 
 
     def deadzone(self, value):
@@ -87,7 +87,7 @@ class Mac_Controller:
                     #return True
                     pass
                 if button == 0: #X
-                    self.acoustic_status = 1
+                    self.acoustic_frequency = 1
                 if button == 2: #square
                     pass
                 if button == 3: #triangle
@@ -115,14 +115,16 @@ class Mac_Controller:
                 self.alpha = 0 
                 self.gamma = 0
                 self.freq = 0
-                self.acoustic_status = 0
+                self.acoustic_frequency = 0
         
         self.actions = [self.Bx, 
                 self.By,
                 self.Bz,
                 self.alpha,
+                self.gamma,
                 self.freq,
-                self.acoustic_status]
+                self.psi,
+                self.acoustic_frequency]
 
         return self.actions
            
@@ -139,7 +141,7 @@ class Windows_Controller:
         #initlize actions actions
         self.Bx, self.By, self.Bz = 0,0,0
         self.Mx, self.My, self.Mz = 0,0,0
-        self.alpha, self.gamma, self.freq = 0,0,0
+        self.alpha, self.gamma, self.freq,self.psi = 0,0,0,0
         self.acoustic_status = 0
 
 
@@ -241,14 +243,16 @@ class Windows_Controller:
                 self.alpha = 0 
                 self.gamma = 0
                 self.freq = 0
-                self.acoustic_status = 0
+                self.acoustic_frequency = 0
         
         self.actions = [self.Bx, 
                 self.By,
                 self.Bz,
                 self.alpha,
+                self.gamma,
                 self.freq,
-                self.acoustic_status]
+                self.psi,
+                self.acoustic_frequency]
 
         return self.actions
 
@@ -263,12 +267,10 @@ class Linux_Controller:
         #initlize actions actions
         self.Bx, self.By, self.Bz = 0,0,0
         self.Mx, self.My, self.Mz = 0,0,0
-        self.alpha, self.gamma, self.freq = 0,0,0
+        self.alpha, self.gamma, self.freq, self.psi = 0,0,0,0
         self.acoustic_status = 0
 
      
-
-
     def deadzone(self, value):
         """
         accepts a value [0,1] and if its less than .2 make it zero otherwise use the value. limits joystick noise
@@ -380,8 +382,10 @@ class Linux_Controller:
                 self.By,
                 self.Bz,
                 self.alpha,
+                self.gamma,
                 self.freq,
-                self.acoustic_status]
+                self.psi,
+                self.acoustic_frequency]
 
         return self.actions
             
