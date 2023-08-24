@@ -7,6 +7,7 @@ from classes.gui_functions import MainWindow
 
 # Convert blur into z position
 # put RRT trajectory in seperate thead
+# ideally refactor the actions output function, not sure the best way to do it though
 
 
 

@@ -246,7 +246,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, _  = actions    
            
              
-
             self.gamma = np.radians(self.ui.gammadial.value())
             self.psi = np.radians(self.ui.psidial.value())
             if self.ui.orientradio.isChecked():
@@ -255,7 +254,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.freq = self.ui.magneticfrequencydial.value()
 
             if stopped == True:
-                self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency = 0,0,0,0,0,0,0,0
+                self.apply_actions(False)
 
             
         #if joystick is on use the joystick though
@@ -1031,7 +1030,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 warpx = w
                 warpy = h   
             
-
             # step 2: zoom into the zoomed frame a certain zoom amount
             rot_mat = cv2.getRotationMatrix2D((warpx,warpy), angle, self.zoomscale)
             zoomedframe = cv2.warpAffine(zoomedframe, rot_mat, zoomedframe.shape[1::-1], flags=cv2.INTER_LINEAR)
