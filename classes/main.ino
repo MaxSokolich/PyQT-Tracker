@@ -26,9 +26,14 @@ double acoustic_frequency;
 
 int phase = 0; 
 
+//other field vals
 float Bx_roll;
 float By_roll;
 float Bz_roll;
+
+float Bx_uniform;
+float By_uniform;
+float Bz_uniform;
 
 float BxPer;
 float ByPer;
@@ -36,7 +41,7 @@ float BzPer;
 float c; 
 
 
-//other
+//other constants
 float tim;
 float t;
 float omega;
@@ -315,12 +320,14 @@ void loop()
     }
    
    //NEW LOGIC
-
-   
+   Bx_uniform = action[0];
+   By_uniform = action[1];
+   Bz_uniform = action[2];   
    alpha = action[3];
    gamma = action[4];
    rolling_frequency = action[5]; 
    psi = action[6]; 
+   acoustic_frequency = action[7];
    omega = 2*PI*rolling_frequency;
    
    tim = micros() % 7812500;
@@ -359,9 +366,9 @@ void loop()
       
       }
    //need to add unform field with rotating field and normalize
-   Bx = (action[0] + Bx_roll);
-   By = (action[1] + By_roll);
-   Bz = (action[2] + Bz_roll); 
+   Bx = (Bx_uniform + Bx_roll);
+   By = (By_uniform + By_roll);
+   Bz = (Bz_uniform + Bz_roll); 
 
 
    // condition to prevent divide by zero error when total Bx, By, Bz are off aka zeroed
@@ -387,10 +394,9 @@ void loop()
 
 
    if (acoustic_frequency != 0){
-      DDS.setfreq(acoustic_frequency, phase);
       DDS.up();
+      DDS.setfreq(acoustic_frequency, phase);
    }
-   
    else{
       DDS.down();
    }
