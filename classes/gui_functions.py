@@ -107,7 +107,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #connect to arduino
         if "mac" in platform.platform():
             self.tbprint("Detected OS: macos")
-            PORT = "/dev/cu.usbmodem2101"
+            PORT = "/dev/cu.usbmodem11401"
             self.controller_actions = Mac_Controller()
         elif "Linux" in platform.platform():
             self.tbprint("Detected OS: Linux")
@@ -346,6 +346,7 @@ class MainWindow(QtWidgets.QMainWindow):
             #self.tbprint("Control On: {} Hz".format(self.acoustic_frequency))
             self.acoustic_frequency = self.ui.acousticfreq_spinBox.value()
             #self.acoustic_module.start(self.acoustic_frequency, 0)
+            self.apply_actions(True)
             self.ui.led.setStyleSheet("\n"
 "                background-color: rgb(0, 255, 0);\n"
 "                border-style: outset;\n"
@@ -368,6 +369,7 @@ class MainWindow(QtWidgets.QMainWindow):
 "                border-color: rgb(255, 0, 0);\n"
 "         \n"
 "                padding: 6px;")
+            self.apply_actions(False)
        
         
 

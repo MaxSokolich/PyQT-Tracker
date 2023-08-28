@@ -55,7 +55,7 @@ class ArduinoHandler:
         By = round(By,3)
         Bz = round(Bz,3)
 
-        data = [float(Bx), float(By), float(Bz), float(alpha), float(gamma), float(freq),float(psi), int(acoustic_freq)]
+        data = [float(Bx), float(By), float(Bz), float(alpha), float(gamma), float(freq),float(psi), float(acoustic_freq)]
         if self.conn is None:
             #self.printer("Connection not initialized..."+ str(data))  
             #self.printer("No Connection:  "+ "Bx: {},    By: {},    Bz: {},    alpha: {},    gamma: {},    freq: {},    psi: {}".format(Bx,By,Bz,alpha,gamma,freq,psi)) 

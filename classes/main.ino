@@ -22,7 +22,7 @@ float alpha;
 float gamma;
 float rolling_frequency;
 float psi;
-double acoustic_frequency;
+float acoustic_frequency = 10000;
 
 int phase = 0; 
 
@@ -89,15 +89,18 @@ const int Coil6_ENL = 29;
 
 
 //AD9850 Acoustic Module
-const int W_CLK_PIN = 18;
-const int FQ_UD_PIN = 19;
-const int DATA_PIN = 20;
-const int RESET_PIN = 21;
+const int W_CLK_PIN = 34;
+const int FQ_UD_PIN = 36;
+const int DATA_PIN = 38;
+const int RESET_PIN = 40;
 
 
   
 void setup()
 {
+  DDS.begin(W_CLK_PIN, FQ_UD_PIN, DATA_PIN, RESET_PIN);
+  DDS.calibrate(124999500);
+
   cli();
   TCCR0B = (TCCR0B & 0b11111000) | 0x02; //7.81250[kHz] pin 13,4
   TCCR1B = (TCCR1B & 0b11111000) | 0x01; //31.37255 [kHz] pin 12,11
@@ -153,9 +156,7 @@ void setup()
   pinMode(Coil6_ENR, OUTPUT);  
   pinMode(Coil6_ENL, OUTPUT);
   
-  DDS.begin(W_CLK_PIN, FQ_UD_PIN, DATA_PIN, RESET_PIN);
-  DDS.calibrate(124999000);
-
+  
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -313,11 +314,19 @@ void set6(float DC6){
 
 void loop()
 {
+
+
+  
+  
+ 
+
     if  (myTransfer.available()){ // THIS IF STATEMENT MIGHT MESS UP EVERYTHING BELOW
       
               uint16_t message = 0;
               message = myTransfer.rxObj(action,message);               
     }
+
+   
    
    //NEW LOGIC
    Bx_uniform = action[0];
@@ -328,6 +337,15 @@ void loop()
    rolling_frequency = action[5]; 
    psi = action[6]; 
    acoustic_frequency = action[7];
+
+   if (acoustic_frequency != 0){
+      DDS.setfreq(acoustic_frequency, phase);
+   }
+   else{
+      DDS.down();
+   }
+   
+   
    omega = 2*PI*rolling_frequency;
    
    tim = micros() % 7812500;
@@ -392,15 +410,8 @@ void loop()
    set5(Bz);
    set6(-Bz);
 
-
-   if (acoustic_frequency != 0){
-      DDS.up();
-      DDS.setfreq(acoustic_frequency, phase);
-   }
-   else{
-      DDS.down();
-   }
-   //while(1);
+   
+   
      
     }
   
