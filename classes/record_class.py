@@ -35,13 +35,13 @@ class RecordThread(QThread):
         # capture from web camx
         while self.recordstatus:
 
-            cv2.putText(self.parent.currentframe,"frame: "+ str(self.parent.tracker.framenum),
+            """cv2.putText(self.parent.currentframe,"frame: "+ str(self.parent.tracker.framenum),
                         (int(self.width / 8),
                         int(self.height / 30)),
                         cv2.FONT_HERSHEY_SIMPLEX,
                         fontScale=1, 
                         thickness=4,
-                        color = (255, 255, 255))
+                        color = (255, 255, 255))"""
             
             #frame = cv2.resize(frame, (self.width,self.height), interpolation = cv2.INTER_AREA)
             self.result.write(self.parent.currentframe)

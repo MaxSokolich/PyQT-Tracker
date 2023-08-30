@@ -38,7 +38,7 @@ from classes.simulation_class import HelmholtzSimulator
 from classes.projection_class import AxisProjection
 from classes.acoustic_class import AcousticClass
 from classes.halleffect_class import HallEffect
-#from classes.record_class import RecordThread
+from classes.record_class import RecordThread
 
 
 
@@ -86,7 +86,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.currentframe = None
 
         self.videopath = 0
-        self.setFile()
+        #self.setFile()
         self.tracker = None
         
         self.drawing = False
@@ -166,7 +166,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.croplengthbox.valueChanged.connect(self.get_slider_vals)
         self.ui.savedatabutton.clicked.connect(self.savedata)
         self.ui.VideoFeedLabel.installEventFilter(self)
-        self.ui.recordbutton.clicked.connect(self.recordfunction)
+        self.ui.recordbutton.clicked.connect(self.recordfunction_class)
         self.ui.controlbutton.clicked.connect(self.toggle_control_status)
         self.ui.memorybox.valueChanged.connect(self.get_slider_vals)
         self.ui.RRTtreesizebox.valueChanged.connect(self.get_slider_vals)
@@ -501,7 +501,7 @@ class MainWindow(QtWidgets.QMainWindow):
         frame = self.handle_zoom(frame)
     
         self.currentframe = frame
-        if self.result is not None:
+        """if self.result is not None:
             cv2.putText(frame,"frame: " + str(self.tracker.framenum),
                         (int(self.video_width / 80),
                          int(self.video_height / 9)),
@@ -509,7 +509,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         fontScale=1, 
                         thickness=4,
                         color = (255, 255, 255))
-            self.result.write(frame)
+            self.result.write(frame)"""
         
 
         
@@ -556,7 +556,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
          
-    """def recordfunction_class(self):
+    def recordfunction_class(self):
         if self.cap is not None:
             if self.ui.recordbutton.isChecked():
                 
@@ -572,7 +572,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.recorder.stop()
                 self.ui.recordbutton.setText("Record")
                 self.tbprint("End Record, Data Saved")
-                self.savedata()"""
+                self.savedata()
 
 
     def recordfunction(self):
@@ -634,8 +634,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.frameslider.setMaximum(self.totalnumframes)
             self.ui.frameslider.show()
         
-        if self.ui.recordbutton.isChecked():
-            self.recordfunction()
+        #if self.ui.recordbutton.isChecked():
+            #self.recordfunction()
 
         #if not self.ui.trackbutton.isChecked(): #clear the pixmap
         self.ui.VideoFeedLabel.setPixmap(QtGui.QPixmap())
