@@ -142,7 +142,7 @@ class Windows_Controller:
         self.Bx, self.By, self.Bz = 0,0,0
         self.Mx, self.My, self.Mz = 0,0,0
         self.alpha, self.gamma, self.freq,self.psi = 0,0,0,0
-        self.acoustic_status = 0
+        self.acoustic_frequency = 0
 
 
     def deadzone(self, value):
@@ -268,7 +268,7 @@ class Linux_Controller:
         self.Bx, self.By, self.Bz = 0,0,0
         self.Mx, self.My, self.Mz = 0,0,0
         self.alpha, self.gamma, self.freq, self.psi = 0,0,0,0
-        self.acoustic_status = 0
+        self.acoustic_frequency = 0
 
      
     def deadzone(self, value):
