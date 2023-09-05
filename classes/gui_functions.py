@@ -481,7 +481,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if event.type() ==  QtCore.QEvent.Wheel:
                     steps = event.angleDelta().y() 
                     
-                    self.scrollamount += (steps and steps / abs(steps/0.1))
+                    self.scrollamount += (steps and steps / abs(steps/0.5))
                     self.scrollamount = max(min(self.scrollamount,20.0),1.0)
                     self.zoomscale = self.scrollamount
 
@@ -1015,8 +1015,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.zoomscale > 1:
             x = self.zoom_x
             y = self.zoom_y
-            w = 200
-            h = 200
+            w = 300
+            h = 300
             angle = 0
             
             # step 1: cropped a frame around the coord you wont to zoom into

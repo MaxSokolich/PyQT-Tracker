@@ -33,16 +33,17 @@ class RecordThread(QThread):
 
     def run(self):
         # capture from web camx
+        start = time.time()
         while self.recordstatus:
 
-            """cv2.putText(self.parent.currentframe,"frame: "+ str(self.parent.tracker.framenum),
-                        (int(self.width / 8),
-                        int(self.height / 30)),
+            cv2.putText(self.parent.currentframe,"time: {} s".format(round(time.time()-start,2)),
+                        (int(self.width * (7/10)),
+                        int(self.height * (9.9/10))),
                         cv2.FONT_HERSHEY_SIMPLEX,
                         fontScale=1, 
                         thickness=4,
-                        color = (255, 255, 255))"""
-            
+                        color = (255, 255, 255))
+                        
             #frame = cv2.resize(frame, (self.width,self.height), interpolation = cv2.INTER_AREA)
             self.result.write(self.parent.currentframe)
             time.sleep(1/self.videofps)
