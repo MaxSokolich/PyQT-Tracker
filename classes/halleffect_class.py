@@ -120,9 +120,9 @@ except Exception:
         def run(self):
             while self.run_flag:
                 
-                bx = 0
-                by = 0
-                bz = 0
+                bx = 1
+                by = 2
+                bz = 3
 
 
                 self.sensor_signal.emit([bx,by,bz])

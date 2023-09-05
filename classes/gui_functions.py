@@ -200,6 +200,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.minusZbutton.clicked.connect(self.quickfieldminusZ)
         self.ui.autoacousticbutton.clicked.connect(self.toggle_autoacoustic)
         self.ui.fieldmagnitudeSlider.valueChanged.connect(self.get_field_magnitude)
+        self.ui.manualapplybutton.clicked.connect(self.get_manual_bfieldbuttons)
         #self.showFullScreen()
 
 
@@ -396,7 +397,21 @@ class MainWindow(QtWidgets.QMainWindow):
     def tbprint(self, text):
         #print to textbox
         self.ui.plainTextEdit.appendPlainText("$ "+ text)
-        
+    
+    def get_manual_bfieldbuttons(self):
+        if self.ui.manualapplybutton.isChecked():
+            self.Bx = self.ui.manualfieldBx.value()/100
+            self.By = self.ui.manualfieldBy.value()/100
+            self.Bz = self.ui.manualfieldBz.value()/100
+            self.ui.manualapplybutton.setText("Stop")
+            self.apply_actions(True)
+        else:
+            self.ui.manualapplybutton.setText("Apply")
+            self.apply_actions(False)
+         
+
+
+
     def get_slider_vals(self):
         memory = self.ui.memorybox.value()
         RRTtreesize = self.ui.RRTtreesizebox.value()
@@ -408,6 +423,8 @@ class MainWindow(QtWidgets.QMainWindow):
         dilation = self.ui.maskdilationbox.value() 
         maskblur = self.ui.maskblurbox.value()
         crop_length = self.ui.croplengthbox.value()
+        
+    
 
         if self.tracker is not None: 
             self.tracker.memory = memory
@@ -890,12 +907,9 @@ class MainWindow(QtWidgets.QMainWindow):
     
     def update_halleffect_sensor(self, vals):
         sensorBx, sensorBy, sensorBz = vals
-        self.ui.bxlabel.setText("Bx:               mT")
-        self.ui.bylabel.setText("Bx:               mT")
-        self.ui.bzlabel.setText("Bx:               mT")
-        self.ui.bxlcdnum.display(sensorBx)
-        self.ui.bylcdnum.display(sensorBy)
-        self.ui.bzlcdnum.display(sensorBz)
+        self.ui.bxlabel.setText("Bx:{}".format(sensorBx))
+        self.ui.bylabel.setText("By:{}".format(sensorBy))
+        self.ui.bzlabel.setText("Bz:{}".format(sensorBz))
         self.sensorBx = sensorBx
         self.sensorBy = sensorBy
         self.sensorBz = sensorBz
