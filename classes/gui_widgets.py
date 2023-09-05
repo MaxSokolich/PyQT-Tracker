@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'uis/original.ui'
+# Form implementation generated from reading ui file 'uis/magscope.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1727, 1014)
+        MainWindow.resize(1920, 1027)
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(16)
@@ -650,6 +650,7 @@ class Ui_MainWindow(object):
         self.acousticfreq_spinBox.setObjectName("acousticfreq_spinBox")
         self.acousticfreqlabel = QtWidgets.QLabel(self.frame)
         self.acousticfreqlabel.setGeometry(QtCore.QRect(80, 130, 151, 21))
+        self.acousticfreqlabel.setStyleSheet("")
         self.acousticfreqlabel.setObjectName("acousticfreqlabel")
         self.autoacousticbutton = QtWidgets.QPushButton(self.frame)
         self.autoacousticbutton.setGeometry(QtCore.QRect(220, 160, 51, 41))
@@ -855,12 +856,12 @@ class Ui_MainWindow(object):
         self.frame_2.setGeometry(QtCore.QRect(10, 230, 321, 161))
         self.frame_2.setStyleSheet(" color: rgb(0, 0, 0);\n"
 " background-color: rgb(255, 255, 255);\n"
-"font-size: 20pt; font: Arial;")
+"font-size: 15pt; font: Arial;")
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_2.setObjectName("frame_2")
         self.plusZbutton = QtWidgets.QToolButton(self.frame_2)
-        self.plusZbutton.setGeometry(QtCore.QRect(110, 40, 41, 31))
+        self.plusZbutton.setGeometry(QtCore.QRect(130, 90, 41, 21))
         self.plusZbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -890,7 +891,7 @@ class Ui_MainWindow(object):
         self.plusZbutton.setArrowType(QtCore.Qt.NoArrow)
         self.plusZbutton.setObjectName("plusZbutton")
         self.upfieldbutton = QtWidgets.QToolButton(self.frame_2)
-        self.upfieldbutton.setGeometry(QtCore.QRect(60, 70, 41, 31))
+        self.upfieldbutton.setGeometry(QtCore.QRect(35, 80, 41, 21))
         self.upfieldbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -923,7 +924,7 @@ class Ui_MainWindow(object):
         self.upfieldbutton.setArrowType(QtCore.Qt.UpArrow)
         self.upfieldbutton.setObjectName("upfieldbutton")
         self.rightfieldbutton = QtWidgets.QToolButton(self.frame_2)
-        self.rightfieldbutton.setGeometry(QtCore.QRect(110, 90, 41, 31))
+        self.rightfieldbutton.setGeometry(QtCore.QRect(60, 105, 41, 21))
         self.rightfieldbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -953,7 +954,7 @@ class Ui_MainWindow(object):
         self.rightfieldbutton.setArrowType(QtCore.Qt.RightArrow)
         self.rightfieldbutton.setObjectName("rightfieldbutton")
         self.leftfieldbutton = QtWidgets.QToolButton(self.frame_2)
-        self.leftfieldbutton.setGeometry(QtCore.QRect(10, 90, 41, 31))
+        self.leftfieldbutton.setGeometry(QtCore.QRect(10, 105, 41, 21))
         self.leftfieldbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -983,7 +984,7 @@ class Ui_MainWindow(object):
         self.leftfieldbutton.setArrowType(QtCore.Qt.LeftArrow)
         self.leftfieldbutton.setObjectName("leftfieldbutton")
         self.minusZbutton = QtWidgets.QToolButton(self.frame_2)
-        self.minusZbutton.setGeometry(QtCore.QRect(10, 40, 41, 31))
+        self.minusZbutton.setGeometry(QtCore.QRect(130, 120, 41, 21))
         self.minusZbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -1013,7 +1014,7 @@ class Ui_MainWindow(object):
         self.minusZbutton.setArrowType(QtCore.Qt.NoArrow)
         self.minusZbutton.setObjectName("minusZbutton")
         self.downfieldbutton = QtWidgets.QToolButton(self.frame_2)
-        self.downfieldbutton.setGeometry(QtCore.QRect(60, 120, 41, 31))
+        self.downfieldbutton.setGeometry(QtCore.QRect(35, 130, 41, 21))
         self.downfieldbutton.setStyleSheet("QToolButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -1043,12 +1044,13 @@ class Ui_MainWindow(object):
         self.downfieldbutton.setArrowType(QtCore.Qt.DownArrow)
         self.downfieldbutton.setObjectName("downfieldbutton")
         self.quickfieldlabel = QtWidgets.QLabel(self.frame_2)
-        self.quickfieldlabel.setGeometry(QtCore.QRect(35, 10, 101, 21))
+        self.quickfieldlabel.setGeometry(QtCore.QRect(10, 5, 171, 31))
+        self.quickfieldlabel.setStyleSheet("")
         self.quickfieldlabel.setObjectName("quickfieldlabel")
         self.bxlcdnum = QtWidgets.QLCDNumber(self.frame_2)
-        self.bxlcdnum.setGeometry(QtCore.QRect(210, 15, 61, 31))
+        self.bxlcdnum.setGeometry(QtCore.QRect(230, 25, 61, 31))
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(15)
         font.setBold(False)
         font.setItalic(False)
         self.bxlcdnum.setFont(font)
@@ -1066,7 +1068,7 @@ class Ui_MainWindow(object):
         self.bxlcdnum.setProperty("value", 5.4)
         self.bxlcdnum.setObjectName("bxlcdnum")
         self.bzlcdnum = QtWidgets.QLCDNumber(self.frame_2)
-        self.bzlcdnum.setGeometry(QtCore.QRect(210, 105, 61, 31))
+        self.bzlcdnum.setGeometry(QtCore.QRect(230, 115, 61, 31))
         self.bzlcdnum.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.bzlcdnum.setAutoFillBackground(False)
         self.bzlcdnum.setStyleSheet("background-color: rgb(255,255,255); \n"
@@ -1079,16 +1081,16 @@ class Ui_MainWindow(object):
         self.bzlcdnum.setProperty("value", 5.4)
         self.bzlcdnum.setObjectName("bzlcdnum")
         self.bxlabel = QtWidgets.QLabel(self.frame_2)
-        self.bxlabel.setGeometry(QtCore.QRect(180, 10, 131, 41))
+        self.bxlabel.setGeometry(QtCore.QRect(200, 20, 115, 41))
         self.bxlabel.setObjectName("bxlabel")
         self.bzlabel = QtWidgets.QLabel(self.frame_2)
-        self.bzlabel.setGeometry(QtCore.QRect(180, 100, 131, 41))
+        self.bzlabel.setGeometry(QtCore.QRect(200, 110, 115, 41))
         self.bzlabel.setObjectName("bzlabel")
         self.bylabel = QtWidgets.QLabel(self.frame_2)
-        self.bylabel.setGeometry(QtCore.QRect(180, 55, 131, 41))
+        self.bylabel.setGeometry(QtCore.QRect(200, 65, 115, 41))
         self.bylabel.setObjectName("bylabel")
         self.bylcdnum = QtWidgets.QLCDNumber(self.frame_2)
-        self.bylcdnum.setGeometry(QtCore.QRect(210, 60, 61, 31))
+        self.bylcdnum.setGeometry(QtCore.QRect(230, 70, 61, 31))
         self.bylcdnum.setStyleSheet("background-color: rgb(255,255,255); \n"
 "color: rgb(0,255,0);")
         self.bylcdnum.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -1098,6 +1100,21 @@ class Ui_MainWindow(object):
         self.bylcdnum.setSegmentStyle(QtWidgets.QLCDNumber.Flat)
         self.bylcdnum.setProperty("value", 5.4)
         self.bylcdnum.setObjectName("bylcdnum")
+        self.fieldmagnitudeSlider = QtWidgets.QSlider(self.frame_2)
+        self.fieldmagnitudeSlider.setGeometry(QtCore.QRect(10, 44, 101, 31))
+        self.fieldmagnitudeSlider.setMaximum(100)
+        self.fieldmagnitudeSlider.setSingleStep(10)
+        self.fieldmagnitudeSlider.setProperty("value", 100)
+        self.fieldmagnitudeSlider.setOrientation(QtCore.Qt.Horizontal)
+        self.fieldmagnitudeSlider.setTickPosition(QtWidgets.QSlider.TicksAbove)
+        self.fieldmagnitudeSlider.setTickInterval(10)
+        self.fieldmagnitudeSlider.setObjectName("fieldmagnitudeSlider")
+        self.magnitudelabel = QtWidgets.QLabel(self.frame_2)
+        self.magnitudelabel.setGeometry(QtCore.QRect(120, 40, 51, 31))
+        self.magnitudelabel.setStyleSheet("color: rgb(0,0,0);\n"
+"background-color: rgb(255,255,255); border:2px solid rgb(0, 0, 0); \n"
+"font-size: 20pt; font: Arial;")
+        self.magnitudelabel.setObjectName("magnitudelabel")
         self.bzlabel.raise_()
         self.bxlabel.raise_()
         self.plusZbutton.raise_()
@@ -1111,6 +1128,8 @@ class Ui_MainWindow(object):
         self.bzlcdnum.raise_()
         self.bylabel.raise_()
         self.bylcdnum.raise_()
+        self.fieldmagnitudeSlider.raise_()
+        self.magnitudelabel.raise_()
         self.dockWidget_2.setWidget(self.dockWidgetContents_4)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.dockWidget_2)
         self.actiondock = QtWidgets.QAction(MainWindow)
@@ -1168,8 +1187,9 @@ class Ui_MainWindow(object):
         self.leftfieldbutton.setText(_translate("MainWindow", "..."))
         self.minusZbutton.setText(_translate("MainWindow", "-Z"))
         self.downfieldbutton.setText(_translate("MainWindow", "..."))
-        self.quickfieldlabel.setText(_translate("MainWindow", "Quick Field"))
-        self.bxlabel.setText(_translate("MainWindow", "Bx:                 mT"))
-        self.bzlabel.setText(_translate("MainWindow", "Bz:                 mT"))
-        self.bylabel.setText(_translate("MainWindow", "By:                 mT"))
+        self.quickfieldlabel.setText(_translate("MainWindow", "Magnetic Field Magnitude"))
+        self.bxlabel.setText(_translate("MainWindow", "Bx:                    mT"))
+        self.bzlabel.setText(_translate("MainWindow", "Bz:                    mT"))
+        self.bylabel.setText(_translate("MainWindow", "By:                    mT"))
+        self.magnitudelabel.setText(_translate("MainWindow", "100"))
         self.actiondock.setText(_translate("MainWindow", "dock"))

@@ -107,6 +107,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.Mx, self.My, self.Mz = 0,0,0
         self.alpha, self.gamma, self.psi, self.freq = 0,0,0,0
         self.sensorBx, self.sensorBy, self.sensorBz = 0,0,0
+        self.field_magnitude = 100
 
         #control tab functions
         self.control_status = False
@@ -198,9 +199,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.plusZbutton.clicked.connect(self.quickfieldplusZ)
         self.ui.minusZbutton.clicked.connect(self.quickfieldminusZ)
         self.ui.autoacousticbutton.clicked.connect(self.toggle_autoacoustic)
-
+        self.ui.fieldmagnitudeSlider.valueChanged.connect(self.get_field_magnitude)
         #self.showFullScreen()
 
+
+    def get_field_magnitude(self):
+        self.field_magnitude = self.ui.fieldmagnitudeSlider.value()
+        self.ui.magnitudelabel.setText("{}".format(self.field_magnitude))
+    
+       
+        
 
        
 
@@ -301,10 +309,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if status == False:
             self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency = 0,0,0,0,0,0,0,0
 
-        #send arduino commands
-        self.arduino.send(self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency)
+       
         
         #output current actions to simulator
+
         self.simulator.Bx = self.Bx
         self.simulator.By = self.By
         self.simulator.Bz = self.Bz
@@ -313,6 +321,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.simulator.psi = self.psi
         self.simulator.freq = self.freq/15
         self.simulator.omega = 2 * np.pi * self.simulator.freq
+
+         #send arduino commands
+        self.arduino.send(self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency)
     
 
 
@@ -897,7 +908,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.rightfieldbutton.setChecked(False)
             self.ui.plusZbutton.setChecked(False)
             self.ui.minusZbutton.setChecked(False)
-            self.Bx = -1
+            self.Bx = -(self.field_magnitude/100)
             self.By = 0
             self.Bz = 0
             self.apply_actions(True)
@@ -911,7 +922,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.leftfieldbutton.setChecked(False)
             self.ui.plusZbutton.setChecked(False)
             self.ui.minusZbutton.setChecked(False)
-            self.Bx = 1
+            self.Bx = (self.field_magnitude/100)
             self.By = 0
             self.Bz = 0
             self.apply_actions(True)
@@ -925,7 +936,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.leftfieldbutton.setChecked(False)
             self.ui.plusZbutton.setChecked(False)
             self.ui.minusZbutton.setChecked(False)
-            self.By = 1
+            self.By = (self.field_magnitude/100)
             self.Bx = 0
             self.Bz = 0
             self.apply_actions(True)
@@ -939,7 +950,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.leftfieldbutton.setChecked(False)
             self.ui.plusZbutton.setChecked(False)
             self.ui.minusZbutton.setChecked(False)
-            self.By = -1
+            self.By = -(self.field_magnitude/100)
             self.Bx = 0
             self.Bz = 0
             self.apply_actions(True)
@@ -953,7 +964,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.leftfieldbutton.setChecked(False)
             self.ui.minusZbutton.setChecked(False)
             self.ui.downfieldbutton.setChecked(False)
-            self.Bz = 1
+            self.Bz = (self.field_magnitude/100)
             self.By = 0
             self.Bx = 0
             self.apply_actions(True)
@@ -967,7 +978,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.leftfieldbutton.setChecked(False)
             self.ui.plusZbutton.setChecked(False)
             self.ui.downfieldbutton.setChecked(False)
-            self.Bz = -1
+            self.Bz = -(self.field_magnitude/100)
             self.By = 0
             self.Bx = 0
             self.apply_actions(True)

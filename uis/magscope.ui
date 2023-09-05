@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1727</width>
-    <height>1014</height>
+    <width>1920</width>
+    <height>1027</height>
    </rect>
   </property>
   <property name="font">
@@ -1408,6 +1408,9 @@ color: rgb(0,255,0);</string>
         <height>21</height>
        </rect>
       </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="text">
        <string>Acoustic Frequency</string>
       </property>
@@ -1851,7 +1854,7 @@ QDial::handle {
      <property name="styleSheet">
       <string notr="true"> color: rgb(0, 0, 0);
  background-color: rgb(255, 255, 255);
-font-size: 20pt; font: Arial;</string>
+font-size: 15pt; font: Arial;</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -1862,10 +1865,10 @@ font-size: 20pt; font: Arial;</string>
      <widget class="QToolButton" name="plusZbutton">
       <property name="geometry">
        <rect>
-        <x>110</x>
-        <y>40</y>
+        <x>130</x>
+        <y>90</y>
         <width>41</width>
-        <height>31</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -1912,10 +1915,10 @@ font-size: 20pt; font: Arial;</string>
      <widget class="QToolButton" name="upfieldbutton">
       <property name="geometry">
        <rect>
-        <x>60</x>
-        <y>70</y>
+        <x>35</x>
+        <y>80</y>
         <width>41</width>
-        <height>31</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -1967,10 +1970,10 @@ font-size: 20pt; font: Arial;</string>
      <widget class="QToolButton" name="rightfieldbutton">
       <property name="geometry">
        <rect>
-        <x>110</x>
-        <y>90</y>
+        <x>60</x>
+        <y>105</y>
         <width>41</width>
-        <height>31</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -2018,9 +2021,9 @@ font-size: 20pt; font: Arial;</string>
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>90</y>
+        <y>105</y>
         <width>41</width>
-        <height>31</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -2067,10 +2070,10 @@ font-size: 20pt; font: Arial;</string>
      <widget class="QToolButton" name="minusZbutton">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>40</y>
+        <x>130</x>
+        <y>120</y>
         <width>41</width>
-        <height>31</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -2117,10 +2120,10 @@ font-size: 20pt; font: Arial;</string>
      <widget class="QToolButton" name="downfieldbutton">
       <property name="geometry">
        <rect>
-        <x>60</x>
-        <y>120</y>
+        <x>35</x>
+        <y>130</y>
         <width>41</width>
-        <height>31</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -2167,28 +2170,31 @@ font-size: 20pt; font: Arial;</string>
      <widget class="QLabel" name="quickfieldlabel">
       <property name="geometry">
        <rect>
-        <x>35</x>
-        <y>10</y>
-        <width>101</width>
-        <height>21</height>
+        <x>10</x>
+        <y>5</y>
+        <width>171</width>
+        <height>31</height>
        </rect>
       </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="text">
-       <string>Quick Field</string>
+       <string>Magnetic Field Magnitude</string>
       </property>
      </widget>
      <widget class="QLCDNumber" name="bxlcdnum">
       <property name="geometry">
        <rect>
-        <x>210</x>
-        <y>15</y>
+        <x>230</x>
+        <y>25</y>
         <width>61</width>
         <height>31</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <pointsize>15</pointsize>
         <italic>false</italic>
         <bold>false</bold>
        </font>
@@ -2229,8 +2235,8 @@ color: rgb(255,0,0);
      <widget class="QLCDNumber" name="bzlcdnum">
       <property name="geometry">
        <rect>
-        <x>210</x>
-        <y>105</y>
+        <x>230</x>
+        <y>115</y>
         <width>61</width>
         <height>31</height>
        </rect>
@@ -2267,47 +2273,47 @@ color: rgb(0,0,255);</string>
      <widget class="QLabel" name="bxlabel">
       <property name="geometry">
        <rect>
-        <x>180</x>
-        <y>10</y>
-        <width>131</width>
+        <x>200</x>
+        <y>20</y>
+        <width>115</width>
         <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>Bx:                 mT</string>
+       <string>Bx:                    mT</string>
       </property>
      </widget>
      <widget class="QLabel" name="bzlabel">
       <property name="geometry">
        <rect>
-        <x>180</x>
-        <y>100</y>
-        <width>131</width>
+        <x>200</x>
+        <y>110</y>
+        <width>115</width>
         <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>Bz:                 mT</string>
+       <string>Bz:                    mT</string>
       </property>
      </widget>
      <widget class="QLabel" name="bylabel">
       <property name="geometry">
        <rect>
-        <x>180</x>
-        <y>55</y>
-        <width>131</width>
+        <x>200</x>
+        <y>65</y>
+        <width>115</width>
         <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>By:                 mT</string>
+       <string>By:                    mT</string>
       </property>
      </widget>
      <widget class="QLCDNumber" name="bylcdnum">
       <property name="geometry">
        <rect>
-        <x>210</x>
-        <y>60</y>
+        <x>230</x>
+        <y>70</y>
         <width>61</width>
         <height>31</height>
        </rect>
@@ -2335,6 +2341,52 @@ color: rgb(0,255,0);</string>
        <double>5.400000000000000</double>
       </property>
      </widget>
+     <widget class="QSlider" name="fieldmagnitudeSlider">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>44</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>100</number>
+      </property>
+      <property name="singleStep">
+       <number>10</number>
+      </property>
+      <property name="value">
+       <number>100</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="tickPosition">
+       <enum>QSlider::TicksAbove</enum>
+      </property>
+      <property name="tickInterval">
+       <number>10</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="magnitudelabel">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>40</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(0,0,0);
+background-color: rgb(255,255,255); border:2px solid rgb(0, 0, 0); 
+font-size: 20pt; font: Arial;</string>
+      </property>
+      <property name="text">
+       <string>100</string>
+      </property>
+     </widget>
      <zorder>bzlabel</zorder>
      <zorder>bxlabel</zorder>
      <zorder>plusZbutton</zorder>
@@ -2348,6 +2400,8 @@ color: rgb(0,255,0);</string>
      <zorder>bzlcdnum</zorder>
      <zorder>bylabel</zorder>
      <zorder>bylcdnum</zorder>
+     <zorder>fieldmagnitudeSlider</zorder>
+     <zorder>magnitudelabel</zorder>
     </widget>
    </widget>
   </widget>
