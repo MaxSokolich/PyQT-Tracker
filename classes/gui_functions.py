@@ -97,6 +97,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.videopath = 0
         #self.setFile()
         self.tracker = None
+        self.recorder = None
         
         self.drawing = False
         self.acoustic_frequency = 0
@@ -1092,6 +1093,8 @@ class MainWindow(QtWidgets.QMainWindow):
         
         if self.tracker is not None:
             self.tracker.stop()
+        #self.recorder.stop()
+        
         self.simulator.stop()
         self.apply_actions(False)
         self.halleffect.stop()
