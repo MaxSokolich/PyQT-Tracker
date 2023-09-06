@@ -207,6 +207,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def get_field_magnitude(self):
         self.field_magnitude = self.ui.fieldmagnitudeSlider.value()
         self.ui.magnitudelabel.setText("{}".format(self.field_magnitude))
+       
     
        
         
