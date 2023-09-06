@@ -22,7 +22,7 @@ float alpha;
 float gamma;
 float rolling_frequency;
 float psi;
-float acoustic_frequency = 10000;
+float acoustic_frequency;
 
 int phase = 0; 
 
@@ -39,14 +39,17 @@ float BxPer;
 float ByPer;
 float BzPer;
 float c; 
+float magnitude;
 
 
 //other constants
 float tim;
 float t;
 float omega;
-float amplitude;
-float direct;
+
+float Bx_final;
+float By_final;
+float Bz_final;
 
 
 
@@ -384,31 +387,37 @@ void loop()
       
       }
    //need to add unform field with rotating field and normalize
-   Bx = (Bx_uniform + Bx_roll);
-   By = (By_uniform + By_roll);
-   Bz = (Bz_uniform + Bz_roll); 
+   //cc = sqrt(Bx_roll*Bx_roll + By_roll*By_roll + Bz_roll*Bz_roll)
+   Bx = (Bx_uniform + Bx_roll); /// (1+cc);
+   By = (By_uniform + By_roll); /// (1+cc);
+   Bz = (Bz_uniform + Bz_roll); //// (1+cc); 
+    
 
-
+   
    // condition to prevent divide by zero error when total Bx, By, Bz are off aka zeroed
    if (Bx == 0 and By == 0 and Bz ==0){
-        Bx = 0;
-        By = 0;
-        Bz = 0;
+        Bx_final = 0;
+        By_final = 0;
+        Bz_final = 0;
    }
    // otherwise I need to normalize the superpoistion of the rotating field with the uniform field
    else{
-       Bx = Bx / sqrt(Bx*Bx + By*By + Bz*Bz);
-       By = By / sqrt(Bx*Bx + By*By + Bz*Bz);
-       Bz = Bz / sqrt(Bx*Bx + By*By + Bz*Bz);
+       magnitude = max(sqrt(Bx_uniform*Bx_uniform + By_uniform*By_uniform + Bz_uniform*Bz_uniform), 
+                       sqrt(Bx_roll*Bx_roll + By_roll*By_roll + Bz_roll*Bz_roll));
+                       
+       Bx_final = magnitude * (Bx / sqrt(Bx*Bx + By*By + Bz*Bz));
+       By_final = magnitude * (By / sqrt(Bx*Bx + By*By + Bz*Bz));
+       Bz_final = magnitude * (Bz / sqrt(Bx*Bx + By*By + Bz*Bz));
+       
    }
    
 
-   set1(By);
-   set2(Bx);
-   set3(-By);
-   set4(-Bx);
-   set5(Bz);
-   set6(-Bz);
+   set1(By_final);
+   set2(Bx_final);
+   set3(-By_final);
+   set4(-Bx_final);
+   set5(Bz_final);
+   set6(-Bz_final);
 
    
    

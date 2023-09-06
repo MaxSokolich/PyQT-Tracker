@@ -13,10 +13,10 @@ data = [float(0), float(0), float(0), float(0), float(0), float(0),float(0), flo
 sendSize = link.tx_obj(data)
 link.send(sendSize)
 print("sent", data)
-sleep(2)
+sleep(3)
 
 
-data = [float(0), float(0), float(0), float(0), float(0), float(0),float(0), float(11000)]
+data = [float(.5), float(.1), float(0), float(0), float(0), float(0),float(0), float(11000)]
 
 sendSize = link.tx_obj(data)
 link.send(sendSize)
