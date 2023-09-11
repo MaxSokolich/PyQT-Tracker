@@ -202,6 +202,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.autoacousticbutton.clicked.connect(self.toggle_autoacoustic)
         self.ui.fieldmagnitudeSlider.valueChanged.connect(self.get_field_magnitude)
         self.ui.manualapplybutton.clicked.connect(self.get_manual_bfieldbuttons)
+        self.ui.manualfieldBx.valueChanged.connect(self.get_slider_vals)
+        self.ui.manualfieldBy.valueChanged.connect(self.get_slider_vals)
+        self.ui.manualfieldBz.valueChanged.connect(self.get_slider_vals)
         #self.showFullScreen()
 
 
@@ -286,6 +289,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.gamma = np.radians(self.ui.gammadial.value())
             self.psi = np.radians(self.ui.psidial.value())
             
+            
         
         #save the current action outputs to a list to be saved 
         self.actions = [self.tracker.framenum,self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, 
@@ -311,7 +315,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #zero output
         if status == False:
             self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency = 0,0,0,0,0,0,0,0
-
+    
        
         
         #output current actions to simulator
@@ -425,6 +429,12 @@ class MainWindow(QtWidgets.QMainWindow):
         dilation = self.ui.maskdilationbox.value() 
         maskblur = self.ui.maskblurbox.value()
         crop_length = self.ui.croplengthbox.value()
+
+        if self.ui.manualapplybutton.isChecked():
+            self.Bx = self.ui.manualfieldBx.value()/100
+            self.By = self.ui.manualfieldBy.value()/100
+            self.Bz = self.ui.manualfieldBz.value()/100
+            self.apply_actions(True)
         
     
 
