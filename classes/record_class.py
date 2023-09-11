@@ -16,7 +16,7 @@ class RecordThread(QThread):
         super().__init__(parent=parent)
         self.parent = parent
         
-        self.recordstatus = True
+        self.recordstatus = False
         self.cap = self.parent.cap
         self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
