@@ -41,7 +41,7 @@ try:
             
             self.senseBx = AnalogIn(self.ads, ADS.P0)
             self.senseBy = AnalogIn(self.ads, ADS.P1)  
-            self.senseBz = AnalogIn(self.ads, ADS.P2)  
+            self.senseBz = AnalogIn(self.ads, ADS.P3)  #good
 
 
             self.run_flag = True
@@ -77,7 +77,7 @@ try:
             elif VAL > bound[1]:
                 bound[1] = VAL
                
-            m = interp1d([bound[0],bound[1]],[-100,100])
+            m = interp1d([bound[0],bound[1]],[-8,8])
             mapped_field = int(m(VAL))
             return mapped_field
         
@@ -89,19 +89,24 @@ try:
             
             while self.run_flag:
                 
-                bx = self.senseBx.value/10000#self.readFIELD(self.senseBx, Bx_bounds)
-                by = self.senseBy.value/10000#self.readFIELD(self.senseBy, By_bounds)
-                bz = self.senseBz.value/10000#self.readFIELD(self.senseBz, Bz_bounds)
+                bx = self.readFIELD(self.senseBx, Bx_bounds)
+                by = self.readFIELD(self.senseBy, By_bounds)
+                bz = self.readFIELD(self.senseBz, Bz_bounds)
+                
+               
+                
                
              
 
                 self.sensor_signal.emit([bx,by,bz])
                 time.sleep(.1)
+            time.sleep(.1)
             print(" -- Sensor Process Terminated -- ")
 
 
         def stop(self):
             self.run_flag = False
+            self.wait()
             
 except Exception:
     class HallEffect(QThread):
