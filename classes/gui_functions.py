@@ -113,6 +113,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #control tab functions
         self.control_status = False
         self.joystick_status = False
+        self.manual_status = False
 
 
         #connect to arduino
@@ -193,12 +194,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.objectivebox.valueChanged.connect(self.get_objective)
         self.ui.exposurebox.valueChanged.connect(self.get_exposure)
         self.ui.joystickbutton.clicked.connect(self.toggle_joystick_status)
-        self.ui.leftfieldbutton.clicked.connect(self.quickfieldleft)
-        self.ui.rightfieldbutton.clicked.connect(self.quickfieldright)
-        self.ui.upfieldbutton.clicked.connect(self.quickfieldup)
-        self.ui.downfieldbutton.clicked.connect(self.quickfielddown)
-        self.ui.plusZbutton.clicked.connect(self.quickfieldplusZ)
-        self.ui.minusZbutton.clicked.connect(self.quickfieldminusZ)
+        self.ui.leftfieldbutton.clicked.connect(self.get_field_magnitude)
+        self.ui.rightfieldbutton.clicked.connect(self.get_field_magnitude)
+        self.ui.upfieldbutton.clicked.connect(self.get_field_magnitude)
+        self.ui.downfieldbutton.clicked.connect(self.get_field_magnitude)
+        self.ui.plusZbutton.clicked.connect(self.get_field_magnitude)
+        self.ui.minusZbutton.clicked.connect(self.get_field_magnitude)
         self.ui.autoacousticbutton.clicked.connect(self.toggle_autoacoustic)
         self.ui.fieldmagnitudeSlider.valueChanged.connect(self.get_field_magnitude)
         self.ui.manualapplybutton.clicked.connect(self.get_manual_bfieldbuttons)
@@ -208,16 +209,85 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.showFullScreen()
 
 
-    def get_field_magnitude(self):
-        self.field_magnitude = self.ui.fieldmagnitudeSlider.value()
-        self.ui.magnitudelabel.setText("{}".format(self.field_magnitude))
-       
-    
-       
+
+
+    def update_actions(self, actions, stopped):
+        #output actions if control status is on
+        if self.ui.autoacousticbutton.isChecked():
+            self.acoustic_frequency  = actions[-1]   
         
+        if self.control_status == True:
+            self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, _  = actions    
+           
+             
+            self.gamma = np.radians(self.ui.gammadial.value())
+            self.psi = np.radians(self.ui.psidial.value())
+            if self.ui.orientradio.isChecked():
+                self.freq = 0
+            else:
+                self.freq = self.ui.magneticfrequencydial.value()
 
-       
+            if stopped == True:
+                self.apply_actions(False)
 
+            
+        #if joystick is on use the joystick though
+        elif self.joystick_status == True:
+            self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, _ = self.controller_actions.run(self.joystick)
+            
+            if self.freq !=0:
+                self.freq = self.ui.magneticfrequencydial.value()
+            self.gamma = np.radians(self.ui.gammadial.value())
+            self.psi = np.radians(self.ui.psidial.value())
+        
+        elif self.manual_status == True:
+            pass
+            
+            
+        
+        #save the current action outputs to a list to be saved 
+        self.actions = [self.tracker.framenum,self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, 
+                        self.acoustic_frequency, self.sensorBx, self.sensorBy, self.sensorBz] 
+        
+        self.magnetic_field_list.append(self.actions)
+        self.apply_actions(True)
+
+
+    def apply_actions(self, status):
+        #the purpose of this function is to output the actions via arduino, 
+        # show the actions via the simulator
+        # and record the actions by appending the field_list
+        
+        #toggle between alpha and orient
+        if self.freq > 0:
+            if self.ui.swimradio.isChecked():
+                self.simulator.roll = False
+            elif self.ui.rollradio.isChecked():
+                self.alpha = self.alpha - np.pi/2
+                self.simulator.roll = True
+
+        #zero output
+        if status == False:
+            self.manual_status = False
+            self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency = 0,0,0,0,0,0,0,0
+
+        #output current actions to simulator
+
+        self.simulator.Bx = self.Bx
+        self.simulator.By = self.By
+        self.simulator.Bz = self.Bz
+        self.simulator.alpha = self.alpha
+        self.simulator.gamma = self.gamma
+        self.simulator.psi = self.psi
+        self.simulator.freq = self.freq/15
+        self.simulator.omega = 2 * np.pi * self.simulator.freq
+
+         #send arduino commands
+        self.arduino.send(self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency)
+    
+
+
+    
     def toggle_simulation(self):
         if self.ui.simulationbutton.isChecked():
             self.simulator.start()
@@ -258,84 +328,6 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             self.tbprint("No Joystick Connected...")
 
-
-
-    def update_actions(self, actions, stopped):
-        #output actions if control status is on
-        if self.ui.autoacousticbutton.isChecked():
-            self.acoustic_frequency  = actions[-1]   
-        
-        if self.control_status == True:
-            self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, _  = actions    
-           
-             
-            self.gamma = np.radians(self.ui.gammadial.value())
-            self.psi = np.radians(self.ui.psidial.value())
-            if self.ui.orientradio.isChecked():
-                self.freq = 0
-            else:
-                self.freq = self.ui.magneticfrequencydial.value()
-
-            if stopped == True:
-                self.apply_actions(False)
-
-            
-        #if joystick is on use the joystick though
-        elif self.joystick_status == True:
-            self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, _ = self.controller_actions.run(self.joystick)
-            
-            if self.freq !=0:
-                self.freq = self.ui.magneticfrequencydial.value()
-            self.gamma = np.radians(self.ui.gammadial.value())
-            self.psi = np.radians(self.ui.psidial.value())
-            
-            
-        
-        #save the current action outputs to a list to be saved 
-        self.actions = [self.tracker.framenum,self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, 
-                        self.acoustic_frequency, self.sensorBx, self.sensorBy, self.sensorBz] 
-        
-        self.magnetic_field_list.append(self.actions)
-        self.apply_actions(True)
-
-
-    def apply_actions(self, status):
-        #the purpose of this function is to output the actions via arduino, 
-        # show the actions via the simulator
-        # and record the actions by appending the field_list
-        
-        #toggle between alpha and orient
-        if self.freq > 0:
-            if self.ui.swimradio.isChecked():
-                self.simulator.roll = False
-            elif self.ui.rollradio.isChecked():
-                self.alpha = self.alpha - np.pi/2
-                self.simulator.roll = True
-
-        #zero output
-        if status == False:
-            self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency = 0,0,0,0,0,0,0,0
-    
-       
-        
-        #output current actions to simulator
-
-        self.simulator.Bx = self.Bx
-        self.simulator.By = self.By
-        self.simulator.Bz = self.Bz
-        self.simulator.alpha = self.alpha
-        self.simulator.gamma = self.gamma
-        self.simulator.psi = self.psi
-        self.simulator.freq = self.freq/15
-        self.simulator.omega = 2 * np.pi * self.simulator.freq
-
-         #send arduino commands
-        self.arduino.send(self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, self.acoustic_frequency)
-    
-
-
-    
-    
     def toggle_autoacoustic(self):
         if self.tracker is not None:
             if self.ui.autoacousticbutton.isChecked():
@@ -396,7 +388,7 @@ class MainWindow(QtWidgets.QMainWindow):
 "                border-color: rgb(255, 0, 0);\n"
 "         \n"
 "                padding: 6px;")
-            self.apply_actions(False)
+            #self.apply_actions(False)
        
         
 
@@ -404,52 +396,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #print to textbox
         self.ui.plainTextEdit.appendPlainText("$ "+ text)
     
-    def get_manual_bfieldbuttons(self):
-        if self.ui.manualapplybutton.isChecked():
-            self.Bx = self.ui.manualfieldBx.value()/100
-            self.By = self.ui.manualfieldBy.value()/100
-            self.Bz = self.ui.manualfieldBz.value()/100
-            self.ui.manualapplybutton.setText("Stop")
-            self.apply_actions(True)
-        else:
-            self.ui.manualapplybutton.setText("Apply")
-            self.apply_actions(False)
-         
-
-
-
-    def get_slider_vals(self):
-        memory = self.ui.memorybox.value()
-        RRTtreesize = self.ui.RRTtreesizebox.value()
-        arrivalthresh = self.ui.arrivalthreshbox.value()
-        magneticfreq = self.ui.magneticfrequencydial.value()
-        gamma = self.ui.gammadial.value()
-        psi = self.ui.psidial.value()
-        thresh = self.ui.maskthreshbox.value() 
-        dilation = self.ui.maskdilationbox.value() 
-        maskblur = self.ui.maskblurbox.value()
-        crop_length = self.ui.croplengthbox.value()
-
-        if self.ui.manualapplybutton.isChecked():
-            self.Bx = self.ui.manualfieldBx.value()/100
-            self.By = self.ui.manualfieldBy.value()/100
-            self.Bz = self.ui.manualfieldBz.value()/100
-            self.apply_actions(True)
-        
     
-
-        if self.tracker is not None: 
-            self.tracker.memory = memory
-            self.tracker.RRTtreesize = RRTtreesize
-            self.tracker.arrivalthresh = arrivalthresh
-            self.tracker.mask_thresh = thresh
-            self.tracker.mask_dilation = dilation
-            self.tracker.mask_blur = maskblur
-            self.tracker.crop_length = crop_length
-
-        self.ui.gammalabel.setText("Gamma: {}".format(gamma))
-        self.ui.psilabel.setText("Psi: {}".format(psi))
-        self.ui.rollingfrequencylabel.setText("Freq: {}".format(magneticfreq))
         
   
 
@@ -925,91 +872,91 @@ class MainWindow(QtWidgets.QMainWindow):
         self.sensorBx = sensorBx
         self.sensorBy = sensorBy
         self.sensorBz = sensorBz
-
-
-    def quickfieldleft(self):
+    
+    def get_manual_bfieldbuttons(self):
+        if self.ui.manualapplybutton.isChecked():
+            self.Bx = self.ui.manualfieldBx.value()/100
+            self.By = self.ui.manualfieldBy.value()/100
+            self.Bz = self.ui.manualfieldBz.value()/100
+            self.ui.manualapplybutton.setText("Stop")
+            self.manual_status = True
+        else:
+            self.ui.manualapplybutton.setText("Apply")
+            self.apply_actions(False)
+    
+    def get_field_magnitude(self):
+        self.field_magnitude = self.ui.fieldmagnitudeSlider.value()
+        self.ui.magnitudelabel.setText("{}".format(self.field_magnitude))
+        self.manual_status = True
         if self.ui.leftfieldbutton.isChecked():
-            self.ui.upfieldbutton.setChecked(False)
-            self.ui.downfieldbutton.setChecked(False)
-            self.ui.rightfieldbutton.setChecked(False)
-            self.ui.plusZbutton.setChecked(False)
-            self.ui.minusZbutton.setChecked(False)
+            #self.ui.rightfieldbutton.setChecked(False)
             self.Bx = -(self.field_magnitude/100)
-            self.By = 0
-            self.Bz = 0
-            self.apply_actions(True)
-        else:
-            self.apply_actions(False)
 
-    def quickfieldright(self):
-        if self.ui.rightfieldbutton.isChecked():
-            self.ui.upfieldbutton.setChecked(False)
-            self.ui.downfieldbutton.setChecked(False)
-            self.ui.leftfieldbutton.setChecked(False)
-            self.ui.plusZbutton.setChecked(False)
-            self.ui.minusZbutton.setChecked(False)
+        elif self.ui.rightfieldbutton.isChecked():
+            #self.ui.leftfieldbutton.setChecked(False)
             self.Bx = (self.field_magnitude/100)
-            self.By = 0
-            self.Bz = 0
-            self.apply_actions(True)
-        else:
-            self.apply_actions(False)
 
-    def quickfieldup(self):
-        if self.ui.upfieldbutton.isChecked():
-            self.ui.rightfieldbutton.setChecked(False)
-            self.ui.downfieldbutton.setChecked(False)
-            self.ui.leftfieldbutton.setChecked(False)
-            self.ui.plusZbutton.setChecked(False)
-            self.ui.minusZbutton.setChecked(False)
+        elif self.ui.upfieldbutton.isChecked():
+            #self.ui.downfieldbutton.setChecked(False)
             self.By = (self.field_magnitude/100)
-            self.Bx = 0
-            self.Bz = 0
-            self.apply_actions(True)
-        else:
-            self.apply_actions(False)
-          
-    def quickfielddown(self):
-        if self.ui.downfieldbutton.isChecked():
-            self.ui.upfieldbutton.setChecked(False)
-            self.ui.rightfieldbutton.setChecked(False)
-            self.ui.leftfieldbutton.setChecked(False)
-            self.ui.plusZbutton.setChecked(False)
-            self.ui.minusZbutton.setChecked(False)
+
+        elif self.ui.downfieldbutton.isChecked():
+            #self.ui.upfieldbutton.setChecked(False)
             self.By = -(self.field_magnitude/100)
-            self.Bx = 0
-            self.Bz = 0
-            self.apply_actions(True)
-        else:
-            self.apply_actions(False)
-
-    def quickfieldplusZ(self):
-        if self.ui.plusZbutton.isChecked():
-            self.ui.upfieldbutton.setChecked(False)
-            self.ui.rightfieldbutton.setChecked(False)
-            self.ui.leftfieldbutton.setChecked(False)
-            self.ui.minusZbutton.setChecked(False)
-            self.ui.downfieldbutton.setChecked(False)
+        
+        elif self.ui.plusZbutton.isChecked():
             self.Bz = (self.field_magnitude/100)
-            self.By = 0
-            self.Bx = 0
-            self.apply_actions(True)
-        else:
-            self.apply_actions(False)
-
-    def quickfieldminusZ(self):
-        if self.ui.minusZbutton.isChecked():
-            self.ui.upfieldbutton.setChecked(False)
-            self.ui.rightfieldbutton.setChecked(False)
-            self.ui.leftfieldbutton.setChecked(False)
-            self.ui.plusZbutton.setChecked(False)
-            self.ui.downfieldbutton.setChecked(False)
+        
+        elif self.ui.minusZbutton.isChecked():
             self.Bz = -(self.field_magnitude/100)
-            self.By = 0
-            self.Bx = 0
-            self.apply_actions(True)
+            #self.ui.plusZbutton.setChecked(False)
+
         else:
             self.apply_actions(False)
+            self.ui.plusZbutton.setChecked(False)
+            self.ui.minusZbutton.setChecked(False)
+            self.ui.upfieldbutton.setChecked(False)
+            self.ui.downfieldbutton.setChecked(False)
+            self.ui.leftfieldbutton.setChecked(False)
+            self.ui.rightfieldbutton.setChecked(False)
+
+
+            
+
+
+         
+       
+    def get_slider_vals(self):
+        memory = self.ui.memorybox.value()
+        RRTtreesize = self.ui.RRTtreesizebox.value()
+        arrivalthresh = self.ui.arrivalthreshbox.value()
+        magneticfreq = self.ui.magneticfrequencydial.value()
+        gamma = self.ui.gammadial.value()
+        psi = self.ui.psidial.value()
+        thresh = self.ui.maskthreshbox.value() 
+        dilation = self.ui.maskdilationbox.value() 
+        maskblur = self.ui.maskblurbox.value()
+        crop_length = self.ui.croplengthbox.value()
+
+        """if self.ui.manualapplybutton.isChecked():
+            self.Bx = self.ui.manualfieldBx.value()/100
+            self.By = self.ui.manualfieldBy.value()/100
+            self.Bz = self.ui.manualfieldBz.value()/100
+            self.apply_actions(True)"""
+
+        if self.tracker is not None: 
+            self.tracker.memory = memory
+            self.tracker.RRTtreesize = RRTtreesize
+            self.tracker.arrivalthresh = arrivalthresh
+            self.tracker.mask_thresh = thresh
+            self.tracker.mask_dilation = dilation
+            self.tracker.mask_blur = maskblur
+            self.tracker.crop_length = crop_length
+
+        self.ui.gammalabel.setText("Gamma: {}".format(gamma))
+        self.ui.psilabel.setText("Psi: {}".format(psi))
+        self.ui.rollingfrequencylabel.setText("Freq: {}".format(magneticfreq))
+
          
         
     def resetparams(self):

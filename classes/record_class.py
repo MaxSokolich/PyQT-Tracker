@@ -20,7 +20,7 @@ class RecordThread(QThread):
         self.cap = self.parent.cap
         self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
+        self.videofps = 10#int(self.cap.get(cv2.CAP_PROP_FPS))
 
       
         date = datetime.now().strftime('%Y.%m.%d-%H.%M.%S')
