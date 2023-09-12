@@ -906,10 +906,11 @@ class MainWindow(QtWidgets.QMainWindow):
         
         elif self.ui.plusZbutton.isChecked():
             self.Bz = (self.field_magnitude/100)
+
         
         elif self.ui.minusZbutton.isChecked():
             self.Bz = -(self.field_magnitude/100)
-            #self.ui.plusZbutton.setChecked(False)
+         
 
         else:
             self.apply_actions(False)
