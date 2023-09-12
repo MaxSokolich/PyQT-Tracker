@@ -1979,7 +1979,7 @@ font-size: 14pt; font: Arial;</string>
        <string notr="true"/>
       </property>
       <property name="text">
-       <string>Magnetic Field Magnitude</string>
+       <string>Field Magnitude</string>
       </property>
      </widget>
      <widget class="QLabel" name="bxlabel">
@@ -2121,7 +2121,7 @@ font-size: 17pt; font: Arial;</string>
        <rect>
         <x>210</x>
         <y>10</y>
-        <width>91</width>
+        <width>131</width>
         <height>21</height>
        </rect>
       </property>
@@ -2198,7 +2198,7 @@ font-size: 17pt; font: Arial;</string>
         <x>210</x>
         <y>130</y>
         <width>71</width>
-        <height>21</height>
+        <height>25</height>
        </rect>
       </property>
       <property name="styleSheet">

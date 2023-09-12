@@ -987,7 +987,7 @@ class Ui_MainWindow(object):
         self.label_5.setGeometry(QtCore.QRect(340, 10, 61, 21))
         self.label_5.setObjectName("label_5")
         self.label_6 = QtWidgets.QLabel(self.frame_2)
-        self.label_6.setGeometry(QtCore.QRect(210, 10, 91, 21))
+        self.label_6.setGeometry(QtCore.QRect(210, 10, 131, 21))
         self.label_6.setObjectName("label_6")
         self.manualfieldBx = QtWidgets.QSpinBox(self.frame_2)
         self.manualfieldBx.setGeometry(QtCore.QRect(230, 40, 71, 25))
@@ -1010,7 +1010,7 @@ class Ui_MainWindow(object):
         self.manualfieldBz.setDisplayIntegerBase(10)
         self.manualfieldBz.setObjectName("manualfieldBz")
         self.manualapplybutton = QtWidgets.QPushButton(self.frame_2)
-        self.manualapplybutton.setGeometry(QtCore.QRect(210, 130, 71, 21))
+        self.manualapplybutton.setGeometry(QtCore.QRect(210, 130, 71, 25))
         self.manualapplybutton.setStyleSheet("QPushButton {\n"
 "                color: rgb(255, 255, 255);\n"
 "                background-color: rgb(0, 0, 0);\n"
@@ -1230,7 +1230,7 @@ class Ui_MainWindow(object):
         self.leftfieldbutton.setText(_translate("MainWindow", "..."))
         self.minusZbutton.setText(_translate("MainWindow", "-Z"))
         self.downfieldbutton.setText(_translate("MainWindow", "..."))
-        self.quickfieldlabel.setText(_translate("MainWindow", "Magnetic Field Magnitude"))
+        self.quickfieldlabel.setText(_translate("MainWindow", "Field Magnitude"))
         self.bxlabel.setText(_translate("MainWindow", "Bx: 0"))
         self.bzlabel.setText(_translate("MainWindow", "Bz: 0"))
         self.bylabel.setText(_translate("MainWindow", "By: 0"))
