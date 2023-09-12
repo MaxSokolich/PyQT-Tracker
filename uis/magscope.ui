@@ -2069,7 +2069,7 @@ font-size: 17pt; font: Arial;</string>
        <rect>
         <x>390</x>
         <y>40</y>
-        <width>21</width>
+        <width>31</width>
         <height>21</height>
        </rect>
       </property>
@@ -2082,7 +2082,7 @@ font-size: 17pt; font: Arial;</string>
        <rect>
         <x>390</x>
         <y>70</y>
-        <width>21</width>
+        <width>31</width>
         <height>21</height>
        </rect>
       </property>
@@ -2095,7 +2095,7 @@ font-size: 17pt; font: Arial;</string>
        <rect>
         <x>390</x>
         <y>100</y>
-        <width>21</width>
+        <width>31</width>
         <height>21</height>
        </rect>
       </property>
