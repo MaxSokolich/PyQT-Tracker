@@ -913,12 +913,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         else:
             self.apply_actions(False)
-            self.ui.plusZbutton.setChecked(False)
-            self.ui.minusZbutton.setChecked(False)
-            self.ui.upfieldbutton.setChecked(False)
-            self.ui.downfieldbutton.setChecked(False)
-            self.ui.leftfieldbutton.setChecked(False)
-            self.ui.rightfieldbutton.setChecked(False)
+
 
 
             
