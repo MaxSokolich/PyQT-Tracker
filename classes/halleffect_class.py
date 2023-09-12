@@ -77,7 +77,7 @@ try:
             elif VAL > bound[1]:
                 bound[1] = VAL
                
-            m = interp1d([bound[0],bound[1]],[-8,8])
+            m = interp1d([bound[0],bound[1]],[-80,80])
             mapped_field = int(m(VAL))
             return mapped_field
         
@@ -89,9 +89,9 @@ try:
             
             while self.run_flag:
                 
-                bx = self.readFIELD(self.senseBx, Bx_bounds)
-                by = self.readFIELD(self.senseBy, By_bounds)
-                bz = self.readFIELD(self.senseBz, Bz_bounds)
+                bx = self.readFIELD(self.senseBx, Bx_bounds)/10
+                by = self.readFIELD(self.senseBy, By_bounds)/10
+                bz = self.readFIELD(self.senseBz, Bz_bounds)/10
                 
                
                 
