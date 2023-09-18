@@ -597,6 +597,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.videopath == 0:
             try:
                 self.cap  = EasyPySpin.VideoCapture(0)
+                self.cap.set(cv2.CAP_PROP_AUTO_WB, False)
             except Exception:
                 self.cap  = cv2.VideoCapture(0) 
                 self.tbprint("No EasyPySpin Camera Available")

@@ -54,8 +54,9 @@ class VideoThread(QThread):
             self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
         else:
             self.totalnumframes = 0
+           
         self.pix2metric =  0.28985 * self.objective #.29853 * self.objective#0.28985 * self.objective  
-        self.cap.set(cv2.CAP_PROP_AUTO_WB, False)
+        
             #at 10x objective
             #width_in_pixels = 2448 #pixels
             #divs = 82
