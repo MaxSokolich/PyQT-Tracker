@@ -1083,8 +1083,8 @@ color: rgb(0,255,0);</string>
     <widget class="QPushButton" name="resetdefaultbutton">
      <property name="geometry">
       <rect>
-       <x>100</x>
-       <y>930</y>
+       <x>20</x>
+       <y>935</y>
        <width>121</width>
        <height>25</height>
       </rect>
@@ -1128,6 +1128,54 @@ color: rgb(0,255,0);</string>
      </property>
      <property name="text">
       <string>Defaults</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="croppedmasktoggle">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>935</y>
+       <width>121</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>300</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>16</pointsize>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+                color: rgb(255, 255, 255);
+                background-color: rgb(0, 0, 0);
+                border-style: outset;
+                border-width: 2px;
+                border-radius: 10px;
+                border-color: rgb(0, 0, 0);
+                min-width: 1em;
+                padding: 1px;
+            }
+            QPushButton:hover {
+                background-color: rgb(100, 100, 100);
+                color: rgb(255, 255, 255);
+                border-style: inset;
+			  border-color: rgb(0, 255, 0);
+            }</string>
+     </property>
+     <property name="text">
+      <string>Original</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>

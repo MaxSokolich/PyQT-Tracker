@@ -48,8 +48,6 @@ class Robot:
         self.times.append(time)
     
 
-    
-
     def as_dict(self) -> dict:
         """
         Convert's the bot's current frame and position information into a

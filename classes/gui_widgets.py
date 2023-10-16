@@ -469,7 +469,7 @@ class Ui_MainWindow(object):
         self.CroppedVideoFeedLabel.setText("")
         self.CroppedVideoFeedLabel.setObjectName("CroppedVideoFeedLabel")
         self.resetdefaultbutton = QtWidgets.QPushButton(self.dockWidgetContents)
-        self.resetdefaultbutton.setGeometry(QtCore.QRect(100, 930, 121, 25))
+        self.resetdefaultbutton.setGeometry(QtCore.QRect(20, 935, 121, 25))
         self.resetdefaultbutton.setMaximumSize(QtCore.QSize(300, 25))
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -499,6 +499,33 @@ class Ui_MainWindow(object):
 "                border-style: inset;\n"
 "                }")
         self.resetdefaultbutton.setObjectName("resetdefaultbutton")
+        self.croppedmasktoggle = QtWidgets.QPushButton(self.dockWidgetContents)
+        self.croppedmasktoggle.setGeometry(QtCore.QRect(170, 935, 121, 25))
+        self.croppedmasktoggle.setMaximumSize(QtCore.QSize(300, 25))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(16)
+        font.setBold(False)
+        font.setItalic(False)
+        self.croppedmasktoggle.setFont(font)
+        self.croppedmasktoggle.setStyleSheet("QPushButton {\n"
+"                color: rgb(255, 255, 255);\n"
+"                background-color: rgb(0, 0, 0);\n"
+"                border-style: outset;\n"
+"                border-width: 2px;\n"
+"                border-radius: 10px;\n"
+"                border-color: rgb(0, 0, 0);\n"
+"                min-width: 1em;\n"
+"                padding: 1px;\n"
+"            }\n"
+"            QPushButton:hover {\n"
+"                background-color: rgb(100, 100, 100);\n"
+"                color: rgb(255, 255, 255);\n"
+"                border-style: inset;\n"
+"              border-color: rgb(0, 255, 0);\n"
+"            }")
+        self.croppedmasktoggle.setCheckable(True)
+        self.croppedmasktoggle.setObjectName("croppedmasktoggle")
         self.dockWidget.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dockWidget)
         self.dockWidget_2 = QtWidgets.QDockWidget(MainWindow)
@@ -1212,6 +1239,7 @@ class Ui_MainWindow(object):
         self.robotblurunitslabe.setText(_translate("MainWindow", "units"))
         self.robotsizeunitslabel.setText(_translate("MainWindow", "um  "))
         self.resetdefaultbutton.setText(_translate("MainWindow", "Defaults"))
+        self.croppedmasktoggle.setText(_translate("MainWindow", "Original"))
         self.swimradio.setText(_translate("MainWindow", "Swim"))
         self.applyacousticbutton.setText(_translate("MainWindow", "Apply"))
         self.rollradio.setText(_translate("MainWindow", "Roll"))

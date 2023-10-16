@@ -33,6 +33,7 @@ class VideoThread(QThread):
         self._run_flag = True
         self._play_flag = True
         self.mask_flag = False
+        self.croppedmask_flag = True
         self.framenum = 0
 
         self.orientstatus = False
@@ -229,6 +230,10 @@ class VideoThread(QThread):
             
     
             croppedmask = cv2.cvtColor(croppedmask, cv2.COLOR_GRAY2BGR)
+            
+            #this will toggle between the cropped frame display being the masked version and the original
+            if self.croppedmask_flag == False:
+                croppedmask = frame[y1 : y1 + h, x1 : x1 + w]
             
             if max_cnt is not None:
                 cv2.drawContours(croppedmask, [max_cnt], -1, (0, 255, 255), 1)

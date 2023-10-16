@@ -206,6 +206,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.manualfieldBx.valueChanged.connect(self.get_slider_vals)
         self.ui.manualfieldBy.valueChanged.connect(self.get_slider_vals)
         self.ui.manualfieldBz.valueChanged.connect(self.get_slider_vals)
+        self.ui.croppedmasktoggle.clicked.connect(self.showcroppedoriginal)
         #self.showFullScreen()
 
 
@@ -738,6 +739,16 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 self.ui.maskbutton.setText("Mask")
                 self.tracker.mask_flag = False
+    
+    def showcroppedoriginal(self):
+        if self.tracker is not None:
+            if self.ui.croppedmasktoggle.isChecked():
+                self.ui.croppedmasktoggle.setText("Mask")
+                self.tracker.croppedmask_flag = False
+            else:
+                self.ui.croppedmasktoggle.setText("Original")
+                self.tracker.croppedmask_flag = True
+
 
          
     def get_objective(self):
