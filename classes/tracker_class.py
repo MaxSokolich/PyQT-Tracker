@@ -7,6 +7,7 @@ from scipy import ndimage
 import time
 
 from classes.algorithm_class import algorithm
+from classes.fps_class import FPSCounter
     
 #add unique crop length 
 class VideoThread(QThread):
@@ -108,6 +109,7 @@ class VideoThread(QThread):
 
                 #crop the frame
                 croppedframe = frame[y1 : y1 + h, x1 : x1 + w]
+                
                 
                 #find the mask
                 croppedmask  = self.find_mask(croppedframe)
@@ -225,7 +227,7 @@ class VideoThread(QThread):
                         tar = targets[-1]
                         cv2.circle(displayframe,(int(tar[0]), int(tar[1])),6,(botcolor), -1,)
             
-   
+    
             croppedmask = cv2.cvtColor(croppedmask, cv2.COLOR_GRAY2BGR)
             
             if max_cnt is not None:
@@ -331,27 +333,3 @@ class VideoThread(QThread):
         self.cap.release()
 
 
-
-class FPSCounter:
-    """
-    Class for managing the FPS of the microbot tracker
-
-    Args:
-        None
-    """
-
-    def __init__(self):
-        self.t0 = time.time()
-        self.t1 = self.t0
-        self.fps = 0
-
-    def update(self):
-        self.t1 = time.time()
-        try:
-            self.fps = 1 / (self.t1 - self.t0)
-        except ZeroDivisionError:
-            self.fps = 0
-        self.t0 = self.t1
-
-    def get_fps(self):
-        return self.fps
