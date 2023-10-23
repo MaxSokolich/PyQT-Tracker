@@ -10,6 +10,8 @@ from classes.gui_functions import MainWindow
 # ideally refactor the actions output function, not sure the best way to do it though
 # add joystick when camera is off. see above
 # calibrate x and y z coils by adding a calbration value
+# add a track all feature
+# need to recode saving and recording data function. there are timing issues
 
 
 

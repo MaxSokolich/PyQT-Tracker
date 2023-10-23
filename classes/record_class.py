@@ -12,7 +12,7 @@ from classes.algorithm_class import algorithm
 #add unique crop length 
 class RecordThread(QThread):
 
-    def __init__(self, parent):
+    def __init__(self, parent, date):
         super().__init__(parent=parent)
         self.parent = parent
         
@@ -20,10 +20,11 @@ class RecordThread(QThread):
         self.cap = self.parent.cap
         self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        self.videofps = 5#int(self.cap.get(cv2.CAP_PROP_FPS))
+        self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
 
       
-        date = datetime.now().strftime('%Y.%m.%d-%H.%M.%S')
+        
+        print(date)
         file_path  = os.path.join(self.parent.new_dir_path, date+".mp4")
         self.result = cv2.VideoWriter(
                     file_path,
@@ -43,9 +44,18 @@ class RecordThread(QThread):
                         fontScale=1, 
                         thickness=4,
                         color = (255, 255, 255))
+            
+            cv2.putText(self.parent.currentframe, "frame: {}".format(self.parent.tracker.framenum),
+                        (int(self.width * (6/10)),
+                        int(self.height * (9.9/10))),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        fontScale=1, 
+                        thickness=4,
+                        color = (255, 255, 255))
                         
             #frame = cv2.resize(frame, (self.width,self.height), interpolation = cv2.INTER_AREA)
             self.result.write(self.parent.currentframe)
+            self.parent.magnetic_field_list.append(self.parent.actions)
             time.sleep(1/self.videofps)
 
            

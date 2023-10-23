@@ -91,11 +91,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
         self.zoom_x, self.zoom_y, self.zoomscale, self.scrollamount = 1,0,0,0
-        self.result = None
+        self.croppedresult = None
         self.currentframe = None
 
         self.videopath = 0
-        #self.setFile()
+        self.cap = None
         self.tracker = None
         self.recorder = None
         
@@ -108,6 +108,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.Mx, self.My, self.Mz = 0,0,0
         self.alpha, self.gamma, self.psi, self.freq = 0,0,0,0
         self.sensorBx, self.sensorBy, self.sensorBz = 0,0,0
+        self.stuckstatus = 0
         self.field_magnitude = 100
 
         #control tab functions
@@ -207,6 +208,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.manualfieldBy.valueChanged.connect(self.get_slider_vals)
         self.ui.manualfieldBz.valueChanged.connect(self.get_slider_vals)
         self.ui.croppedmasktoggle.clicked.connect(self.showcroppedoriginal)
+        self.ui.croppedrecordbutton.clicked.connect(self.croppedrecordfunction)
         #self.showFullScreen()
 
 
@@ -244,13 +246,19 @@ class MainWindow(QtWidgets.QMainWindow):
         elif self.manual_status == True:
             pass
             
-            
-        
+        #stuck status
+        if len(self.tracker.robot_list) > 0:
+            if self.tracker.robot_list[-1].velocity_list[-1][2] <= 2 and self.freq >0:
+                self.stuckstatus = 1
+            else:
+                self.stuckstatus = 0
+
+
         #save the current action outputs to a list to be saved 
-        self.actions = [self.tracker.framenum,self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, 
-                        self.acoustic_frequency, self.sensorBx, self.sensorBy, self.sensorBz] 
+        self.actions = [self.tracker.framenum, self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, 
+                        self.acoustic_frequency, self.sensorBx, self.sensorBy, self.sensorBz, self.stuckstatus] 
         
-        self.magnetic_field_list.append(self.actions)
+        #self.magnetic_field_list.append(self.actions)
         self.apply_actions(True)
 
 
@@ -498,15 +506,7 @@ class MainWindow(QtWidgets.QMainWindow):
         frame = self.handle_zoom(frame)
     
         self.currentframe = frame
-        """if self.result is not None:
-            cv2.putText(frame,"frame: " + str(self.tracker.framenum),
-                        (int(self.video_width / 80),
-                         int(self.video_height / 9)),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        fontScale=1, 
-                        thickness=4,
-                        color = (255, 255, 255))
-            self.result.write(frame)"""
+        
         
 
         
@@ -549,19 +549,41 @@ class MainWindow(QtWidgets.QMainWindow):
         p = convert_to_Qt_format.scaled(310, 310, Qt.KeepAspectRatio)
         qt_cimg = QPixmap.fromImage(p)
         self.ui.CroppedVideoFeedLabel.setPixmap(qt_cimg)
+        if self.croppedresult is not None:
+            self.magnetic_field_list.append(self.actions)
+            self.croppedresult.write(frame)
+
     
 
-
+    def croppedrecordfunction(self):
+        if self.cap is not None:
+            if self.ui.croppedrecordbutton.isChecked():
+                self.ui.croppedrecordbutton.setText("Stop")
+                self.tbprint("Start Record")
+                self.date = datetime.now().strftime('%Y.%m.%d-%H.%M.%S')
+                file_path  = os.path.join(self.new_dir_path, self.date+".mp4")
+                self.croppedresult = cv2.VideoWriter(
+                    file_path,
+                    cv2.VideoWriter_fourcc(*"mp4v"),
+                    int(self.videofps),    
+                    (self.tracker.crop_length, self.tracker.crop_length), ) 
+            
+            else:
+                self.ui.croppedrecordbutton.setText("Record")
+                if self.croppedresult is not None:
+                    self.croppedresult.release()
+                    self.croppedresult = None
+                    self.tbprint("End Record, Data Saved")
+                    self.savedata(self.date)
+    
          
     def recordfunction_class(self):
         if self.cap is not None:
             if self.ui.recordbutton.isChecked():
-                
-                self.recorder = RecordThread(self)
+                self.date = datetime.now().strftime('%Y.%m.%d-%H.%M.%S')
+                self.recorder = RecordThread(self, self.date)
                 self.recorder.recordstatus = True
                 self.recorder.start()
-                
-
                 self.ui.recordbutton.setText("Stop")
                 self.tbprint("Start Record")
                 
@@ -569,31 +591,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.recorder.stop()
                 self.ui.recordbutton.setText("Record")
                 self.tbprint("End Record, Data Saved")
-                self.savedata()
+                self.savedata(self.date)
 
 
-    def recordfunction(self):
-        if self.cap is not None:
-            if self.ui.recordbutton.isChecked():
-                self.ui.recordbutton.setText("Stop")
-                self.tbprint("Start Record")
-                date = datetime.now().strftime('%Y.%m.%d-%H.%M.%S')
-                file_path  = os.path.join(self.new_dir_path, date+".mp4")
-                self.rec_start_time = time.time()
-                self.result = cv2.VideoWriter(
-                    file_path,
-                    cv2.VideoWriter_fourcc(*"mp4v"),
-                    int(self.videofps),    
-                    (self.video_width, self.video_height), ) 
-            else:
-                self.ui.recordbutton.setText("Record")
-                if self.result is not None:
-                    self.result.release()
-                    self.result = None
-                    self.tbprint("End Record, Data Saved")
-                    self.savedata()
     
-
     def setFile(self):
         if self.videopath == 0:
             try:
@@ -790,8 +791,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.frameslider.setValue(self.tracker.framenum)
             self.ui.framelabel.setText("Frame:"+str(self.tracker.framenum))
 
-    def savedata(self):
-        date = datetime.now().strftime('%Y.%m.%d-%H.%M.%S')
+    def savedata(self, date):
+     
+        #date = datetime.now().strftime('%Y.%m.%d-%H.%M.%S')
         file_path  = os.path.join(self.new_dir_path, date+".xlsx")
         robot_dictionary = []
         for bot in self.tracker.robot_list:
@@ -861,8 +863,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if len(self.magnetic_field_list) > 0:     
                 df2 = pd.DataFrame()      
 
-                MFFrame, Bx, By, Bz, alpha, gamma, freq, psi, acoustic_freq ,sensorBx, sensorBy, sensorBz = zip(*self.magnetic_field_list)
-                df2[f"Applied on Frame"] = pd.Series(MFFrame, dtype='float64')
+                MFFrame, Bx, By, Bz, alpha, gamma, freq, psi, acoustic_freq ,sensorBx, sensorBy, sensorBz, stucklist = zip(*self.magnetic_field_list)
+                df2[f"Frame"] = pd.Series(MFFrame, dtype='float64')
                 df2[f"Bx"] = pd.Series(Bx, dtype='float64')
                 df2[f"By"] = pd.Series(By, dtype='float64')
                 df2[f"Bz"] = pd.Series(Bz, dtype='float64')
@@ -874,6 +876,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 df2[f"sensor Bx"] = pd.Series(sensorBx, dtype='float64')
                 df2[f"sensor By"] = pd.Series(sensorBy, dtype='float64')
                 df2[f"sensor Bz"] = pd.Series(sensorBz, dtype='float64')
+                df2[f"Stuck?"] = pd.Series(stucklist, dtype='float64')
                 df2.to_excel(writer, sheet_name=f"Magnetic Field", index=False)
     
     def update_halleffect_sensor(self, vals):

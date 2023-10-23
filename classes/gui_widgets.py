@@ -220,7 +220,8 @@ class Ui_MainWindow(object):
 "                padding-left: 5px;\n"
 "                padding-top: 5px;\n"
 "            }")
-        self.leftbutton.setAutoRepeat(True)
+        self.leftbutton.setAutoRepeat(False)
+        self.leftbutton.setAutoRepeatDelay(0)
         self.leftbutton.setAutoRepeatInterval(1)
         self.leftbutton.setArrowType(QtCore.Qt.LeftArrow)
         self.leftbutton.setObjectName("leftbutton")
@@ -306,7 +307,7 @@ class Ui_MainWindow(object):
 "                padding-left: 5px;\n"
 "                padding-top: 5px;\n"
 "            }")
-        self.rightbutton.setAutoRepeat(True)
+        self.rightbutton.setAutoRepeat(False)
         self.rightbutton.setAutoRepeatInterval(1)
         self.rightbutton.setArrowType(QtCore.Qt.RightArrow)
         self.rightbutton.setObjectName("rightbutton")
@@ -469,7 +470,7 @@ class Ui_MainWindow(object):
         self.CroppedVideoFeedLabel.setText("")
         self.CroppedVideoFeedLabel.setObjectName("CroppedVideoFeedLabel")
         self.resetdefaultbutton = QtWidgets.QPushButton(self.dockWidgetContents)
-        self.resetdefaultbutton.setGeometry(QtCore.QRect(20, 935, 121, 25))
+        self.resetdefaultbutton.setGeometry(QtCore.QRect(20, 935, 71, 25))
         self.resetdefaultbutton.setMaximumSize(QtCore.QSize(300, 25))
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -500,7 +501,7 @@ class Ui_MainWindow(object):
 "                }")
         self.resetdefaultbutton.setObjectName("resetdefaultbutton")
         self.croppedmasktoggle = QtWidgets.QPushButton(self.dockWidgetContents)
-        self.croppedmasktoggle.setGeometry(QtCore.QRect(170, 935, 121, 25))
+        self.croppedmasktoggle.setGeometry(QtCore.QRect(125, 935, 71, 25))
         self.croppedmasktoggle.setMaximumSize(QtCore.QSize(300, 25))
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -526,6 +527,40 @@ class Ui_MainWindow(object):
 "            }")
         self.croppedmasktoggle.setCheckable(True)
         self.croppedmasktoggle.setObjectName("croppedmasktoggle")
+        self.croppedrecordbutton = QtWidgets.QPushButton(self.dockWidgetContents)
+        self.croppedrecordbutton.setGeometry(QtCore.QRect(230, 935, 71, 25))
+        self.croppedrecordbutton.setMinimumSize(QtCore.QSize(24, 0))
+        self.croppedrecordbutton.setStyleSheet("QPushButton {\n"
+"                color: rgb(255, 255, 255);\n"
+"                background-color: rgb(0, 0, 0);\n"
+"                border-style: outset;\n"
+"                border-width: 3px;\n"
+"                border-radius: 10px;\n"
+"                border-color: rgb(0, 0, 0);\n"
+"                min-width: 1em;\n"
+"      \n"
+"            }\n"
+"      \n"
+"            QPushButton:checked {\n"
+"                color: rgb(255, 255, 255);\n"
+"                background-color: rgb(255, 0, 0);\n"
+"                border-style: inset;\n"
+"                border-width: 3px;\n"
+"                border-radius: 10px;\n"
+"                border-color: rgb(255, 0, 0);\n"
+"                font: bold 16px;\n"
+"                min-width: 1em;\n"
+"               \n"
+"            }\n"
+"            QPushButton:hover {\n"
+"                background-color: rgb(100, 100, 100);\n"
+"                color: rgb(255, 255, 255);\n"
+"                border-color: rgb(100, 100, 100);\n"
+"                padding-left: 5px;\n"
+"                padding-top: 5px;\n"
+"            }")
+        self.croppedrecordbutton.setCheckable(True)
+        self.croppedrecordbutton.setObjectName("croppedrecordbutton")
         self.dockWidget.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dockWidget)
         self.dockWidget_2 = QtWidgets.QDockWidget(MainWindow)
@@ -1240,6 +1275,7 @@ class Ui_MainWindow(object):
         self.robotsizeunitslabel.setText(_translate("MainWindow", "um  "))
         self.resetdefaultbutton.setText(_translate("MainWindow", "Defaults"))
         self.croppedmasktoggle.setText(_translate("MainWindow", "Original"))
+        self.croppedrecordbutton.setText(_translate("MainWindow", "Record"))
         self.swimradio.setText(_translate("MainWindow", "Swim"))
         self.applyacousticbutton.setText(_translate("MainWindow", "Apply"))
         self.rollradio.setText(_translate("MainWindow", "Roll"))
