@@ -38,7 +38,7 @@ class VideoThread(QThread):
 
         self.orientstatus = False
         self.autoacousticstatus = False
-        self.mask_thresh = 128
+        self.mask_thresh = 120
         self.mask_dilation = 0  #this is not used as of now
         self.mask_blur = 5
         self.maskinvert = True
@@ -234,9 +234,11 @@ class VideoThread(QThread):
             #this will toggle between the cropped frame display being the masked version and the original
             if self.croppedmask_flag == False:
                 croppedmask = frame[y1 : y1 + h, x1 : x1 + w]
+                
+                    
             
-            if max_cnt is not None:
-                cv2.drawContours(croppedmask, [max_cnt], -1, (0, 255, 255), 1)
+            #if max_cnt is not None:
+            #    cv2.drawContours(croppedmask, [max_cnt], -1, (0, 255, 255), 1)
 
         else:
             croppedmask = np.zeros((310, 310, 3), dtype=np.uint8) 
@@ -296,8 +298,6 @@ class VideoThread(QThread):
                     self.cap.set(cv2.CAP_PROP_EXPOSURE, self.exposure)
                     self.pix2metric =  0.28985 * self.objective
                     
-          
-
                 #step 1 detect robot
                 croppedmask, max_cnt = self.track_robot(frame) 
 
