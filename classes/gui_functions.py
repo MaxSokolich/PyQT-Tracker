@@ -10,7 +10,7 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 import cv2
 import os
 from os.path import expanduser
-
+import openpyxl 
 import pandas as pd
 from datetime import datetime
 import sys
@@ -93,11 +93,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.zoom_x, self.zoom_y, self.zoomscale, self.scrollamount = 1,0,0,0
         self.croppedresult = None
         self.currentframe = None
-
+        self.frame_number = 0
+        self.robots = []
         self.videopath = 0
         self.cap = None
         self.tracker = None
         self.recorder = None
+
+        self.save_status = False
+        self.output_workbook = None
+        
+        
         
         self.drawing = False
         self.acoustic_frequency = 0
@@ -214,7 +220,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
 
-    def update_actions(self, actions, stopped):
+    def update_actions(self, actions, stopped, robot_list):
+        self.frame_number+=1
+        
         #output actions if control status is on
         if self.ui.autoacousticbutton.isChecked():
             self.acoustic_frequency  = actions[-1]   
@@ -245,22 +253,92 @@ class MainWindow(QtWidgets.QMainWindow):
         
         elif self.manual_status == True:
             pass
-            
-        #stuck status
-        if len(self.tracker.robot_list) > 0:
-            if self.tracker.robot_list[-1].velocity_list[-1][2] <= 2 and self.freq >0:
-                self.stuckstatus = 1
-            else:
-                self.stuckstatus = 0
+        
+    
+        #DEFINE CURRENT ROBOT PARAMS TO A LIST
+        if len(robot_list) > 0:
+            self.robots = []
+            for bot in robot_list:
+                currentbot_params = [bot.frame_list[-1],
+                                     bot.times[-1],
+                                     bot.position_list[-1][0],bot.position_list[-1][1], 
+                                     bot.velocity_list[-1][0], bot.velocity_list[-1][1],bot.velocity_list[-1][2],
+                                     bot.blur_list[-1],
+                                     bot.area_list[-1],
+                                     bot.avg_area,
+                                     bot.cropped_frame[-1][0],bot.cropped_frame[-1][1],bot.cropped_frame[-1][2],bot.cropped_frame[-1][3],
+                                     bot.trajectory,
+                                    ]
+                
+                self.robots.append(currentbot_params)
+        
 
-
-        #save the current action outputs to a list to be saved 
-        self.actions = [self.tracker.framenum, self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, 
+    
+        #DEFINE CURRENT MAGNETIC FIELD OUTPUT TO A LIST 
+        self.actions = [self.frame_number, self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, 
                         self.acoustic_frequency, self.sensorBx, self.sensorBy, self.sensorBz, self.stuckstatus] 
         
-        #self.magnetic_field_list.append(self.actions)
+        self.magnetic_field_list.append(self.actions)
         self.apply_actions(True)
 
+
+        #IF SAVE STATUS THEN CONTINOUSLY SAVE THE CURRENT ROBOT PARAMS AND MAGNETIC FIELD PARAMS TO AN EXCEL ROWS
+        if self.save_status == True:
+            self.magnetic_field_sheet.append(self.actions)
+            for (sheet, bot) in zip(self.robot_params_sheets,self.robots):
+                sheet.append(bot[:-1])
+
+
+            
+    def start_data_record(self):
+        self.output_workbook = openpyxl.Workbook()
+            
+        #create sheet for magneti field actions
+        self.magnetic_field_sheet = self.output_workbook.create_sheet(title="Magnetic Field Actions")#self.output_workbook.active
+        self.magnetic_field_sheet.append(["Frame","Bx", "By", "Bz", "Alpha", "Gamma", "Rolling Frequency", "Psi", "Acoustic Frequency","Sensor Bx", "Sensor By", "Sensor Bz", "Stuck?"])
+
+        #create sheet for robot data
+        self.robot_params_sheets = []
+        for i in range(len(self.robots)):
+            robot_sheet = self.output_workbook.create_sheet(title= "Robot {}".format(i+1))
+            robot_sheet.append(["Frame","Times","Pos X", "Pos Y", "Vel X", "Vel Y", "Vel Mag", "Blur", "Area", "Avg Area", "Cropped X","Cropped Y","Cropped W","Cropped H", "Path X", "Path Y"])
+            self.robot_params_sheets.append(robot_sheet)
+
+        #tell update_actions function to start appending data to the sheets
+        self.save_status = True
+
+    def stop_data_record(self):
+        #tell update_actions function to stop appending data to the sheets
+        self.save_status = False
+        file_path  = os.path.join(self.new_dir_path, self.date+".xlsx")
+        
+        #add trajectory to file after the fact
+        if self.output_workbook is not None:
+            if len((self.robot_params_sheets)) > 0:
+                for i in range(len((self.robot_params_sheets))):
+                    for idx,(x,y) in enumerate(self.robots[i][-1]):
+                        self.robot_params_sheets[i].cell(row=idx+2, column=15).value = x
+                        self.robot_params_sheets[i].cell(row=idx+2, column=16).value = y
+
+            #save and close workbook
+            self.output_workbook.remove(self.output_workbook["Sheet"])
+            self.output_workbook.save(file_path)
+
+            self.output_workbook.close()
+            self.output_workbook = None
+
+        
+        
+
+    def savedata(self):
+        if self.ui.savedatabutton.isChecked():
+            self.ui.savedatabutton.setText("Stop")
+            self.start_data_record()
+        else:
+            self.ui.savedatabutton.setText("Save Data")
+            self.date = datetime.now().strftime('%Y.%m.%d-%H.%M.%S')
+            self.stop_data_record()
+            
 
     def apply_actions(self, status):
         #the purpose of this function is to output the actions via arduino, 
@@ -433,7 +511,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         self.tracker.control_robot.reset()
 
                         robot = Robot()  # create robot instance
-                        robot.add_frame(self.tracker.framenum)
+                        robot.add_frame(self.frame_number)
                         robot.add_time(0)
                         robot.add_position([newx,newy])
                         robot.add_velocity([0,0,0])
@@ -441,7 +519,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         robot.add_area(0)
                         robot.add_blur(0)
                         
-                        self.tracker.robot_list.append(robot)
+                        self.tracker.robot_list.append(robot) #this has to include tracker.robot_list because I need to add it to that class
 
                     if event.buttons() == QtCore.Qt.RightButton: 
                         self.drawing = True
@@ -455,6 +533,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     if event.buttons() == QtCore.Qt.MiddleButton: 
                         del self.tracker.robot_list[:]
                         del self.magnetic_field_list[:]
+                        del self.robots[:]
                         self.apply_actions(False)
                        
                     
@@ -506,11 +585,6 @@ class MainWindow(QtWidgets.QMainWindow):
         frame = self.handle_zoom(frame)
     
         self.currentframe = frame
-        
-        
-
-        
-
         rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
       
@@ -520,15 +594,15 @@ class MainWindow(QtWidgets.QMainWindow):
         qt_img = QPixmap.fromImage(p)
        
         #update frame slider too
-        self.ui.framelabel.setText("Frame:"+str(self.tracker.framenum))
+        self.ui.framelabel.setText("Frame:"+str(self.frame_number))
         if self.videopath !=0:
             self.ui.frameslider.setValue(self.tracker.framenum)
         
         #also update robot info
-        if len(self.tracker.robot_list) > 0:
-            robot_diameter = round(np.sqrt(4*self.tracker.robot_list[-1].avg_area/np.pi),1)
-            self.ui.vellcdnum.display(self.tracker.robot_list[-1].velocity_list[-1][2])
-            self.ui.blurlcdnum.display(self.tracker.robot_list[-1].blur_list[-1])
+        if len(self.robots) > 0:
+            robot_diameter = round(np.sqrt(4*self.robots[-1][8]/np.pi),1)
+            self.ui.vellcdnum.display(self.robots[-1][5])
+            self.ui.blurlcdnum.display(self.robots[-1][6])
             self.ui.sizelcdnum.display(robot_diameter)
                 
        
@@ -550,7 +624,6 @@ class MainWindow(QtWidgets.QMainWindow):
         qt_cimg = QPixmap.fromImage(p)
         self.ui.CroppedVideoFeedLabel.setPixmap(qt_cimg)
         if self.croppedresult is not None:
-            self.magnetic_field_list.append(self.actions)
             self.croppedresult.write(frame)
 
     
@@ -567,6 +640,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     cv2.VideoWriter_fourcc(*"mp4v"),
                     int(self.videofps),    
                     (self.tracker.crop_length, self.tracker.crop_length), ) 
+                #start recording magnetic field and tracking data
+                self.start_data_record()
             
             else:
                 self.ui.croppedrecordbutton.setText("Record")
@@ -574,7 +649,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.croppedresult.release()
                     self.croppedresult = None
                     self.tbprint("End Record, Data Saved")
-                    self.savedata(self.date)
+                #stop and save the data when the record is over.
+                self.stop_data_record()
     
          
     def recordfunction_class(self):
@@ -586,12 +662,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.recorder.start()
                 self.ui.recordbutton.setText("Stop")
                 self.tbprint("Start Record")
+                self.start_data_record()
                 
             else:
                 self.recorder.stop()
                 self.ui.recordbutton.setText("Record")
                 self.tbprint("End Record, Data Saved")
-                self.savedata(self.date)
+                self.stop_data_record()
 
 
     
@@ -629,6 +706,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.robotsizeunitslabel.setText("px")
             self.ui.robotvelocityunitslabel.setText("px/s")
             self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            print(self.totalnumframes)
             self.ui.frameslider.setGeometry(QtCore.QRect(10, self.display_height+12, self.display_width, 20))
             self.ui.frameslider.setMaximum(self.totalnumframes)
             self.ui.frameslider.show()
@@ -791,93 +869,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.frameslider.setValue(self.tracker.framenum)
             self.ui.framelabel.setText("Frame:"+str(self.tracker.framenum))
 
-    def savedata(self, date):
-     
-        #date = datetime.now().strftime('%Y.%m.%d-%H.%M.%S')
-        file_path  = os.path.join(self.new_dir_path, date+".xlsx")
-        robot_dictionary = []
-        for bot in self.tracker.robot_list:
-            robot_dictionary.append(bot.as_dict())
-        
-        with pd.ExcelWriter(file_path) as writer:
-            
-            if self.tracker is not None: 
-                if len(self.tracker.robot_list)>0:      
-        
-                    for idx, mydict in enumerate(robot_dictionary, start=0):
-                        # Create a DataFrame from the dictionary
-                        df = pd.DataFrame()
-                        
-                        for key, value in mydict.items():
-                            if key == "Frame":
-                                df[f"{key}"] = pd.Series(value, dtype='float64')
-                        
-                            elif key == "Times":
-                                df[f"{key}"] = pd.Series(value, dtype='float64')
-                        
-                            elif key == "Position":
-                                if len(value) > 0:
-                                    x_coords, y_coords = zip(*value)
-                                    df[f"{key}_X"] = pd.Series(x_coords, dtype='float64')
-                                    df[f"{key}_Y"] = pd.Series(y_coords, dtype='float64')
-                        
-                            elif key == "Velocity":
-                                if len(value) > 0:
-                                    x_coords, y_coords, mag = zip(*value)
-                                    df[f"{key}_X"] = pd.Series(x_coords, dtype='float64')
-                                    df[f"{key}_Y"] = pd.Series(y_coords, dtype='float64')
-                                    df[f"{key}_Mag"] = pd.Series(mag, dtype='float64')
-                            
-                            elif key == "Cropped Frame Dim":
-                                if len(value) > 0:
-                                    x1, y1, w, h = zip(*value)
-                                    df[f"{key}_x1"] = pd.Series(x1, dtype='float64')
-                                    df[f"{key}_y1"] = pd.Series(y1, dtype='float64')
-                                    df[f"{key}_w"] = pd.Series(w, dtype='float64')
-                                    df[f"{key}_h"] = pd.Series(h, dtype='float64')
-                            
-                            elif key == "Area":
-                                df[f"{key}"] = pd.Series(value, dtype='float64')
-
-                            elif key == "Blur":
-                                df[f"{key}"] = pd.Series(value, dtype='float64')
-                            
-                            elif key == "Avg Area":
-                                df[f"{key}"] = pd.Series(value, dtype='float64')
-                        
-                            elif key == "Trajectory":
-                                if len(value) > 0:
-                                    x_coords, y_coords = zip(*value)
-                                    df[f"{key}_X"] = pd.Series(x_coords, dtype='float64')
-                                    df[f"{key}_Y"] = pd.Series(y_coords, dtype='float64')
-                        
-                            elif key == "Acoustic Frequency":
-                                if len(value) > 0:
-                                    df[f"{key}"] = pd.Series(value, dtype='float64')
-
-
-                            # Write the DataFrame to a separate sheet with sheet name "Sheet_<idx>"
-                            df.to_excel(writer, sheet_name=f"Robot_{idx+1}", index=False)
-                        
-            #also save the magnetic field params 
-            if len(self.magnetic_field_list) > 0:     
-                df2 = pd.DataFrame()      
-
-                MFFrame, Bx, By, Bz, alpha, gamma, freq, psi, acoustic_freq ,sensorBx, sensorBy, sensorBz, stucklist = zip(*self.magnetic_field_list)
-                df2[f"Frame"] = pd.Series(MFFrame, dtype='float64')
-                df2[f"Bx"] = pd.Series(Bx, dtype='float64')
-                df2[f"By"] = pd.Series(By, dtype='float64')
-                df2[f"Bz"] = pd.Series(Bz, dtype='float64')
-                df2[f"alpha"] = pd.Series(alpha, dtype='float64')
-                df2[f"gamma"] = pd.Series(gamma, dtype='float64')
-                df2[f"freq"] = pd.Series(freq, dtype='float64')
-                df2[f"psi"] = pd.Series(psi, dtype='float64')
-                df2[f"acoustic_frequency"] = pd.Series(acoustic_freq, dtype='float64')
-                df2[f"sensor Bx"] = pd.Series(sensorBx, dtype='float64')
-                df2[f"sensor By"] = pd.Series(sensorBy, dtype='float64')
-                df2[f"sensor Bz"] = pd.Series(sensorBz, dtype='float64')
-                df2[f"Stuck?"] = pd.Series(stucklist, dtype='float64')
-                df2.to_excel(writer, sheet_name=f"Magnetic Field", index=False)
+    
     
     def update_halleffect_sensor(self, vals):
         sensorBx, sensorBy, sensorBz = vals
@@ -922,20 +914,12 @@ class MainWindow(QtWidgets.QMainWindow):
         elif self.ui.plusZbutton.isChecked():
             self.Bz = (self.field_magnitude/100)
 
-        
         elif self.ui.minusZbutton.isChecked():
             self.Bz = -(self.field_magnitude/100)
          
-
         else:
             self.apply_actions(False)
 
-
-
-            
-
-
-         
        
     def get_slider_vals(self):
         memory = self.ui.memorybox.value()

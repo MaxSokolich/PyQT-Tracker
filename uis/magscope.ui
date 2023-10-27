@@ -275,7 +275,7 @@
                 background-color: rgb(255, 255, 200);
                 color: rgb(0, 0, 0);
             }
-            QPushButton:pressed {
+            QPushButton:checked {
                 background-color: red;
                 border: 2px solid red;
                 padding-left: 5px;

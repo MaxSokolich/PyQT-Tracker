@@ -13,7 +13,7 @@ from classes.fps_class import FPSCounter
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
     cropped_frame_signal = pyqtSignal(np.ndarray)
-    actions_signal = pyqtSignal(list, bool)
+    actions_signal = pyqtSignal(list, bool, list)
 
 
     def __init__(self, parent):
@@ -311,11 +311,13 @@ class VideoThread(QThread):
                     actions = [0,0,0,0,0,0,0,0]
                     stopped = True    
                     
-              
+                #gather most recent robot params
+                
                 #step 3: emit croppedframe, frame from this thread to the main thread
                 self.cropped_frame_signal.emit(croppedmask)
                 self.change_pixmap_signal.emit(frame)
-                self.actions_signal.emit(actions, stopped)
+                self.actions_signal.emit(actions, stopped, self.robot_list)
+                
                 
 
                 #step 4: delay based on fps

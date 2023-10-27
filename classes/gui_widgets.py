@@ -149,7 +149,7 @@ class Ui_MainWindow(object):
 "                background-color: rgb(255, 255, 200);\n"
 "                color: rgb(0, 0, 0);\n"
 "            }\n"
-"            QPushButton:pressed {\n"
+"            QPushButton:checked {\n"
 "                background-color: red;\n"
 "                border: 2px solid red;\n"
 "                padding-left: 5px;\n"

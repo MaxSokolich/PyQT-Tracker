@@ -11,7 +11,10 @@ from classes.gui_functions import MainWindow
 # add joystick when camera is off. see above
 # calibrate x and y z coils by adding a calbration value
 # add a track all feature
-# need to recode saving and recording data function. there are timing issues
+# need to find better way of saving global video
+# need to refactor the cropped video saving to be seperate from another thing
+
+# stuck status should be for each robot.
 
 
 
