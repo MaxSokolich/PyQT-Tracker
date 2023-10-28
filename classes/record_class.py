@@ -23,8 +23,6 @@ class RecordThread(QThread):
         self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
 
       
-        
-        print(date)
         file_path  = os.path.join(self.parent.new_dir_path, date+".mp4")
         self.result = cv2.VideoWriter(
                     file_path,
@@ -55,7 +53,6 @@ class RecordThread(QThread):
                         
             #frame = cv2.resize(frame, (self.width,self.height), interpolation = cv2.INTER_AREA)
             self.result.write(self.parent.currentframe)
-            self.parent.magnetic_field_list.append(self.parent.actions)
             time.sleep(1/self.videofps)
 
            

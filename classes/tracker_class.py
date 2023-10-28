@@ -110,6 +110,8 @@ class VideoThread(QThread):
 
                 #crop the frame
                 croppedframe = frame[y1 : y1 + h, x1 : x1 + w]
+
+                
                 
                 
                 #find the mask
@@ -169,6 +171,14 @@ class VideoThread(QThread):
                     bot.add_area(area)
                     bot.add_blur(blur)
                     bot.set_avg_area(np.mean(bot.area_list))
+
+                    #stuck condition
+                    if velocity[2] < 20 and self.parent.freq > 0:
+                        stuck_status = 1
+                    else:
+                        stuck_status = 0
+                    bot.add_stuck_status(stuck_status)
+                
                 else:
                     max_cnt = None
         else:

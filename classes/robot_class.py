@@ -18,6 +18,7 @@ class Robot:
         self.avg_area = 0  # current average area of the bot in this frame
         self.trajectory = []  # track points from manual pathing
         self.times = []  #time step per frame in seconds
+        self.stuck_status_list = [] #whether or not the robot is stuck or not
         
 
     def add_area(self, area: float):
@@ -46,6 +47,9 @@ class Robot:
 
     def add_time(self, time):
         self.times.append(time)
+
+    def add_stuck_status(self,stuck):
+        self.stuck_status_list.append(stuck)
     
 
     def as_dict(self) -> dict:

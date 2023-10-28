@@ -114,7 +114,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.Mx, self.My, self.Mz = 0,0,0
         self.alpha, self.gamma, self.psi, self.freq = 0,0,0,0
         self.sensorBx, self.sensorBy, self.sensorBz = 0,0,0
-        self.stuckstatus = 0
         self.field_magnitude = 100
 
         #control tab functions
@@ -267,16 +266,15 @@ class MainWindow(QtWidgets.QMainWindow):
                                      bot.area_list[-1],
                                      bot.avg_area,
                                      bot.cropped_frame[-1][0],bot.cropped_frame[-1][1],bot.cropped_frame[-1][2],bot.cropped_frame[-1][3],
+                                     bot.stuck_status_list[-1],
                                      bot.trajectory,
                                     ]
                 
                 self.robots.append(currentbot_params)
         
-
-    
         #DEFINE CURRENT MAGNETIC FIELD OUTPUT TO A LIST 
         self.actions = [self.frame_number, self.Bx, self.By, self.Bz, self.alpha, self.gamma, self.freq, self.psi, 
-                        self.acoustic_frequency, self.sensorBx, self.sensorBy, self.sensorBz, self.stuckstatus] 
+                        self.acoustic_frequency, self.sensorBx, self.sensorBy, self.sensorBz] 
         
         self.magnetic_field_list.append(self.actions)
         self.apply_actions(True)
@@ -289,19 +287,18 @@ class MainWindow(QtWidgets.QMainWindow):
                 sheet.append(bot[:-1])
 
 
-            
     def start_data_record(self):
         self.output_workbook = openpyxl.Workbook()
             
         #create sheet for magneti field actions
         self.magnetic_field_sheet = self.output_workbook.create_sheet(title="Magnetic Field Actions")#self.output_workbook.active
-        self.magnetic_field_sheet.append(["Frame","Bx", "By", "Bz", "Alpha", "Gamma", "Rolling Frequency", "Psi", "Acoustic Frequency","Sensor Bx", "Sensor By", "Sensor Bz", "Stuck?"])
+        self.magnetic_field_sheet.append(["Frame","Bx", "By", "Bz", "Alpha", "Gamma", "Rolling Frequency", "Psi", "Acoustic Frequency","Sensor Bx", "Sensor By", "Sensor Bz"])
 
         #create sheet for robot data
         self.robot_params_sheets = []
         for i in range(len(self.robots)):
             robot_sheet = self.output_workbook.create_sheet(title= "Robot {}".format(i+1))
-            robot_sheet.append(["Frame","Times","Pos X", "Pos Y", "Vel X", "Vel Y", "Vel Mag", "Blur", "Area", "Avg Area", "Cropped X","Cropped Y","Cropped W","Cropped H", "Path X", "Path Y"])
+            robot_sheet.append(["Frame","Times","Pos X", "Pos Y", "Vel X", "Vel Y", "Vel Mag", "Blur", "Area", "Avg Area", "Cropped X","Cropped Y","Cropped W","Cropped H","Stuck?","Path X", "Path Y"])
             self.robot_params_sheets.append(robot_sheet)
 
         #tell update_actions function to start appending data to the sheets
@@ -317,8 +314,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if len((self.robot_params_sheets)) > 0:
                 for i in range(len((self.robot_params_sheets))):
                     for idx,(x,y) in enumerate(self.robots[i][-1]):
-                        self.robot_params_sheets[i].cell(row=idx+2, column=15).value = x
-                        self.robot_params_sheets[i].cell(row=idx+2, column=16).value = y
+                        self.robot_params_sheets[i].cell(row=idx+2, column=16).value = x
+                        self.robot_params_sheets[i].cell(row=idx+2, column=17).value = y
 
             #save and close workbook
             self.output_workbook.remove(self.output_workbook["Sheet"])
@@ -327,9 +324,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.output_workbook.close()
             self.output_workbook = None
 
-        
-        
-
+    
     def savedata(self):
         if self.ui.savedatabutton.isChecked():
             self.ui.savedatabutton.setText("Stop")
@@ -483,9 +478,6 @@ class MainWindow(QtWidgets.QMainWindow):
         #print to textbox
         self.ui.plainTextEdit.appendPlainText("$ "+ text)
     
-    
-        
-  
 
     def convert_coords(self,pos):
         #need a way to convert the video position of mouse to the actually coordinate in the window
@@ -563,8 +555,7 @@ class MainWindow(QtWidgets.QMainWindow):
         
         return super().eventFilter(object, event)
             
-                
-          
+            
 
     def update_image(self, frame):
         """Updates the image_label with a new opencv image"""
@@ -601,8 +592,8 @@ class MainWindow(QtWidgets.QMainWindow):
         #also update robot info
         if len(self.robots) > 0:
             robot_diameter = round(np.sqrt(4*self.robots[-1][8]/np.pi),1)
-            self.ui.vellcdnum.display(self.robots[-1][5])
-            self.ui.blurlcdnum.display(self.robots[-1][6])
+            self.ui.vellcdnum.display(self.robots[-1][6])
+            self.ui.blurlcdnum.display(self.robots[-1][7])
             self.ui.sizelcdnum.display(robot_diameter)
                 
        
@@ -706,7 +697,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.robotsizeunitslabel.setText("px")
             self.ui.robotvelocityunitslabel.setText("px/s")
             self.totalnumframes = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            print(self.totalnumframes)
+            self.tbprint("Total Frames: {} ".format(self.totalnumframes))
             self.ui.frameslider.setGeometry(QtCore.QRect(10, self.display_height+12, self.display_width, 20))
             self.ui.frameslider.setMaximum(self.totalnumframes)
             self.ui.frameslider.show()
