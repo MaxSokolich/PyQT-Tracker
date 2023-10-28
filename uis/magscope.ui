@@ -1086,7 +1086,7 @@ color: rgb(0,255,0);</string>
     <widget class="QPushButton" name="resetdefaultbutton">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>15</x>
        <y>935</y>
        <width>71</width>
        <height>25</height>
@@ -1136,7 +1136,7 @@ color: rgb(0,255,0);</string>
     <widget class="QPushButton" name="croppedmasktoggle">
      <property name="geometry">
       <rect>
-       <x>125</x>
+       <x>100</x>
        <y>935</y>
        <width>71</width>
        <height>25</height>
@@ -1184,9 +1184,9 @@ color: rgb(0,255,0);</string>
     <widget class="QPushButton" name="croppedrecordbutton">
      <property name="geometry">
       <rect>
-       <x>230</x>
+       <x>190</x>
        <y>935</y>
-       <width>71</width>
+       <width>121</width>
        <height>25</height>
       </rect>
      </property>
@@ -1228,7 +1228,7 @@ color: rgb(0,255,0);</string>
             }</string>
      </property>
      <property name="text">
-      <string>Record</string>
+      <string>Record Robot</string>
      </property>
      <property name="checkable">
       <bool>true</bool>

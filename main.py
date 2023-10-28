@@ -11,7 +11,7 @@ from classes.gui_functions import MainWindow
 # calibrate x and y z coils by adding a calbration value
 # add a track all feature
 # need to find better way of saving global video
-# need to refactor the cropped video saving to be seperate from another thing
+
 
 
 

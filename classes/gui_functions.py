@@ -603,7 +603,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     
 
-    def update_croppedimage(self, frame):
+    def update_croppedimage(self, frame, recoreded_frame):
         """Updates the cropped image_label with a new cropped opencv image"""
         
         rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -614,8 +614,10 @@ class MainWindow(QtWidgets.QMainWindow):
         p = convert_to_Qt_format.scaled(310, 310, Qt.KeepAspectRatio)
         qt_cimg = QPixmap.fromImage(p)
         self.ui.CroppedVideoFeedLabel.setPixmap(qt_cimg)
+        
+        #recored the robots suroundings
         if self.croppedresult is not None:
-            self.croppedresult.write(frame)
+            self.croppedresult.write(recoreded_frame)
 
     
 
@@ -630,7 +632,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     file_path,
                     cv2.VideoWriter_fourcc(*"mp4v"),
                     int(self.videofps),    
-                    (self.tracker.crop_length, self.tracker.crop_length), ) 
+                    (300, 300), ) 
                 #start recording magnetic field and tracking data
                 self.start_data_record()
             

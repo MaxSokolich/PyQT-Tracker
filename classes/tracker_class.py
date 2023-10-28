@@ -12,7 +12,7 @@ from classes.fps_class import FPSCounter
 #add unique crop length 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
-    cropped_frame_signal = pyqtSignal(np.ndarray)
+    cropped_frame_signal = pyqtSignal(np.ndarray,np.ndarray)
     actions_signal = pyqtSignal(list, bool, list)
 
 
@@ -43,6 +43,7 @@ class VideoThread(QThread):
         self.mask_blur = 5
         self.maskinvert = True
         self.crop_length = 40
+        self.crop_length_record = 300
         self.exposure = 5000
         self.objective = 10
 
@@ -111,7 +112,7 @@ class VideoThread(QThread):
                 #crop the frame
                 croppedframe = frame[y1 : y1 + h, x1 : x1 + w]
 
-                
+            
                 
                 
                 #find the mask
@@ -147,6 +148,9 @@ class VideoThread(QThread):
                     h_new = int(self.crop_length)
                     new_crop = [int(x1_new), int(y1_new), int(w_new), int(h_new)]
 
+
+                   
+
                     #find velocity:
                     if len(bot.position_list) > self.memory:
                         vx = (current_pos[0] - bot.position_list[-self.memory][0]) * (self.fps.get_fps()/self.memory) / self.pix2metric
@@ -171,21 +175,34 @@ class VideoThread(QThread):
                     bot.add_area(area)
                     bot.add_blur(blur)
                     bot.set_avg_area(np.mean(bot.area_list))
-
-                    #stuck condition
-                    if velocity[2] < 20 and self.parent.freq > 0:
-                        stuck_status = 1
-                    else:
-                        stuck_status = 0
-                    bot.add_stuck_status(stuck_status)
                 
                 else:
                     max_cnt = None
-        else:
-            croppedmask = None
-            max_cnt = None       
+            
 
-        return croppedmask, max_cnt
+
+                #stuck condition
+                if velocity[2] < 20 and self.parent.freq > 0:
+                    stuck_status = 1
+                else:
+                    stuck_status = 0
+                bot.add_stuck_status(stuck_status)
+        
+            #also crop a second frame at a fixed wdith and heihgt for recording the most recent robots suroundings
+ 
+            x1_record = int(bot.position_list[-1][0] - self.crop_length_record/2)
+            y1_record = int(bot.position_list[-1][1] - self.crop_length_record/2)
+            recorded_cropped_frame = frame[y1_record : y1_record + self.crop_length_record, x1_record : x1_record + self.crop_length_record]
+            
+
+        else:
+            recorded_cropped_frame = np.zeros((self.crop_length_record, self.crop_length_record, 3), dtype=np.uint8) 
+            croppedmask = None
+            max_cnt = None  
+
+
+
+        return croppedmask, max_cnt, recorded_cropped_frame
  
 
     def display_hud(self,frame, croppedmask, max_cnt):
@@ -245,10 +262,9 @@ class VideoThread(QThread):
             if self.croppedmask_flag == False:
                 croppedmask = frame[y1 : y1 + h, x1 : x1 + w]
                 
-                    
-            
-            #if max_cnt is not None:
-            #    cv2.drawContours(croppedmask, [max_cnt], -1, (0, 255, 255), 1)
+                
+            if max_cnt is not None:
+                cv2.drawContours(croppedmask, [max_cnt], -1, (0, 255, 255), 1)
 
         else:
             croppedmask = np.zeros((310, 310, 3), dtype=np.uint8) 
@@ -309,7 +325,7 @@ class VideoThread(QThread):
                     self.pix2metric =  0.28985 * self.objective
                     
                 #step 1 detect robot
-                croppedmask, max_cnt = self.track_robot(frame) 
+                croppedmask, max_cnt, recorded_cropped_frame = self.track_robot(frame) 
 
                 #step 2: display visuals
                 frame, croppedmask, display_mask = self.display_hud(frame, croppedmask, max_cnt)
@@ -324,7 +340,7 @@ class VideoThread(QThread):
                 #gather most recent robot params
                 
                 #step 3: emit croppedframe, frame from this thread to the main thread
-                self.cropped_frame_signal.emit(croppedmask)
+                self.cropped_frame_signal.emit(croppedmask, recorded_cropped_frame)
                 self.change_pixmap_signal.emit(frame)
                 self.actions_signal.emit(actions, stopped, self.robot_list)
                 
