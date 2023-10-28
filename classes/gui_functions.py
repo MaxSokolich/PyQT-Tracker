@@ -632,7 +632,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     file_path,
                     cv2.VideoWriter_fourcc(*"mp4v"),
                     int(self.videofps),    
-                    (300, 300), ) 
+                    (200, 200), ) 
                 #start recording magnetic field and tracking data
                 self.start_data_record()
             

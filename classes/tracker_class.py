@@ -43,7 +43,7 @@ class VideoThread(QThread):
         self.mask_blur = 5
         self.maskinvert = True
         self.crop_length = 40
-        self.crop_length_record = 300
+        self.crop_length_record = 200
         self.exposure = 5000
         self.objective = 10
 
@@ -148,8 +148,6 @@ class VideoThread(QThread):
                     h_new = int(self.crop_length)
                     new_crop = [int(x1_new), int(y1_new), int(w_new), int(h_new)]
 
-
-                   
 
                     #find velocity:
                     if len(bot.position_list) > self.memory:
@@ -263,8 +261,8 @@ class VideoThread(QThread):
                 croppedmask = frame[y1 : y1 + h, x1 : x1 + w]
                 
                 
-            if max_cnt is not None:
-                cv2.drawContours(croppedmask, [max_cnt], -1, (0, 255, 255), 1)
+            #if max_cnt is not None:
+            #    cv2.drawContours(croppedmask, [max_cnt], -1, (0, 255, 255), 1)
 
         else:
             croppedmask = np.zeros((310, 310, 3), dtype=np.uint8) 
