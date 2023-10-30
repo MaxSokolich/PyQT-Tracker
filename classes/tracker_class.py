@@ -173,21 +173,22 @@ class VideoThread(QThread):
                     bot.add_area(area)
                     bot.add_blur(blur)
                     bot.set_avg_area(np.mean(bot.area_list))
+
+                        #stuck condition
+                    if len(bot.position_list) > self.memory and velocity[2] < 20 and self.parent.freq > 0:
+                        stuck_status = 1
+                    else:
+                        stuck_status = 0
+                    bot.add_stuck_status(stuck_status)
                 
                 else:
                     max_cnt = None
             
 
 
-                #stuck condition
-                if velocity[2] < 20 and self.parent.freq > 0:
-                    stuck_status = 1
-                else:
-                    stuck_status = 0
-                bot.add_stuck_status(stuck_status)
+                
         
             #also crop a second frame at a fixed wdith and heihgt for recording the most recent robots suroundings
- 
             x1_record = int(bot.position_list[-1][0] - self.crop_length_record/2)
             y1_record = int(bot.position_list[-1][1] - self.crop_length_record/2)
             recorded_cropped_frame = frame[y1_record : y1_record + self.crop_length_record, x1_record : x1_record + self.crop_length_record]
@@ -222,9 +223,13 @@ class VideoThread(QThread):
             
             if len(self.robot_list) > 0 and croppedmask is not None:
                 #replace the botslocaton with black squre so dilation is not performed in it
-                if len(self.robot_list[-1].cropped_frame) > 1:
-                    x,y,w,h = self.robot_list[-1].cropped_frame[-2]
-                    displaymask[y:y+w , x:x+h] =  croppedmask #= croppedmask
+                try:
+                    if len(self.robot_list[-1].cropped_frame) > 1:
+                        x,y,w,h = self.robot_list[-1].cropped_frame[-2]
+                        displaymask[y:y+w , x:x+h] =  croppedmask #= croppedmask
+                except Exception:
+                    pass
+                
             
             displayframe = cv2.cvtColor(displaymask, cv2.COLOR_GRAY2BGR)
 
