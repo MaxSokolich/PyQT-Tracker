@@ -38,9 +38,9 @@ class VideoThread(QThread):
 
         self.orientstatus = False
         self.autoacousticstatus = False
-        self.mask_thresh = 120
+        self.mask_thresh = 128
         self.mask_dilation = 0  #this is not used as of now
-        self.mask_blur = 5
+        self.mask_blur = 0
         self.maskinvert = True
         self.crop_length = 40
         self.crop_length_record = 200
@@ -103,7 +103,7 @@ class VideoThread(QThread):
     
         if len(self.robot_list) > 0:
             for bot in self.robot_list: #for each bot with a position botx, boty, find the cropped frame around the bot
-               
+                
                 #current cropped frame dim
                 x1, y1, w, h = bot.cropped_frame[-1]
                 x1 = max(min(x1, self.width), 0)
@@ -112,9 +112,7 @@ class VideoThread(QThread):
                 #crop the frame
                 croppedframe = frame[y1 : y1 + h, x1 : x1 + w]
 
-            
-                
-                
+          
                 #find the mask
                 croppedmask  = self.find_mask(croppedframe)
             
@@ -142,10 +140,10 @@ class VideoThread(QThread):
                     current_pos = [xcord + x1,   ycord + y1] #xcord ycord are relative to the cropped frame. need to convert to the overall frame dim
 
                     #generate new cropped frame based on the new robots position
-                    x1_new = int(current_pos[0] - self.crop_length/2)
-                    y1_new = int(current_pos[1] - self.crop_length/2)
-                    w_new = int(self.crop_length)
-                    h_new = int(self.crop_length)
+                    x1_new = int(current_pos[0] - bot.crop_length/2)
+                    y1_new = int(current_pos[1] - bot.crop_length/2)
+                    w_new = int(bot.crop_length)
+                    h_new = int(bot.crop_length)
                     new_crop = [int(x1_new), int(y1_new), int(w_new), int(h_new)]
 
 
@@ -174,7 +172,7 @@ class VideoThread(QThread):
                     bot.add_blur(blur)
                     bot.set_avg_area(np.mean(bot.area_list))
 
-                        #stuck condition
+                    #stuck condition
                     if len(bot.position_list) > self.memory and velocity[2] < 20 and self.parent.freq > 0:
                         stuck_status = 1
                     else:
@@ -193,6 +191,8 @@ class VideoThread(QThread):
             y1_record = int(bot.position_list[-1][1] - self.crop_length_record/2)
             recorded_cropped_frame = frame[y1_record : y1_record + self.crop_length_record, x1_record : x1_record + self.crop_length_record]
             
+            #adjust most recent bot crop_length 
+            bot.crop_length = self.crop_length
 
         else:
             recorded_cropped_frame = np.zeros((self.crop_length_record, self.crop_length_record, 3), dtype=np.uint8) 

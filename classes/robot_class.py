@@ -19,6 +19,7 @@ class Robot:
         self.trajectory = []  # track points from manual pathing
         self.times = []  #time step per frame in seconds
         self.stuck_status_list = [] #whether or not the robot is stuck or not
+        self.crop_length = 40
         
 
     def add_area(self, area: float):

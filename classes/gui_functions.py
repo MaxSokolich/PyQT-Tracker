@@ -511,6 +511,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         robot.add_area(0)
                         robot.add_blur(0)
                         robot.add_stuck_status(0)
+                        robot.crop_length = crop_length
                         
                         self.tracker.robot_list.append(robot) #this has to include tracker.robot_list because I need to add it to that class
 
