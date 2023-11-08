@@ -13,11 +13,6 @@ from classes.gui_functions import MainWindow
 # need to find better way of saving global video
 
 
-
-
-
-
-
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     w = MainWindow()
