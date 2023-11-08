@@ -1,6 +1,9 @@
 import cv2
-import PySpin
-import EasyPySpin
+
+try:
+    import EasyPySpin
+except Exception:
+    pass
 import time
 import numpy as np
 
@@ -38,11 +41,21 @@ def mouse_points(event,x,y,flags,params):
 b = [0,0]
 fps = count_fps()       
 #cam = cv2.VideoCapture("/home/max/Documents/MagScopeSystem/src/videos/mickyroll1.mp4")
-cam = EasyPySpin.VideoCapture(0)
+try:
+    cam = EasyPySpin.VideoCapture(0)
+except Exception:
+    cam = cv2.VideoCapture(0)
+
 width = int(cam.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
+fpscam = int(cam.get(cv2.CAP_PROP_FPS))
 #cam.set(cv2.CAP_PROP_FPS,25)
 print(cam.get(cv2.CAP_PROP_FPS))
+result = cv2.VideoWriter(
+                    "test.mp4",
+                    cv2.VideoWriter_fourcc(*"mp4v"),
+                    fpscam,    
+                    (width,height), ) 
 
 
 cv2.namedWindow("img")  # name of CV2 window
@@ -58,7 +71,7 @@ while True:
     #do contouring based on full res img
 
 
-    resize_scale =50
+    resize_scale =100
     resize_ratio = (
                 width * resize_scale // 100,
                 height * resize_scale // 100,
@@ -66,14 +79,14 @@ while True:
     
     x,y = b[0], b[1]
     frame = cv2.resize(frame, resize_ratio, interpolation=cv2.INTER_AREA)
-    cv2.circle(frame,(x,y),10, (255,255,0),-1)
+    #cv2.circle(frame,(x,y),10, (255,255,0),-1)
 
 
 
    
 
     
-    cv2.putText(
+    """cv2.putText(
             frame,
             str(int(fps.get_fps())),
             (
@@ -101,11 +114,12 @@ while True:
             0.5,
             (0, 255, 0),
             1,
-        )
+        )"""
 
     
     
     cv2.imshow("img",frame)
+    result.write(frame)
 
   
 
@@ -117,6 +131,7 @@ while True:
 
 cv2.destroyAllWindows()
 cam.release()
+result.release()
 
 
 """

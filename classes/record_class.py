@@ -21,6 +21,7 @@ class RecordThread(QThread):
         self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         self.videofps = int(self.cap.get(cv2.CAP_PROP_FPS))
+        
 
       
         file_path  = os.path.join(self.parent.new_dir_path, date+".mp4")
@@ -35,7 +36,7 @@ class RecordThread(QThread):
         start = time.time()
         while self.recordstatus:
 
-            cv2.putText(self.parent.currentframe,"time: {} s".format(round(time.time()-start,2)),
+            """cv2.putText(self.parent.currentframe,"time: {} s".format(round(time.time()-start,2)),
                         (int(self.width * (7/10)),
                         int(self.height * (9.9/10))),
                         cv2.FONT_HERSHEY_SIMPLEX,
@@ -49,11 +50,11 @@ class RecordThread(QThread):
                         cv2.FONT_HERSHEY_SIMPLEX,
                         fontScale=1, 
                         thickness=4,
-                        color = (255, 255, 255))
+                        color = (255, 255, 255))"""
                         
             #frame = cv2.resize(frame, (self.width,self.height), interpolation = cv2.INTER_AREA)
             self.result.write(self.parent.currentframe)
-            time.sleep(1/self.videofps)
+            cv2.waitKey(1)
 
            
                 

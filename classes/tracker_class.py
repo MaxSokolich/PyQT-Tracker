@@ -355,10 +355,7 @@ class VideoThread(QThread):
                     time.sleep(interval)
 
     
-            
-           
-
-
+        
     def stop(self):
         """Sets run flag to False and waits for thread to finish"""
         #blank = np.zeros((self.width, self.height, 3), dtype=np.uint8) 
