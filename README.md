@@ -1,5 +1,5 @@
 # PyQT-Tracker
-New microrobotic tracking and control UI
+New microrobotic tracking and control UI. Now outdated.
 
 to install neccesary librarys do: python3 -m pip install -r reqs.txt. it might be missing one library but maybe not
 
